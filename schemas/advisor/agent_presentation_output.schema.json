@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/advisor/agent_presentation_output",
+  "title": "agent_presentation_output",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "checkpoint_id": {"type": "string", "minLength": 1},
+    "reason_template": {"type": "string", "minLength": 1, "maxLength": 120},
+    "why_template": {"type": "string", "minLength": 1, "maxLength": 280},
+    "used_fact_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "used_number_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "used_caveat_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  },
+  "required": ["schema_version", "checkpoint_id", "reason_template", "why_template", "used_fact_ids", "used_number_ids", "used_caveat_ids"]
+}

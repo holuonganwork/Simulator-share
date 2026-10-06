@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l2i/inferred_activity",
+  "title": "inferred_activity",
+  "description": "Hoạt động SUY DIỄN từ GPS+event gaps — KHÔNG BAO GIỜ trình bày như đo được. Nuôi F3.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string",
+      "x-sensitivity": "PII-id"
+    },
+    "t_start": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "t_end": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "label": {
+      "type": "string",
+      "enum": [
+        "rest_likely",
+        "charging_likely",
+        "relocating",
+        "idle_wait"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "inference_rule_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "confidence",
+    "driver_id",
+    "inference_rule_version",
+    "label",
+    "schema_version",
+    "source",
+    "t_end",
+    "t_start"
+  ],
+  "additionalProperties": false
+}

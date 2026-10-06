@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l0/service_catalog",
+  "title": "service_catalog",
+  "description": "Loại dịch vụ (bike/express/ngon...) — D-009 nối vào đây.",
+  "type": "object",
+  "properties": {
+    "service_type": {
+      "type": "string"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "attributes": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "schema_version",
+    "service_type",
+    "source"
+  ],
+  "additionalProperties": false
+}

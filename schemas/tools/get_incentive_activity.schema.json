@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/get_incentive_activity",
+  "title": "get_incentive_activity",
+  "description": "Xem src/lcx_core/agent/tools/get_incentive_activity.py",
+  "input": {
+    "type": "object",
+    "properties": { "driver_id": { "type": "string" } },
+    "required": ["driver_id"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "driver_id": { "type": "string" },
+      "n_mission_earn_records": { "type": "integer" },
+      "total_earn_vnd": { "type": "integer" },
+      "kpi_weeks_tracked": { "type": "integer" },
+      "weekly_earn_anomalies": { "type": "array" },
+      "n_weekly_earn_anomalies": { "type": "integer" }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/resolve_case",
+  "title": "resolve_case",
+  "description": "Xem src/lcx_core/agent/tools/resolve_case.py. Ghi mot ban ghi tuong ung schemas/case/case_resolution.schema.json va cap nhat status cua fraud_case (append-only).",
+  "input": {
+    "type": "object",
+    "properties": {
+      "case_id": { "type": "string" },
+      "verdict": { "type": "string", "enum": ["false_positive", "confirmed"] },
+      "reviewer_id": { "type": "string", "minLength": 1 },
+      "note": { "type": "string" }
+    },
+    "required": ["case_id", "verdict", "reviewer_id", "note"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "case_id": { "type": "string" },
+      "verdict": { "type": "string" },
+      "reviewer_id": { "type": "string" },
+      "reviewed_at": { "type": "string", "format": "date-time" }
+    }
+  },
+  "error_codes": ["invalid_verdict", "missing_reviewer_id", "case_not_found"]
+}

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l2/driver_day_state",
+  "title": "driver_day_state",
+  "description": "Trạng thái ngày per driver: điểm, rates, giờ online. US-F1-04, US-F3-02. Pain #2 #3.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string",
+      "x-sensitivity": "PII-id"
+    },
+    "bucket": {
+      "type": "string",
+      "description": "bucket 15ph ISO start"
+    },
+    "points": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "acceptance_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "completion_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "online_min": {
+      "type": "number",
+      "minimum": 0
+    },
+    "soc_pct": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100,
+      "description": "TBC telemetry — fallback ESTIMATED per-swap + km"
+    },
+    "soc_label": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "MEASURED",
+        "ESTIMATED",
+        null
+      ]
+    },
+    "derivation_version": {
+      "type": "string",
+      "description": "version của derivation job (code, không sửa tay)"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "acceptance_rate",
+    "bucket",
+    "completion_rate",
+    "derivation_version",
+    "driver_id",
+    "online_min",
+    "points",
+    "schema_version",
+    "source"
+  ],
+  "additionalProperties": false
+}

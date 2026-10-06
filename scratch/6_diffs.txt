@@ -1,0 +1,606 @@
+
+==================== configs/pilot_hanoi.yaml (57 diff lines) ====================
+--- rl/configs/pilot_hanoi.yaml
++++ check/configs/pilot_hanoi.yaml
+@@ -122,14 +122,8 @@
+   # Đo 12 seed (so với greedy-haversine gốc, cùng k=6):
+   #   served 0.761 → 0.764 · hết hạn 233 → 228 · pickup TB 1.04 → 0.98 km · runtime 2.9s → 2.7s
+   #   lệch accept_base P7 −0.042 → −0.047 (vẫn trong dung sai 5pp)
+-  # CƠ CHẾ GHÉP CHUYẾN ĐỘNG PPO + PBRS (Timing the Match - arXiv:2503.13200v1)
+-  # Điều phối phân vùng độc lập theo cụm H3 Res 6 (~36.1 km², tương thích bản đồ huấn luyện)
++  # Pickup NGẮN LẠI là cơ chế then chốt: gán tối ưu TỔNG thay vì greedy theo `order_id`.
+   matching: batch
+-  ppo_model_path: "ride_hailing/checkpoints/ppo_pbrs_ride_hailing.pt"
+-  ppo_cluster_actor_reach: cluster_neighbors # "cluster_neighbors" (vùng + kề) hoặc "cluster" (trong vùng)
+-  eval_interval_s: 1.0              # Nhịp đánh giá quyết định nhị phân (1 giây)
+-  safety_w_max_min: null            # Để PPO tự quyết định nhịp ghép, tránh đơn ngoại thành kẹt làm méo timer
+-  max_batch_interval_min: 1.0       # Giới hạn gom đơn tối đa 60 giây
+   candidate_ring_k: 2              # Res 7: grid_disk k=2 (~ bán kính 4.6km, 19 ô); nới nếu rỗng
+   # ⛔ BUG-DISPATCH-SHORTLIST (UPDATE-079, hồ sơ `14-*` §2) — ĐÃ TÌM RA, **CHƯA SỬA ĐƯỢC**.
+   #
+@@ -285,7 +279,6 @@
+   base_km: 2.0
+   per_km_vnd: 4300
+   driver_share: 0.75             # ⚠ CẬN DƯỚI của dải mâu thuẫn nguồn [0,75–0,91]
+-
+                                    # (driver-cost-structure-2026 §5: 91% official image-locked
+                                    # / 90→85% / 84,5% / 75%) — chọn bảo thủ, chờ D-POL-05
+   # ⚠ Thực tế có **5 mức** điểm/chuyến (5-10-15-20-30, Q&A official câu 1); sim chỉ mô hình 2.
+@@ -455,6 +448,30 @@
+   combine:
+     demand_total_clamp: [0.3, 3.0]
+     log_raw_and_capped: true
++
++# === CƠ CHẾ LÀM GIÀU DỮ LIỆU & SỰ KIỆN ĐỘNG (gsm_sim/event) ===
++event_dynamics:
++  enabled: true                    # Bật/tắt toàn bộ cơ chế biến thiên ngày & thời tiết
++  start_date: "2026-07-01"         # Ngày xuất phát của chuỗi mô phỏng
++  demand_variation:
++    enabled: true
++    stochastic_sigma: 0.045        # Nhiễu hàng ngày ~4.5%
++    stochastic_clamp: [0.88, 1.15] # Giới hạn nhiễu an toàn
++  weather:
++    enabled: true
++    pleasant_speed_mult: 1.00
++    pleasant_demand_mult: 1.00
++    rain_speed_mult: 0.85          # Mưa: vận tốc giảm ~15%
++    rain_demand_mult: 0.92         # Mưa: khách giảm ~8%
++    fog_speed_mult: 0.58           # Sương mù: vận tốc giảm ~42%
++    fog_demand_mult: 0.94          # Sương mù: khách giảm ~6%
++    flood_city_demand_mult: 0.72   # Lũ lụt: cầu toàn thành giảm ~28%
++    flood_severe_speed_mult: 0.25  # Lũ lụt: ô ngập vừa vận tốc giảm trầm trọng còn 25% (3-5 km/h)
++    probabilities:
++      pleasant: 0.78               # Mát trời cao nhất: 78%
++      rain: 0.18                   # Trời mưa ít hơn: 18%
++      fog: 0.025                   # Sương mù siêu hiếm: 2.5%
++      flood: 0.015                 # Lũ lụt/ngập úng siêu hiếm: 1.5%
+ 
+ output:
+   runs_dir: runs
+
+==================== src/gsm_sim/demand.py (39 diff lines) ====================
+--- rl/src/gsm_sim/demand.py
++++ check/src/gsm_sim/demand.py
+@@ -104,8 +104,13 @@
+     # that adding coordinates does not disturb the existing trace and the baseline metrics stay
+     # unchanged.
+     rng_pt = np.random.default_rng(seed ^ 0xC0FFEE)
+-    orders_per_day = float(cfg.get("demand.orders_per_day"))
+-    hour_share = _hour_intensity(cfg)
++    # Hỗ trợ cấu hình động từ demand_profile (gsm_sim/event)
++    if env is not None and getattr(env, "demand_profile", None) is not None:
++        orders_per_day = float(env.demand_profile.effective_orders_per_day)
++        hour_share = dict(env.demand_profile.hourly_shares)
++    else:
++        orders_per_day = float(cfg.get("demand.orders_per_day"))
++        hour_share = _hour_intensity(cfg)
+     cell_w = _cell_weights(grid, cfg)
+     cells = list(cell_w.keys())
+     base_probs = np.array([cell_w[c] for c in cells], dtype=float)
+@@ -154,6 +159,10 @@
+             target_km = float(min(km_max, math.exp(rng.normal(mu, sigma))))
+             drop = _sample_drop(grid, pickup, target_km, buffer_k, km_per_cell, softness, rng,
+                                 demand_w=cell_w, alpha=drop_alpha)
++            # Lộ trình bị ngập sâu cấm xe tuyệt đối (thiên tai/ngập lụt) -> bỏ qua đơn này
++            if env is not None and hasattr(env, "is_route_passable"):
++                if not env.is_route_passable(t_min, pickup, drop):
++                    continue
+             patience = float(min(pat_max, math.exp(rng.normal(pat_mu, pat_sigma))))
+             p_lat, p_lon = sample_point_in_cell(grid, pickup, rng_pt)
+             d_lat, d_lon = sample_point_in_cell(grid, drop, rng_pt)
+@@ -166,7 +175,8 @@
+             # The fare is charged on the real driven distance, as the operator charges by
+             # route kilometres rather than straight line. With no road matrix the old
+             # straight-line path is kept.
+-            fare_km = dist_km * road.factor(pickup, drop, detour_f) if road else dist_km
++            actual_detour = env.get_route_detour_factor(t_min, pickup, drop, detour_f) if (env is not None and hasattr(env, "get_route_detour_factor")) else detour_f
++            fare_km = dist_km * road.factor(pickup, drop, actual_detour) if road else dist_km
+             v_class = str(rng_cls.choice(car_classes, p=car_probs)) if is_car_mode else "A_COMPACT"
+             gross = policy.gross_fare(fare_km, vehicle_class=v_class if is_car_mode else None)
+             orders.append(Order(oid, t_min, pickup, drop, round(dist_km, 3), gross, round(patience, 2),
+
+==================== src/gsm_sim/environment.py (67 diff lines) ====================
+--- rl/src/gsm_sim/environment.py
++++ check/src/gsm_sim/environment.py
+@@ -84,6 +84,10 @@
+ 
+         # --- events ---
+         self.events = self._build_events(env, grid)
++
++        # --- event dynamics & weather profiles (gsm_sim/event) ---
++        self.demand_profile = None
++        self.weather_profile = None
+ 
+     # ---------- rain ----------
+ 
+@@ -171,10 +175,18 @@
+ 
+     # ---------- demand combine ----------
+ 
+-    def demand_factor(self, t_min: float) -> float:
+-        """Tích các factor LEVEL (dow × rain × temp), clamp tổng. Log khi bị bó."""
++    def attach_event_profiles(self, demand_profile=None, weather_profile=None) -> None:
++        """Gắn hồ sơ biến thiên nhu cầu và thời tiết vào ngữ cảnh môi trường."""
++        self.demand_profile = demand_profile
++        self.weather_profile = weather_profile
++
++    def demand_factor(self, t_min: float, cell: str | None = None) -> float:
++        """Tích các factor LEVEL (dow × rain × temp × weather_event), clamp tổng. Log khi bị bó."""
+         R = self.rain_mm(t_min)
+         m = self.dow_level * self.rain_demand_factor(R) * self.temp_demand_factor
++        if self.weather_profile is not None:
++            from .event import WeatherEventEngine
++            m *= WeatherEventEngine.get_effective_demand_multiplier(self.weather_profile, t_min, cell)
+         capped = min(self.m_max, max(self.m_min, m))
+         if self.log_clamp and capped != m:
+             self._clamp_hits += 1
+@@ -182,10 +194,29 @@
+ 
+     # ---------- speed combine ----------
+ 
+-    def speed_factor(self, t_min: float, congestion_r: float = 0.0) -> float:
+-        """Survival product: (1-r_rain)·(1-r_congestion). Luôn ∈ (0,1]."""
++    def speed_factor(self, t_min: float, congestion_r: float = 0.0, cell: str | None = None) -> float:
++        """Survival product: (1-r_rain)·(1-r_congestion)·weather_speed_mult. Luôn ∈ [0, 1]."""
+         R = self.rain_mm(t_min)
+-        return (1.0 - self.rain_speed_slowdown(R)) * (1.0 - max(0.0, min(0.95, congestion_r)))
++        base_f = (1.0 - self.rain_speed_slowdown(R)) * (1.0 - max(0.0, min(0.95, congestion_r)))
++        if self.weather_profile is not None:
++            from .event import WeatherEventEngine
++            w_speed = WeatherEventEngine.get_effective_speed_multiplier(self.weather_profile, t_min, cell)
++            base_f *= w_speed
++        return max(0.0, min(1.0, base_f))
++
++    def is_route_passable(self, t_min: float, pickup_cell: str, drop_cell: str) -> bool:
++        """Kiểm tra tuyến đường có bị chia cắt / phong tỏa (ngập lụt cấm đường) không."""
++        if self.weather_profile is not None:
++            from .event import WeatherEventEngine
++            return WeatherEventEngine.is_route_passable(self.weather_profile, t_min, pickup_cell, drop_cell)
++        return True
++
++    def get_route_detour_factor(self, t_min: float, pickup_cell: str, drop_cell: str, base_detour: float = 1.3) -> float:
++        """Hệ số detour: tăng cao khi xe phải đi đường vòng tránh vùng ngập lụt."""
++        if self.weather_profile is not None:
++            from .event import WeatherEventEngine
++            return WeatherEventEngine.get_route_detour_factor(self.weather_profile, t_min, pickup_cell, drop_cell, base_detour)
++        return base_detour
+ 
+     # ---------- events ----------
+ 
+
+==================== src/gsm_sim/multiday.py (23 diff lines) ====================
+--- rl/src/gsm_sim/multiday.py
++++ check/src/gsm_sim/multiday.py
+@@ -29,6 +29,7 @@
+ from __future__ import annotations
+ 
+ import copy
++from datetime import date as _dt_date, timedelta as _dt_timedelta
+ import statistics as st
+ from dataclasses import dataclass, field
+ 
+@@ -236,7 +237,11 @@
+                 for mem in memory.values():
+                     mem.close_week()
+ 
+-        env = build_environment(grid, cfg, s_day)
++        # Ngày thực tế theo lịch cho biến thiên thời tiết & nhu cầu
++        start_d_str = str(cfg.get("event_dynamics.start_date", "2026-07-01"))
++        cur_d_str = (_dt_date.fromisoformat(start_d_str) + _dt_timedelta(days=d)).isoformat()
++
++        env = build_environment(grid, cfg, s_day, day_index=d, date_str=cur_d_str)
+         orders = generate_orders(grid, cfg, policy, s_day, env=env,
+                                  road=load_road_matrix(cfg, grid))
+         congestion = CongestionField(orders, cfg, env=env)
+
+==================== src/gsm_sim/runner.py (64 diff lines) ====================
+--- rl/src/gsm_sim/runner.py
++++ check/src/gsm_sim/runner.py
+@@ -114,13 +114,58 @@
+         f"run_id là identity của store append-only, không được phụ thuộc str() ngẫu nhiên")
+ 
+ 
+-def build_environment(grid: Grid, cfg: Config, seed: int) -> EnvironmentContext | None:
++def build_environment(grid: Grid, cfg: Config, seed: int, day_index: int = 0,
++                      date_str: str | None = None) -> EnvironmentContext | None:
+     """Tạo EnvironmentContext nếu config có block `environment`. Scenario mặc định
+     dry_weekday (mọi factor=1) ⇒ tương đương env=None (baseline). Không tiêu RNG khi
+-    không mưa/sự kiện ⇒ giữ CRN với các run không-env."""
++    không mưa/sự kiện ⇒ giữ CRN với các run không-env.
++    Đồng thời tự động gắn event profiles (demand_variation & weather_event) nếu event_dynamics được bật."""
+     if cfg.get("environment", None) is None:
+         return None
+-    return EnvironmentContext(grid, cfg, seed)
++    env = EnvironmentContext(grid, cfg, seed)
++
++    ed_cfg = cfg.get("event_dynamics", {})
++    if ed_cfg.get("enabled", False):
++        from .event import DailyDemandVariation, WeatherEventEngine
++        cur_date = date_str or str(ed_cfg.get("start_date", "2026-07-01"))
++
++        # 1. Biến thiên nhu cầu theo ngày
++        dv_cfg = ed_cfg.get("demand_variation", {})
++        if dv_cfg.get("enabled", True):
++            base_orders = float(cfg.get("demand.orders_per_day", 50000.0))
++            dv_engine = DailyDemandVariation(
++                base_orders_per_day=base_orders,
++                stochastic_sigma=float(dv_cfg.get("stochastic_sigma", 0.045)),
++                stochastic_clamp=tuple(dv_cfg.get("stochastic_clamp", [0.88, 1.15])),
++                enabled=True,
++            )
++            d_profile = dv_engine.evaluate_day(cur_date, day_index=day_index, seed=seed)
++        else:
++            d_profile = None
++
++        # 2. Sự kiện thời tiết & ngập lụt
++        wt_cfg = ed_cfg.get("weather", {})
++        if wt_cfg.get("enabled", True):
++            wt_engine = WeatherEventEngine(
++                probabilities=wt_cfg.get("probabilities", None),
++                pleasant_speed_mult=float(wt_cfg.get("pleasant_speed_mult", 1.0)),
++                pleasant_demand_mult=float(wt_cfg.get("pleasant_demand_mult", 1.0)),
++                rain_speed_mult=float(wt_cfg.get("rain_speed_mult", 0.85)),
++                rain_demand_mult=float(wt_cfg.get("rain_demand_mult", 0.92)),
++                fog_speed_mult=float(wt_cfg.get("fog_speed_mult", 0.58)),
++                fog_demand_mult=float(wt_cfg.get("fog_demand_mult", 0.94)),
++                flood_city_demand_mult=float(wt_cfg.get("flood_city_demand_mult", 0.72)),
++                flood_severe_speed_mult=float(wt_cfg.get("flood_severe_speed_mult", 0.25)),
++                core_cells=grid.core_cells,
++                enabled=True,
++            )
++            w_profile = wt_engine.evaluate_day(cur_date, day_index=day_index, seed=seed)
++        else:
++            w_profile = None
++
++        env.attach_event_profiles(demand_profile=d_profile, weather_profile=w_profile)
++
++    return env
+ 
+ 
+ def build_world(cfg: Config, seed: int, human_actor_id: int | None = None,
+
+==================== src/gsm_sim/world.py (344 diff lines) ====================
+--- rl/src/gsm_sim/world.py
++++ check/src/gsm_sim/world.py
+@@ -145,29 +145,7 @@
+         self.env = simpy.Environment()
+         self.events: list[Event] = []
+         self.speed_cfg = cfg.get("speed_kmh")
+-        self.disp_cfg = cfg.get("dispatcher") or {}
+-        self.start_min = float(cfg.get("time.start_min", 300.0))
+-        self.end_min = float(cfg.get("time.end_min", 1440.0))
+-        matching_mode = str(self.disp_cfg.get("matching", "ppo_batch")).lower() if self.disp_cfg else "batch"
+-        if matching_mode in ("ppo_batch", "ppo", "rl", "dynamic"):
+-            from .ppo_dispatcher import PPODispatcher
+-            ppo_model_path = self.disp_cfg.get("ppo_model_path", None)
+-            safety_w_raw = self.disp_cfg.get("safety_w_max_min", None)
+-            safety_w = float(safety_w_raw) if safety_w_raw is not None else None
+-            max_batch = float(self.disp_cfg.get("max_batch_interval_min", 1.0))
+-            det = bool(self.disp_cfg.get("deterministic", False))
+-            reach = str(self.disp_cfg.get("ppo_cluster_actor_reach", "cluster_neighbors"))
+-            self.ppo_dispatcher = PPODispatcher(
+-                model_path=ppo_model_path,
+-                start_min=self.start_min,
+-                safety_w_max_min=safety_w,
+-                max_batch_interval_min=max_batch,
+-                deterministic=det,
+-                seed=self.seed,
+-                cluster_actor_reach=reach,
+-            )
+-        else:
+-            self.ppo_dispatcher = None
++        self.disp_cfg = cfg.get("dispatcher")
+         self.veh = cfg.get("vehicle")
+         self.car_sim_cfg = cfg.get("car_simulation", {}) or {}
+         self.car_sim_enabled = bool(self.car_sim_cfg.get("enabled", False) and self.car_sim_cfg.get("primary_mode", False))
+@@ -441,16 +419,19 @@
+         return self.congestion.r(cell, hour)
+ 
+     def _eff_speed(self, hour: int, cell: str | None = None) -> float:
+-        """Effective speed: the hourly base times the survival product of rain and local
+-        congestion, with a floor.
++        """Effective speed: the hourly base times the survival product of rain, weather events,
++        and local congestion, with a floor.
+ 
+         Congestion is derived from order density per cell and hour. With congestion and
+         environment both absent the base speed is returned and the baseline is unchanged."""
+         base = _speed_kmh(hour, self.speed_cfg)
+         r_cong = self._congestion_r(cell, hour)
++        t_now = self.env.now if self.env.now > 0 else float(hour * 60 + 30)
+         if self.envctx is not None:
+-            # env.speed_factor = (1-r_rain)·(1-r_cong) survival product
+-            v = base * self.envctx.speed_factor(self.env.now, r_cong)
++            # env.speed_factor = (1-r_rain)·(1-r_cong)·weather_factor survival product
++            v = base * self.envctx.speed_factor(t_now, r_cong, cell=cell)
++            if v <= 0.0:
++                return 0.0
+             return max(self.envctx.v_floor, v)
+         if r_cong <= 0.0:
+             return base
+@@ -460,8 +441,13 @@
+         """The road factor for a cell pair, from the matrix if available and the constant detour
+     otherwise."""
+         if self.road is None or a is None or b is None:
+-            return self.detour
+-        return self.road.factor(a, b, self.detour)
++            base_detour = self.detour
++        else:
++            base_detour = self.road.factor(a, b, self.detour)
++        t_now = self.env.now if self.env.now > 0 else 720.0
++        if self.envctx is not None and hasattr(self.envctx, "get_route_detour_factor") and a and b:
++            return self.envctx.get_route_detour_factor(t_now, a, b, base_detour)
++        return base_detour
+ 
+     def _travel_min(self, dist_km: float, hour: int, cell: str | None = None,
+                     fac: float | None = None) -> float:
+@@ -470,11 +456,14 @@
+         The factor is per cell pair; absent, the constant detour applies.
+         """
+         f = self.detour if fac is None else fac
+-        return (dist_km * f) / self._eff_speed(hour, cell) * 60.0
++        eff_v = self._eff_speed(hour, cell)
++        if eff_v <= 0.0:
++            return 9999.0  # Ô ngập sâu cấm đường tuyệt đối
++        return (dist_km * f) / eff_v * 60.0
+ 
+     def _pct_per_km(self, actor: Actor) -> float:
+         """Charge consumed per kilometre, adjusted for temperature: less range means more
+-    consumption. Supports both car EV and bike specifications."""
++    consumption. Uses the car EV class specifications (Taxi Co Huu)."""
+         if self.car_sim_enabled and hasattr(actor, "vehicle_class") and actor.vehicle_class in self.car_classes:
+             c = self.car_classes[actor.vehicle_class]
+             battery_kwh = float(c.get("battery_kwh", 37.23))
+@@ -846,173 +835,90 @@
+                 self.log(-1, "order_expired", order_id=oid)
+ 
+     def _dispatcher_proc(self):
+-        if self.ppo_dispatcher is not None:
+-            # Cơ chế điều phối động PPO + PBRS (Timing the Match - arXiv:2503.13200v1)
+-            # Tần số quét nhịp quyết định nhị phân (mặc định 1 giây = 1/60 phút)
+-            eval_tick_min = float(self.disp_cfg.get("eval_interval_s", 1.0)) / 60.0
+-            while True:
+-                yield self.env.timeout(eval_tick_min)
+-                self._inject_orders()
+-                if not self.open_orders:
++        tick_min = float(self.cfg.get("time.dispatch_tick_s")) / 60.0
++        while True:
++            yield self.env.timeout(tick_min)
++            self._inject_orders()
++            if not self.open_orders:
++                continue
++            idle = [a for a in self.actors.values() if a.state == ActorState.IDLE]
++            if not idle:
++                continue
++            hour = int(self.env.now // 60) % 24
++            assigns = match_batch(list(self.open_orders.values()), idle, self.grid, hour,
++                                  self.speed_cfg, self.disp_cfg,
++                                  speed_fn=lambda cell, h: self._eff_speed(h, cell), detour=self.detour,
++                                  factor_fn=self._dfac if self.road else None)
++            for asg in assigns:
++                order = self.open_orders.get(asg.order_id)
++                actor = self.actors.get(asg.actor_id)
++                if order is None or actor is None or actor.state != ActorState.IDLE:
+                     continue
+-                idle = [a for a in self.actors.values() if a.state == ActorState.IDLE]
+-                if not idle:
++                # Tuyến đường ngập lụt phong tỏa tuyệt đối không gán xe vào
++                if self.envctx is not None and hasattr(self.envctx, "is_route_passable"):
++                    if not self.envctx.is_route_passable(self.env.now, order.pickup_cell, order.drop_cell):
++                        continue
++                # do not re-offer the same order to the same driver during the cooldown
++                pair = (asg.order_id, asg.actor_id)
++                t_last = self.offer_history.get(pair)
++                if t_last is not None and (self.env.now - t_last) < self.offer_cooldown:
+                     continue
+-
+-                # PPO đánh giá song song từng phân vùng Res 6 có đơn chờ
+-                ready_clusters = self.ppo_dispatcher.get_ready_clusters(self, self.env.now)
+-                if not ready_clusters:
++                self.offer_history[pair] = self.env.now
++                actor.orders_offered += 1
++                actor.idle_streak_min = 0.0   # being offered work is evidence of demand here
++                # is there charge for the whole job, pickup and trip, at each leg's own road factor?
++                total_km = (asg.pickup_dist_km * self._dfac(actor.cell, order.pickup_cell)
++                            + order.dist_km * self._dfac(order.pickup_cell, order.drop_cell))
++                enough = actor.soc_pct - total_km * self._pct_per_km(actor) > 8.0
++                forced = actor.acceptance_rate < 0.5 and actor.orders_offered > 5
++                if not enough:
++                    # No longer counted as a cancellation: the driver never accepted the
++                    # order. Cancellations now count only what happens after acceptance, which
++                    # matches the meaning of the operator's own column.
++                    actor.orders_soc_skipped += 1
++                    # This branch used to increment a counter only, making it invisible on the
++                    # timeline, so there was no way to explain why a driver dropped out of the
++                    # market for a while.
++                    self.log(actor.actor_id, "order_skipped_soc", actor.cell,
++                             order_id=order.order_id, soc_pct=round(actor.soc_pct, 1),
++                             need_km=round(total_km, 2))
+                     continue
+-
+-                # Lọc ra các đơn hàng thuộc các phân vùng đã sẵn sàng ghép
+-                orders_to_match = [
+-                    o for o in self.open_orders.values()
+-                    if self.grid.parent_report(o.pickup_cell) in ready_clusters
+-                ]
+-                if not orders_to_match:
++                # The first human seam: a human driver decides whether to accept, in place of
++                # the instinct model. The instinct is still evaluated first and still consumes
++                # the same random draws as the autonomous arm; the gate only overrides the
++                # result. The rest-commitment and advice blocks below follow the same
++                # discipline. Reversing this order would shift the whole fleet's stream.
++                dec = decide_accept(actor, order.gross_vnd, asg.pickup_dist_km, forced, self.rng,
++                                    self.pickup_disutility_km, self.accept_center, self.accept_scale)
++                if actor.actor_id == self.human_actor_id:
++                    dec = yield from self.hil_gate.ask_accept_offer(actor, order, asg, dec)
++                if not dec.accepted:
++                    # record enough grounds to answer why this particular trip was refused
++                    self.log(actor.actor_id, "order_declined", actor.cell,
++                             order_id=order.order_id, reason=dec.reason,
++                             net_vnd=round(dec.net_vnd), pickup_km=round(asg.pickup_dist_km, 2),
++                             gross_vnd=order.gross_vnd, p_accept=round(dec.p_accept, 4))
+                     continue
+-
+-                hour = int(self.env.now // 60) % 24
+-                assigns = match_batch(orders_to_match, idle, self.grid, hour,
+-                                      self.speed_cfg, self.disp_cfg,
+-                                      speed_fn=lambda cell, h: self._eff_speed(h, cell), detour=self.detour,
+-                                      factor_fn=self._dfac if self.road else None)
+-                self.ppo_dispatcher.record_matches(ready_clusters, self.env.now)
+-                for asg in assigns:
+-                    order = self.open_orders.get(asg.order_id)
+-                    actor = self.actors.get(asg.actor_id)
+-                    if order is None or actor is None or actor.state != ActorState.IDLE:
+-                        continue
+-                    # do not re-offer the same order to the same driver during the cooldown
+-                    pair = (asg.order_id, asg.actor_id)
+-                    t_last = self.offer_history.get(pair)
+-                    if t_last is not None and (self.env.now - t_last) < self.offer_cooldown:
+-                        continue
+-                    self.offer_history[pair] = self.env.now
+-                    actor.orders_offered += 1
+-                    actor.idle_streak_min = 0.0   # being offered work is evidence of demand here
+-                    # is there charge for the whole job, pickup and trip, at each leg's own road factor?
+-                    total_km = (asg.pickup_dist_km * self._dfac(actor.cell, order.pickup_cell)
+-                                + order.dist_km * self._dfac(order.pickup_cell, order.drop_cell))
+-                    enough = actor.soc_pct - total_km * self._pct_per_km(actor) > 8.0
+-                    forced = actor.acceptance_rate < 0.5 and actor.orders_offered > 5
+-                    if not enough:
+-                        # No longer counted as a cancellation: the driver never accepted the
+-                        # order. Cancellations now count only what happens after acceptance, which
+-                        # matches the meaning of the operator's own column.
+-                        actor.orders_soc_skipped += 1
+-                        self.log(actor.actor_id, "order_skipped_soc", actor.cell,
+-                                 order_id=order.order_id, soc_pct=round(actor.soc_pct, 1),
+-                                 need_km=round(total_km, 2))
+-                        continue
+-                    # The first human seam: a human driver decides whether to accept, in place of
+-                    # the instinct model. The instinct is still evaluated first and still consumes
+-                    # the same random draws as the autonomous arm; the gate only overrides the
+-                    # result. The rest-commitment and advice blocks below follow the same
+-                    # discipline. Reversing this order would shift the whole fleet's stream.
+-                    dec = decide_accept(actor, order.gross_vnd, asg.pickup_dist_km, forced, self.rng,
+-                                        self.pickup_disutility_km, self.accept_center, self.accept_scale)
+-                    if actor.actor_id == self.human_actor_id:
+-                        dec = yield from self.hil_gate.ask_accept_offer(actor, order, asg, dec)
+-                    if not dec.accepted:
+-                        # record enough grounds to answer why this particular trip was refused
+-                        self.log(actor.actor_id, "order_declined", actor.cell,
+-                                 order_id=order.order_id, reason=dec.reason,
+-                                 net_vnd=round(dec.net_vnd), pickup_km=round(asg.pickup_dist_km, 2),
+-                                 gross_vnd=order.gross_vnd, p_accept=round(dec.p_accept, 4))
+-                        continue
+-                    # accept the order
+-                    actor.orders_accepted += 1
+-                    self.open_orders.pop(order.order_id, None)
+-                    self.order_open_since.pop(order.order_id, None)
+-                    self._order_transition(order.order_id, "MATCHED")
+-                    actor.state = ActorState.ENROUTE
+-                    self.log(actor.actor_id, "order_matched", actor.cell, order_id=order.order_id,
+-                             net_vnd=round(dec.net_vnd), pickup_km=round(asg.pickup_dist_km, 2),
+-                             gross_vnd=order.gross_vnd, p_accept=round(dec.p_accept, 4),
+-                             reason=dec.reason)
+-                    self.env.process(self._serve_trip(actor, order, asg))
+-        else:
+-            tick_min = float(self.cfg.get("time.dispatch_tick_s")) / 60.0
+-            while True:
+-                yield self.env.timeout(tick_min)
+-                self._inject_orders()
+-                if not self.open_orders:
+-                    continue
+-                idle = [a for a in self.actors.values() if a.state == ActorState.IDLE]
+-                if not idle:
+-                    continue
+-                hour = int(self.env.now // 60) % 24
+-                assigns = match_batch(list(self.open_orders.values()), idle, self.grid, hour,
+-                                      self.speed_cfg, self.disp_cfg,
+-                                      speed_fn=lambda cell, h: self._eff_speed(h, cell), detour=self.detour,
+-                                      factor_fn=self._dfac if self.road else None)
+-                for asg in assigns:
+-                    order = self.open_orders.get(asg.order_id)
+-                    actor = self.actors.get(asg.actor_id)
+-                    if order is None or actor is None or actor.state != ActorState.IDLE:
+-                        continue
+-                    # do not re-offer the same order to the same driver during the cooldown
+-                    pair = (asg.order_id, asg.actor_id)
+-                    t_last = self.offer_history.get(pair)
+-                    if t_last is not None and (self.env.now - t_last) < self.offer_cooldown:
+-                        continue
+-                    self.offer_history[pair] = self.env.now
+-                    actor.orders_offered += 1
+-                    actor.idle_streak_min = 0.0   # being offered work is evidence of demand here
+-                    # is there charge for the whole job, pickup and trip, at each leg's own road factor?
+-                    total_km = (asg.pickup_dist_km * self._dfac(actor.cell, order.pickup_cell)
+-                                + order.dist_km * self._dfac(order.pickup_cell, order.drop_cell))
+-                    enough = actor.soc_pct - total_km * self._pct_per_km(actor) > 8.0
+-                    forced = actor.acceptance_rate < 0.5 and actor.orders_offered > 5
+-                    if not enough:
+-                        # No longer counted as a cancellation: the driver never accepted the
+-                        # order. Cancellations now count only what happens after acceptance, which
+-                        # matches the meaning of the operator's own column.
+-                        actor.orders_soc_skipped += 1
+-                        # This branch used to increment a counter only, making it invisible on the
+-                        # timeline, so there was no way to explain why a driver dropped out of the
+-                        # market for a while.
+-                        self.log(actor.actor_id, "order_skipped_soc", actor.cell,
+-                                 order_id=order.order_id, soc_pct=round(actor.soc_pct, 1),
+-                                 need_km=round(total_km, 2))
+-                        continue
+-                    # The first human seam: a human driver decides whether to accept, in place of
+-                    # the instinct model. The instinct is still evaluated first and still consumes
+-                    # the same random draws as the autonomous arm; the gate only overrides the
+-                    # result. The rest-commitment and advice blocks below follow the same
+-                    # discipline. Reversing this order would shift the whole fleet's stream.
+-                    dec = decide_accept(actor, order.gross_vnd, asg.pickup_dist_km, forced, self.rng,
+-                                        self.pickup_disutility_km, self.accept_center, self.accept_scale)
+-                    if actor.actor_id == self.human_actor_id:
+-                        dec = yield from self.hil_gate.ask_accept_offer(actor, order, asg, dec)
+-                    if not dec.accepted:
+-                        # record enough grounds to answer why this particular trip was refused
+-                        self.log(actor.actor_id, "order_declined", actor.cell,
+-                                 order_id=order.order_id, reason=dec.reason,
+-                                 net_vnd=round(dec.net_vnd), pickup_km=round(asg.pickup_dist_km, 2),
+-                                 gross_vnd=order.gross_vnd, p_accept=round(dec.p_accept, 4))
+-                        continue
+-                    # accept the order
+-                    actor.orders_accepted += 1
+-                    self.open_orders.pop(order.order_id, None)
+-                    self.order_open_since.pop(order.order_id, None)
+-                    self._order_transition(order.order_id, "MATCHED")
+-                    # Driving to a pickup deliberately sets no movement target. The real
+-                    # destination of this journey is the dropoff, an uncertain distance and possibly
+-                    # tens of minutes away. Treating a driver carrying a passenger as supply
+-                    # arriving at that cell would inflate supply everywhere and stop the advisor
+-                    # recommending cells that are genuinely short of drivers. The limitation is
+-                    # labelled rather than overlooked, and a test names it.
+-                    actor.state = ActorState.ENROUTE
+-                    # Snapshot order_matched sau boundary state mutation.  Event details remain
+-                    # identical; only the observer's canonical actor state changes from idle to
+-                    # enroute.  No RNG or simulator decision is added here.
+-                    self.log(actor.actor_id, "order_matched", actor.cell, order_id=order.order_id,
+-                             net_vnd=round(dec.net_vnd), pickup_km=round(asg.pickup_dist_km, 2),
+-                             gross_vnd=order.gross_vnd, p_accept=round(dec.p_accept, 4),
+-                             reason=dec.reason)
+-                    self.env.process(self._serve_trip(actor, order, asg))
++                # accept the order
++                actor.orders_accepted += 1
++                self.open_orders.pop(order.order_id, None)
++                self.order_open_since.pop(order.order_id, None)
++                self._order_transition(order.order_id, "MATCHED")
++                # Driving to a pickup deliberately sets no movement target. The real
++                # destination of this journey is the dropoff, an uncertain distance and possibly
++                # tens of minutes away. Treating a driver carrying a passenger as supply
++                # arriving at that cell would inflate supply everywhere and stop the advisor
++                # recommending cells that are genuinely short of drivers. The limitation is
++                # labelled rather than overlooked, and a test names it.
++                actor.state = ActorState.ENROUTE
++                # Snapshot order_matched sau boundary state mutation.  Event details remain
++                # identical; only the observer's canonical actor state changes from idle to
++                # enroute.  No RNG or simulator decision is added here.
++                self.log(actor.actor_id, "order_matched", actor.cell, order_id=order.order_id,
++                         net_vnd=round(dec.net_vnd), pickup_km=round(asg.pickup_dist_km, 2),
++                         gross_vnd=order.gross_vnd, p_accept=round(dec.p_accept, 4),
++                         reason=dec.reason)
++                self.env.process(self._serve_trip(actor, order, asg))
+ 
+     def _serve_trip(self, actor: Actor, order, asg):
+         hour = int(self.env.now // 60) % 24

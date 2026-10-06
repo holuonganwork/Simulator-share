@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1/trip_record",
+  "title": "trip_record",
+  "description": "Cuốc hoàn chỉnh. US-F3-01/02; input mọi solver. Pain #2.",
+  "type": "object",
+  "properties": {
+    "order_id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string",
+      "x-sensitivity": "PII-id"
+    },
+    "service_type": {
+      "type": "string"
+    },
+    "vehicle_class": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "A_COMPACT",
+        "B_SEDAN",
+        "C_SUV",
+        "D_LUXURY",
+        "LIMO",
+        null
+      ],
+      "description": "Phân hạng phương tiện ô tô điện phục vụ: A_COMPACT (VF5), B_SEDAN/C_SUV (VF e34, VF6), D_LUXURY (VF8, VF9), LIMO"
+    },
+    "t_request": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "t_assign": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "t_pickup": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "t_complete": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "pickup": {
+      "type": "object",
+      "required": [
+        "lat",
+        "lon",
+        "h3"
+      ],
+      "properties": {
+        "lat": {
+          "type": "number",
+          "x-sensitivity": "PII-location"
+        },
+        "lon": {
+          "type": "number",
+          "x-sensitivity": "PII-location"
+        },
+        "h3": {
+          "type": "string",
+          "description": "res 9 vận hành"
+        }
+      },
+      "additionalProperties": false
+    },
+    "drop": {
+      "type": "object",
+      "required": [
+        "lat",
+        "lon",
+        "h3"
+      ],
+      "properties": {
+        "lat": {
+          "type": "number",
+          "x-sensitivity": "PII-location"
+        },
+        "lon": {
+          "type": "number",
+          "x-sensitivity": "PII-location"
+        },
+        "h3": {
+          "type": "string",
+          "description": "res 9 vận hành"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dist_km": {
+      "type": "number",
+      "minimum": 0,
+      "description": "distance contract M0-9: = haversine(pickup,drop) trong mock"
+    },
+    "gross_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "VND nguyên (không âm)"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "dist_km",
+    "driver_id",
+    "drop",
+    "gross_vnd",
+    "order_id",
+    "pickup",
+    "schema_version",
+    "service_type",
+    "source",
+    "t_assign",
+    "t_complete",
+    "t_pickup",
+    "t_request"
+  ],
+  "additionalProperties": false
+}

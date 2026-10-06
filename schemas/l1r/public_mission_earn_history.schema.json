@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/public_mission_earn_history",
+  "title": "public_mission_earn_history",
+  "description": "Lịch sử nhận thưởng mission (UC3/UC8). earn từ mission.rewards. customer_id drop.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "updated_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "deleted_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mission_id": {
+      "type": "string"
+    },
+    "order_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "order_status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "driver_id": {
+      "type": "string"
+    },
+    "customer_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "service_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "order_time": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "complete_time": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "travel_mode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sap_contract_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "count_order": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "count_stoppoint": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "earn": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "datastream_metadata": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "CDC Datastream metadata — không dùng logic"
+    },
+    "reward_level": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "count_order",
+    "driver_id",
+    "earn",
+    "id",
+    "mission_id",
+    "schema_version",
+    "source"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id",
+    "customer_id"
+  ]
+}

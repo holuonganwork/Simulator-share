@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/telemetry/camera_event",
+  "title": "camera_event",
+  "description": "Hang muc 2 'Chien luoc lam giau du lieu' (mentor giao 2026-09-18) - suy luan AI-on-device tu camera trong xe, KHONG luu video/anh that (chi luu KET QUA suy luan). Chi ap dung cho xe hoi (source_device='vehicle_tcu_car') - xe may khong co camera noi that. Day la du lieu duy nhat mo khoa mau hinh 'can thiep cam bien - Mat than' (dang Thieu han trong tai lieu chien luoc goc, muc 02).",
+  "type": "object",
+  "properties": {
+    "event_id": { "type": "string" },
+    "driver_id": { "type": "string" },
+    "trip_id": {
+      "type": ["string", "null"],
+      "description": "null neu su kien xay ra ngoai chuyen (vd ONLINE_IDLE)."
+    },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "camera_event_type": {
+      "type": "string",
+      "enum": [
+        "face_mismatch",
+        "no_face_detected",
+        "passenger_count_exceeds_seat_sensor",
+        "driver_left_seat_mid_trip"
+      ],
+      "description": "face_mismatch: khuon mat tai xe truoc camera KHONG khop anh dai dien tai khoan dang dang nhap. no_face_detected: khong phat hien khuon mat nao o ghe lai trong luc xe dang chay. passenger_count_exceeds_seat_sensor: so nguoi camera dem duoc NHIEU HON so ghe dang bao co nguoi (seat_occupancy trong vehicle_telemetry_ping) - dau hieu don khach ngoai app. driver_left_seat_mid_trip: ghe lai bao trong trong luc trip dang TRIP_ACTIVE."
+    },
+    "detected_face_matches_account": {
+      "type": ["boolean", "null"],
+      "description": "Chi dinh khi camera_event_type='face_mismatch'."
+    },
+    "detected_passenger_count": { "type": ["integer", "null"], "minimum": 0 },
+    "seat_sensor_passenger_count": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Doi chieu voi seat_occupancy.any_passenger_seat cua vehicle_telemetry_ping cung thoi diem."
+    },
+    "confidence": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Do tin cay cua model AI-on-device, khong phai xac suat gian lan."
+    },
+    "source_device": { "type": "string", "enum": ["vehicle_tcu_car"] }
+  },
+  "required": ["event_id", "driver_id", "occurred_at", "camera_event_type", "source_device"],
+  "additionalProperties": false
+}

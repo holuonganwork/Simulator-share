@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/frauds/f1_off_app_pickup",
+  "title": "f1_off_app_pickup",
+  "description": "Thực thể phát hiện gian lận F1: Chở khách không tạo cuốc (Off-App Pickup / Street Hail). Áp dụng duy nhất cho mô hình Taxi Cơ Hữu (100% xe VinFast công ty, tài xế ký HĐLĐ) tại Hà Nội theo tài liệu FRAUDS.md và Bộ Quy tắc Ứng xử 11/09/2026. Cơ chế phát hiện dựa trên cuốc bị hủy sau khi đến điểm đón, xe tiếp tục lăn bánh ngoài app có khách ngồi ghế sau (cảm biến ghế + camera AI) và công-tơ-mét ODO phần cứng tăng.",
+  "type": "object",
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "description": "Mã định danh duy nhất của vụ việc vi phạm F1 (vd: f1-20260924-a1b2c3d4)"
+    },
+    "fraud_type": {
+      "type": "string",
+      "const": "F1_OFF_APP_PICKUP",
+      "description": "Mã định danh loại vi phạm F1"
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm hệ thống phát hiện vi phạm (ISO-8601 UTC+7)"
+    },
+    "driver_id": {
+      "type": "string",
+      "description": "Mã nhân viên / tài xế Taxi Cơ Hữu (vd: d-123)"
+    },
+    "vehicle_id": {
+      "type": "string",
+      "description": "Mã định danh nội bộ của xe ô tô điện (vd: veh-123)"
+    },
+    "vin": {
+      "type": "string",
+      "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+      "description": "Số khung 17 ký tự tiêu chuẩn ISO của xe VinFast thuộc sở hữu GSM"
+    },
+    "depot_id": {
+      "type": "string",
+      "enum": [
+        "depot_gia_lam",
+        "depot_nam_tu_liem",
+        "depot_yen_nghia",
+        "hub_noi_bai",
+        "hub_my_dinh",
+        "hub_giap_bat"
+      ],
+      "description": "Depot hoặc Hub quản lý phương tiện được phân bổ"
+    },
+    "track": {
+      "type": "string",
+      "const": "core_owned",
+      "description": "Chỉ áp dụng cho mô hình Taxi Cơ Hữu công ty"
+    },
+    "trip_id": {
+      "type": "string",
+      "description": "Mã cuốc xe trên app bị hủy bất thường"
+    },
+    "trip_cancelled_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm cuốc xe bị đổi trạng thái cancelled trên hệ thống"
+    },
+    "cancelled_by": {
+      "type": "string",
+      "enum": ["driver", "customer"],
+      "description": "Bên bấm hủy chuyến (tài xế tự hủy hoặc ép/xúi giục khách hủy)"
+    },
+    "cancel_reason": {
+      "type": "string",
+      "description": "Lý do hủy được chọn trên app (vd: khach_khong_den, xe_hong, thoa_thuan_rieng)"
+    },
+    "arrived_at_pickup_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm tài xế đã bấm 'Đã đến điểm đón' hoặc GPS xác nhận đã tới điểm hẹn"
+    },
+    "pickup_h3": {
+      "type": "string",
+      "description": "Mã ô H3 đón khách ban đầu"
+    },
+    "drop_h3": {
+      "type": "string",
+      "description": "Mã ô H3 trả khách dự kiến ban đầu"
+    },
+    "off_app_start_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm bắt đầu đoạn lăn bánh chở khách không tạo cuốc"
+    },
+    "off_app_end_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm kết thúc đoạn lăn bánh chở khách không tạo cuốc"
+    },
+    "moving_duration_minutes": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Tổng thời gian xe lăn bánh chở khách ngoài app (phút)"
+    },
+    "n_moving_pings": {
+      "type": "integer",
+      "minimum": 5,
+      "description": "Số lượng ping viễn thám ghi nhận xe chạy có khách ngoài app (ngưỡng >= 5)"
+    },
+    "max_speed_kmh": {
+      "type": "number",
+      "minimum": 10.0,
+      "description": "Vận tốc tối đa ghi nhận trong hành trình ngoài app (km/h)"
+    },
+    "avg_speed_kmh": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Vận tốc trung bình trong hành trình ngoài app (km/h)"
+    },
+    "seat_occupied_passenger": {
+      "type": "boolean",
+      "const": true,
+      "description": "Cảm biến áp lực trọng lượng ghế phụ/ghế sau xác nhận có người ngồi"
+    },
+    "camera_corroboration": {
+      "type": ["object", "null"],
+      "description": "Bằng chứng củng cố từ camera AI trong cabin",
+      "properties": {
+        "camera_event_type": {
+          "type": "string",
+          "enum": ["passenger_count_exceeds_seat_sensor", "passenger_detected", null]
+        },
+        "detected_passenger_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Số hành khách AI nhận diện trong cabin"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Độ tin cậy của thuật toán thị giác máy tính"
+        }
+      }
+    },
+    "start_location": {
+      "type": "object",
+      "required": ["lat", "lng"],
+      "properties": {
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "h3": { "type": "string" }
+      },
+      "description": "Tọa độ điểm bắt đầu chạy ngoài app (thường trùng điểm đón của khách)"
+    },
+    "end_location": {
+      "type": "object",
+      "required": ["lat", "lng"],
+      "properties": {
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "h3": { "type": "string" }
+      },
+      "description": "Tọa độ điểm kết thúc hành trình ngoài app (trả khách)"
+    },
+    "odo_start_km": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Số công-tơ-mét ODO phần cứng VinFast khi bắt đầu chở ngoài app"
+    },
+    "odo_end_km": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Số công-tơ-mét ODO phần cứng VinFast khi kết thúc chuyến đi ngoài app"
+    },
+    "km_moved_off_app": {
+      "type": "number",
+      "minimum": 0.5,
+      "description": "Số km thực tế xe chạy ngoài luồng: odo_end_km - odo_start_km"
+    },
+    "vehicle_class": {
+      "type": "string",
+      "enum": ["A_COMPACT", "B_SEDAN", "C_SUV", "D_LUXURY", "LIMO"],
+      "description": "Phân hạng xe để áp đơn giá cước quy định của GSM tại Hà Nội"
+    },
+    "rate_per_km_vnd": {
+      "type": "integer",
+      "enum": [13000, 13800, 14500, 19000],
+      "description": "Đơn giá cước km theo hạng xe (VF5: 13k, VF6/e34: 14.5k, VF8: 19k)"
+    },
+    "clawback_amount_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Số tiền cước bị chiếm đoạt phải truy thu: km_moved_off_app * rate_per_km_vnd"
+    },
+    "ata_penalty_vnd": {
+      "type": "integer",
+      "enum": [1000000, 2000000],
+      "description": "Mức phạt chế tài trừ ví ATA theo Quy tắc Ứng xử (Lần 1: 1 triệu, Lần 2: 2 triệu)"
+    },
+    "disciplinary_action": {
+      "type": "string",
+      "enum": [
+        "ata_fine_1m",
+        "ata_fine_2m_suspension_7_days",
+        "ata_fine_2m_suspension_14_days",
+        "labor_contract_termination"
+      ],
+      "description": "Hình thức kỷ luật lao động tương ứng theo HĐLĐ"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["light", "medium", "heavy"],
+      "description": "Mức độ nghiêm trọng của hành vi vi phạm"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Xác suất khẳng định vi phạm sau khi tổng hợp tín hiệu ODO, ghế và GPS"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["flagged", "under_review", "confirmed", "appealed", "dismissed"],
+      "description": "Trạng thái xử lý hồ sơ gian lận F1"
+    }
+  },
+  "required": [
+    "incident_id",
+    "detected_at",
+    "driver_id",
+    "vehicle_id",
+    "vin",
+    "track",
+    "trip_id",
+    "cancelled_by",
+    "arrived_at_pickup_time",
+    "n_moving_pings",
+    "seat_occupied_passenger",
+    "km_moved_off_app",
+    "vehicle_class",
+    "rate_per_km_vnd",
+    "clawback_amount_vnd",
+    "severity",
+    "confidence",
+    "status"
+  ],
+  "additionalProperties": false
+}

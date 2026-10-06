@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/advisor/advice_request",
+  "title": "advice_request",
+  "description": "Request vào pipeline (spec §3 I/O).",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string"
+    },
+    "feature": {
+      "type": "string",
+      "enum": [
+        "F0",
+        "F1",
+        "F2",
+        "F3"
+      ]
+    },
+    "free_text_query": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "l3_view_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "t_request": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "trigger_source": {
+      "type": "string",
+      "enum": [
+        "user_ask",
+        "anchor",
+        "event_trigger"
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "feature",
+    "request_id",
+    "schema_version",
+    "session_id",
+    "t_request",
+    "trigger_source"
+  ],
+  "additionalProperties": false
+}

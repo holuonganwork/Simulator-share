@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/check_location_integrity",
+  "title": "check_location_integrity",
+  "description": "Xem src/lcx_core/agent/tools/check_location_integrity.py",
+  "input": {
+    "type": "object",
+    "properties": { "driver_id": { "type": "string" } },
+    "required": ["driver_id"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "driver_id": { "type": "string" },
+      "implausible_speed_events": { "type": "array" },
+      "n_implausible_speed_events": { "type": "integer" },
+      "location_dropout_events": { "type": "array" },
+      "n_location_dropout_events": { "type": "integer" }
+    }
+  }
+}

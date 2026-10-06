@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l0/road_matrix",
+  "title": "road_matrix",
+  "description": "Bản hợp đồng dữ liệu cho ma trận cự ly, thời gian và phân cấp loại đường bộ OSRM giữa các cặp ô lục giác H3 toàn Hà Nội. Phân loại 3 cấp độ đường: Cao tốc (EXPRESSWAY), Suýt cao tốc / Trục chính (ARTERIAL) và Đường thường (LOCAL_STREET) dựa trên vận tốc cơ sở OSRM (inferred_speed_kmh = road_km / (duration_s / 3600)).",
+  "type": "object",
+  "properties": {
+    "cell_from": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{15}$",
+      "description": "Mã ô lục giác H3 điểm xuất phát (độ phân giải Res 7/8/9)"
+    },
+    "cell_to": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{15}$",
+      "description": "Mã ô lục giác H3 điểm đến (độ phân giải Res 7/8/9)"
+    },
+    "road_km": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Khoảng cách di chuyển đường bộ tối ưu tính bằng km"
+    },
+    "duration_s": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Thời gian di chuyển đường bộ dự kiến tính bằng giây"
+    },
+    "inferred_speed_kmh": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Vận tốc di chuyển cơ sở OSRM (km/h) giữa 2 ô: road_km / (duration_s / 3600)"
+    },
+    "road_tier": {
+      "type": "string",
+      "enum": ["EXPRESSWAY", "ARTERIAL", "LOCAL_STREET"],
+      "description": "Phân cấp loại tuyến đường: EXPRESSWAY (Cao tốc, >= 70 km/h), ARTERIAL (Trục chính/Vành đai/Suýt cao tốc, 50-70 km/h), LOCAL_STREET (Đường thường/nội đô, < 50 km/h)"
+    },
+    "detour_ratio": {
+      "type": ["number", "null"],
+      "minimum": 1.0,
+      "description": "Hệ số uốn lượn đường bộ so với đường chim bay: road_km / haversine_km"
+    },
+    "source": {
+      "type": "string",
+      "enum": ["OSRM", "MOCK", "ESTIMATED", "INFERRED"],
+      "description": "Nhãn nguồn dữ liệu (OSRM driving profile)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "cell_from",
+    "cell_to",
+    "road_km",
+    "duration_s",
+    "inferred_speed_kmh",
+    "road_tier",
+    "source",
+    "schema_version"
+  ],
+  "additionalProperties": false
+}

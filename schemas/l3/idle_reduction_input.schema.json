@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l3/idle_reduction_input",
+  "title": "idle_reduction_input",
+  "description": "Input S7 IdleReduction (UC5 Reduce Idle). Nguồn: public_driver_hex_tracking (ĐO ĐƯỢC) + trips (demand PROXY). D-004b: chỉ khuyên MỨC THỜI GIAN; khu vực chỉ nhắc nhiệm vụ reposition CHÍNH THỨC của GSM.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string"
+    },
+    "t_now": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "session_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "idle_segments": {
+      "type": "array",
+      "description": "Khoảng chờ ĐO ĐƯỢC từ hex_tracking (tracking_status=idle)",
+      "items": {
+        "type": "object",
+        "required": [
+          "duration_seconds",
+          "hour"
+        ],
+        "properties": {
+          "hex": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ô H3 nơi chờ — CHỈ để thống kê, KHÔNG dùng để chỉ định chỗ đứng (D-004b/B1)"
+          },
+          "start": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "duration_seconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "hour": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 23
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "total_idle_min": {
+      "type": "number",
+      "minimum": 0
+    },
+    "longest_idle_min": {
+      "type": "number",
+      "minimum": 0
+    },
+    "online_hours": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "demand_by_hour": {
+      "type": "object",
+      "description": "PROXY chuẩn hoá [0,1] theo giờ — CHỈ đơn ĐÃ phục vụ (không có unserved). Nhãn bắt buộc khi trình bày.",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
+    },
+    "active_reposition": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Nhiệm vụ reposition CHÍNH THỨC của GSM (campaign) — null nếu không có; solver KHÔNG tự tạo",
+      "properties": {
+        "campaign_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "target_hex": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reached": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "view_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "idle_segments",
+    "longest_idle_min",
+    "schema_version",
+    "session_date",
+    "source",
+    "t_now",
+    "total_idle_min",
+    "view_version"
+  ],
+  "additionalProperties": false
+}

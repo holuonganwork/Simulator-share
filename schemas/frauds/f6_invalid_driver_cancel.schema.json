@@ -1,0 +1,324 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/frauds/f6_invalid_driver_cancel",
+  "title": "f6_invalid_driver_cancel",
+  "description": "Schema thực thể cho lỗi F6: Hủy sai lý do / Kén chọn cuốc xe (Abnormal Cancellation / Cherry-Picking / Vi Phạm Tiêu Chuẩn 5 Sao) của đội xe Taxi Cơ Hữu Hà Nội (VinFast VF5, VF6, VF e34, VF8, 100% hợp đồng lao động, quản lý theo Quy tắc ứng xử 11/09/2026 và Quyết định Sàn thu nhập 650.000đ/ngày GF-VIP 31/08/2026).",
+  "type": "object",
+  "required": [
+    "incident_id",
+    "fraud_type",
+    "detected_at",
+    "driver_id",
+    "vehicle_id",
+    "vin",
+    "depot_id",
+    "track",
+    "trip_id",
+    "status",
+    "cancelled_by",
+    "cancel_reason",
+    "min_distance_to_pickup_meters",
+    "arrival_geofence_check_passed",
+    "actual_wait_at_pickup_seconds",
+    "weekly_invalid_cancel_count",
+    "daily_floor_forfeited",
+    "clawback_amount_vnd",
+    "ata_penalty_vnd",
+    "severity",
+    "confidence_score"
+  ],
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Mã định danh duy nhất của sự kiện vi phạm hủy chuyến sai lý do F6"
+    },
+    "fraud_type": {
+      "type": "string",
+      "const": "F6_INVALID_DRIVER_CANCEL",
+      "description": "Mã định danh loại vi phạm F6"
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm hệ thống phát hiện hành vi hủy chuyến không hợp lệ (ISO 8601)"
+    },
+    "driver_id": {
+      "type": "string",
+      "description": "Mã tài xế Taxi Cơ Hữu thực hiện hủy cuốc"
+    },
+    "vehicle_id": {
+      "type": "string",
+      "description": "Biển kiểm soát xe điện VinFast (ví dụ: 29E-012.34)"
+    },
+    "vin": {
+      "type": "string",
+      "minLength": 17,
+      "maxLength": 17,
+      "description": "Số khung 17 ký tự của xe VinFast thuộc sở hữu GSM"
+    },
+    "depot_id": {
+      "type": "string",
+      "enum": [
+        "depot_gia_lam",
+        "depot_nam_tu_liem",
+        "depot_yen_nghia",
+        "hub_noi_bai",
+        "hub_my_dinh",
+        "hub_giap_bat",
+        "DEPOT_GIA_LAM",
+        "DEPOT_NAM_TU_LIEM",
+        "DEPOT_YEN_NGHIA"
+      ],
+      "description": "Depot quản lý tài xế và phương tiện tại Hà Nội"
+    },
+    "track": {
+      "type": "string",
+      "const": "core_owned",
+      "description": "Phân hệ tài xế: bắt buộc là core_owned (Taxi Cơ Hữu)"
+    },
+    "service_tier": {
+      "type": "string",
+      "enum": ["VF5", "VF6", "VF_e34", "VF8", "A_COMPACT", "B_SEDAN", "C_SUV", "D_LUXURY"],
+      "description": "Phân hạng dịch vụ và dòng xe Taxi Cơ Hữu"
+    },
+    "trip_id": {
+      "type": "string",
+      "description": "Mã chuyến đi bị tài xế hủy bỏ"
+    },
+    "booking_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm khách hàng đặt cuốc qua ứng dụng GSM"
+    },
+    "assign_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm hệ thống gán cuốc và tài xế nhận cuốc"
+    },
+    "cancel_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm tài xế bấm lệnh hủy cuốc trên app lái xe"
+    },
+    "status": {
+      "type": "string",
+      "const": "cancelled",
+      "description": "Trạng thái cuốc xe: bắt buộc là cancelled"
+    },
+    "cancelled_by": {
+      "type": "string",
+      "const": "driver",
+      "description": "Bên khởi tạo lệnh hủy chuyến: bắt buộc là driver"
+    },
+    "cancel_reason": {
+      "type": "string",
+      "enum": [
+        "khach_khong_den",
+        "rider_no_show",
+        "cannot_contact_rider",
+        "wrong_pickup_point",
+        "vehicle_breakdown",
+        "traffic_jam_cannot_reach",
+        "passenger_refused_trip",
+        "other"
+      ],
+      "description": "Lý do hủy chuyến mà tài xế lựa chọn trên app (thường khai gian khách không đến hoặc không liên lạc được)"
+    },
+    "driver_stated_reason_text": {
+      "type": "string",
+      "description": "Ghi chú giải trình do tài xế nhập vào app khi bấm hủy cuốc (nếu có)"
+    },
+    "arrived_at_pickup_time": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Thời điểm tài xế bấm 'Đã đến điểm đón' trên app. Trong các ca gian lận F6 thường là null hoặc bấm khống khi xe còn ở rất xa"
+    },
+    "pickup_location": {
+      "type": "object",
+      "required": ["latitude", "longitude", "h3_res7"],
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+        "h3_res7": { "type": "string" },
+        "h3_res9": { "type": "string" },
+        "street_address": { "type": "string" },
+        "district": { "type": "string", "description": "Quận/huyện đón khách tại Hà Nội (ví dụ: Hoàn Kiếm, Ba Đình, Đống Đa...)" }
+      },
+      "description": "Tọa độ và địa chỉ điểm đón hành khách do hệ thống chỉ định"
+    },
+    "driver_location_at_cancel": {
+      "type": "object",
+      "required": ["latitude", "longitude", "timestamp"],
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+        "gps_accuracy_meters": { "type": "number", "minimum": 0 },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "description": "Tọa độ GNSS thực tế của xe từ hộp viễn thám TCU tại thời điểm bấm hủy cuốc"
+    },
+    "min_distance_to_pickup_meters": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Khoảng cách đường chim bay tối thiểu giữa xe và điểm đón trong toàn bộ thời gian từ lúc nhận đến lúc hủy. Nếu > 150m chứng minh tài xế chưa từng đến điểm đón"
+    },
+    "distance_at_cancel_meters": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Khoảng cách giữa xe và điểm đón tại đúng khoảnh khắc bấm hủy cuốc"
+    },
+    "arrival_geofence_threshold_meters": {
+      "type": "number",
+      "default": 150.0,
+      "description": "Bán kính hàng rào địa lý Geofence chuẩn để xác nhận xe đã có mặt tại điểm đón (chuẩn 150m)"
+    },
+    "arrival_geofence_check_passed": {
+      "type": "boolean",
+      "description": "Kết quả đối soát Geofence: false nếu xe chưa bao giờ tiến vào vùng bán kính 150m của điểm đón"
+    },
+    "actual_wait_at_pickup_seconds": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Tổng thời gian thực tế xe đỗ dừng trong phạm vi Geofence điểm đón (tính bằng giây). F6 thường = 0 giây"
+    },
+    "required_minimum_wait_seconds": {
+      "type": "integer",
+      "default": 300,
+      "description": "Thời gian tối thiểu tài xế bắt buộc phải chờ hành khách tại điểm đón theo quy định (mặc định 300 giây = 5 phút) trước khi được kích hoạt lý do khách không đến"
+    },
+    "driver_contact_checks": {
+      "type": "object",
+      "properties": {
+        "call_attempt_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Số lần tài xế gọi điện cho hành khách qua tổng đài VoIP trên app"
+        },
+        "first_call_time": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "last_call_time": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "call_connected": {
+          "type": "boolean",
+          "description": "Cuộc gọi có kết nối thành công với hành khách hay không"
+        },
+        "in_app_chat_sent": {
+          "type": "boolean",
+          "description": "Tài xế có gửi tin nhắn nhắn tin cho khách trên app không"
+        }
+      },
+      "description": "Dữ liệu nhật ký liên lạc giữa tài xế và hành khách để chứng minh tính hợp lệ của lý do không liên lạc được"
+    },
+    "route_difficulty_factors": {
+      "type": "object",
+      "properties": {
+        "is_narrow_alley": {
+          "type": "boolean",
+          "description": "Điểm đón nằm trong ngõ nhỏ/phố cổ khó lùi xe (nguyên nhân tài xế kén chọn cuốc)"
+        },
+        "traffic_congestion_level": {
+          "type": "string",
+          "enum": ["FREE_FLOW", "MODERATE", "HEAVY_CONGESTION", "GRIDLOCK"],
+          "description": "Mức độ ùn tắc giao thông trên tuyến đường tiếp cận"
+        },
+        "is_rush_hour": {
+          "type": "boolean",
+          "description": "Cuốc xe phát sinh trong khung giờ cao điểm (07:00-09:00 hoặc 17:00-19:30)"
+        }
+      },
+      "description": "Các yếu tố ngoại cảnh đặc thù Hà Nội giải thích động cơ kén chọn cuốc xe của tài xế"
+    },
+    "weekly_invalid_cancel_count": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Số cuốc hủy không hợp lệ tích lũy của tài xế trong tuần hiện tại"
+    },
+    "weekly_cancel_penalty_tier": {
+      "type": "string",
+      "enum": ["TIER_1_TO_5_TRIPS", "TIER_OVER_5_TRIPS", "TIER_REPEAT_OFFENSE_2", "TIER_REPEAT_OFFENSE_3"],
+      "description": "Khung bậc chế tài theo số cuốc hủy sai trong tuần (1-5 cuốc: 1 triệu, >5 cuốc: 2 triệu, tái phạm: 3-5 triệu)"
+    },
+    "driver_daily_completion_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Tỷ lệ hoàn thành chuyến trong ngày của tài xế sau khi hủy cuốc này"
+    },
+    "completion_rate_threshold_floor": {
+      "type": "number",
+      "default": 0.90,
+      "description": "Ngưỡng tỷ lệ hoàn thành chuyến tối thiểu để duy trì điều kiện hưởng sàn thu nhập ngày (0.90 cho chuẩn, 0.95 cho GF-VIP)"
+    },
+    "daily_floor_forfeited": {
+      "type": "boolean",
+      "description": "Đánh dấu tài xế bị MẤT HOÀN TOÀN quyền hưởng Sàn Đảm Bảo Thu Nhập 650.000 VNĐ/ngày do tỷ lệ hoàn thành bị tụt giảm hoặc vi phạm kén chọn cuốc"
+    },
+    "forfeited_floor_amount_vnd": {
+      "type": "number",
+      "minimum": 0,
+      "default": 650000,
+      "description": "Mức thiệt hại thu nhập trong ngày của tài xế do mất sàn (650.000 VNĐ/ngày theo Quyết định GF-VIP Hà Nội 31/08/2026)"
+    },
+    "clawback_amount_vnd": {
+      "type": "number",
+      "const": 0,
+      "description": "Số tiền truy thu cước: bắt buộc là 0 VNĐ do cuốc không hoàn thành, không phát sinh doanh thu cước"
+    },
+    "ata_penalty_vnd": {
+      "type": "number",
+      "enum": [1000000, 2000000, 3000000, 5000000],
+      "description": "Mức phạt tiền trừ ví theo bảng chế tài ATA và Quy tắc Ứng xử 11/09/2026: 1.000.000đ (1-5 cuốc/tuần), 2.000.000đ (>5 cuốc/tuần), 3.000.000đ (tái phạm lần 2), 5.000.000đ (tái phạm lần 3)"
+    },
+    "disciplinary_action": {
+      "type": "string",
+      "enum": [
+        "ata_fine_1m",
+        "ata_fine_2m",
+        "ata_fine_3m",
+        "ata_fine_5m_probation",
+        "written_warning",
+        "temporary_suspension_next_shift",
+        "contract_termination"
+      ],
+      "description": "Hình thức kỷ luật lao động áp dụng đối với tài xế Taxi Cơ Hữu"
+    },
+    "five_star_standard_violation": {
+      "type": "boolean",
+      "default": true,
+      "description": "Ghi nhận vi phạm Bộ Quy chuẩn Dịch vụ Taxi 5 sao của Green SM"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+      "description": "Mức độ nghiêm trọng của hành vi vi phạm: 1-5 cuốc là MEDIUM; >5 cuốc hoặc tái phạm là HIGH; ảnh hưởng diện rộng là CRITICAL"
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Độ tin cậy của thuật toán phát hiện gian lận (dựa trên Geofence 150m, khoảng cách TCU, nhật ký cuộc gọi)"
+    },
+    "investigation_status": {
+      "type": "string",
+      "enum": [
+        "DETECTED",
+        "PENDING_DRIVER_EXPLANATION",
+        "ESCALATED_TO_DEPOT",
+        "RESOLVED_CONFIRMED",
+        "RESOLVED_DISMISSED"
+      ],
+      "default": "DETECTED",
+      "description": "Trạng thái xử lý sự vụ"
+    },
+    "created_case_id": {
+      "type": ["string", "null"],
+      "description": "Mã hồ sơ xử lý vi phạm trong fraud_case nếu được tự động khởi tạo"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/apply_action",
+  "title": "apply_action",
+  "description": "Xem src/lcx_core/agent/tools/apply_action.py. TOOL DUY NHAT co tac dong that len tai khoan tai xe. Fail-closed: tu choi neu thieu approver_id, sanction_tier khong hop le, case khong ton tai, hoac case.status != 'confirmed'. Moi lan goi (ke ca bi tu choi) duoc ghi vao var/cases/actions.jsonl.",
+  "input": {
+    "type": "object",
+    "properties": {
+      "case_id": { "type": "string" },
+      "sanction_tier": {
+        "type": "string",
+        "enum": ["clawback_100pct_weekly_bonus", "suspend_7_days", "terminate"],
+        "description": "Nguyen van 3 bac che tai that (GSM_SIMULATOR src/gsm_core/advisor/policy_kb.py:252)."
+      },
+      "approver_id": {
+        "type": ["string", "null"],
+        "description": "BAT BUOC khac null - day la con nguoi phe duyet, agent khong tu ky duoc."
+      },
+      "reason": { "type": "string" }
+    },
+    "required": ["case_id", "sanction_tier", "approver_id", "reason"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "case_id": { "type": "string" },
+      "sanction_tier": { "type": "string" },
+      "approver_id": { "type": "string" },
+      "reason": { "type": "string" },
+      "attempted_at": { "type": "string", "format": "date-time" },
+      "driver_id": { "type": "string" },
+      "outcome": { "type": "string", "const": "applied" }
+    }
+  },
+  "error_codes": ["missing_approver_id", "invalid_sanction_tier", "case_not_found", "case_not_confirmed"]
+}

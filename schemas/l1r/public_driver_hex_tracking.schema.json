@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/public_driver_hex_tracking",
+  "title": "public_driver_hex_tracking",
+  "description": "Chuyển động H3 + reposition (UC5). target_hex/reached = reposition mission GSM.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string"
+    },
+    "campaign_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "log_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "init_hex": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "current_hex": {
+      "type": "string"
+    },
+    "last_hex": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "target_hex": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "last_seen_at": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "entered_current_hex_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "stay_duration_seconds": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reached_target": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "reached_target_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hex_history": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "updated_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "schedule_job_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "datastream_metadata": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "CDC Datastream metadata — không dùng logic"
+    },
+    "tracking_status": {
+      "type": "string",
+      "enum": [
+        "moving",
+        "idle",
+        "offline"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "current_hex",
+    "driver_id",
+    "id",
+    "last_seen_at",
+    "schema_version",
+    "source",
+    "stay_duration_seconds",
+    "tracking_status"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id"
+  ]
+}

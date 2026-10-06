@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/case/case_resolution",
+  "title": "case_resolution",
+  "description": "Ban ghi nhan doc lap khoi fraud_case, ghi boi tool resolve_case, luu trong var/cases/resolutions.jsonl. Day la kho nhan chinh thuc cho Pha 5 (vong phan hoi) - KHONG sua de case goc, chi APPEND.",
+  "type": "object",
+  "properties": {
+    "case_id": { "type": "string" },
+    "driver_id": { "type": "string" },
+    "pattern": { "type": "string" },
+    "verdict": {
+      "type": "string",
+      "enum": ["false_positive", "confirmed"],
+      "description": "'confirmed' du dieu kien cho apply_action. 'false_positive' chi dung hieu chinh nguong Tier A/B."
+    },
+    "reviewer_id": { "type": "string" },
+    "reviewed_at": { "type": "string", "format": "date-time" },
+    "note": { "type": "string" },
+    "signal_snapshot": {
+      "type": "object",
+      "description": "Nguyen trang evidence cua case tai thoi diem phat hien (route deviation, GPS trace, KPI lien quan...)."
+    }
+  },
+  "required": [
+    "case_id", "driver_id", "pattern", "verdict", "reviewer_id",
+    "reviewed_at", "note", "signal_snapshot"
+  ],
+  "additionalProperties": false
+}

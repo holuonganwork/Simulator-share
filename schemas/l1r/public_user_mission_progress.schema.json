@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/public_user_mission_progress",
+  "title": "public_user_mission_progress",
+  "description": "Tiến độ mission per driver (UC8) — ENGINEER. progress ≤ target.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string"
+    },
+    "mission_id": {
+      "type": "string"
+    },
+    "progress_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "target_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "progress_value_vnd": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "target_value_vnd": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "in_progress",
+        "completed",
+        "claimed",
+        "expired"
+      ]
+    },
+    "started_at": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "updated_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "claimed_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "datastream_metadata": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "CDC Datastream metadata — không dùng logic"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "id",
+    "mission_id",
+    "progress_count",
+    "schema_version",
+    "source",
+    "state",
+    "target_count"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id"
+  ],
+  "x-availability": "TBC-với-GSM (bảng thiếu cột — field ENGINEER)"
+}

@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/kpi_driver_platform_calculator_gbq",
+  "title": "kpi_driver_platform_calculator_gbq",
+  "description": "Tính KPI tuần + thưởng (UC3) — NỀN S5 khoán. PII optional (scrub). Số target/threshold có thể ở meta → TBC.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string"
+    },
+    "driver_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sap_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "week_key": {
+      "type": "string"
+    },
+    "week_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "week_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "kpi_month": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "kpi_year": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tel": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "engname": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "depot_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "depot_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "vehicle_vin_number": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "vehicle_license_plate": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "vehicle_model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "country": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "last_updated_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "id",
+    "schema_version",
+    "source",
+    "week_end",
+    "week_key",
+    "week_start"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id",
+    "driver_name",
+    "sap_id",
+    "email",
+    "tel",
+    "vehicle_vin_number",
+    "vehicle_license_plate"
+  ]
+}

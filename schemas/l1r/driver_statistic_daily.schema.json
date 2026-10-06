@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/driver_statistic_daily",
+  "title": "driver_statistic_daily",
+  "description": "Snapshot KPI vận doanh daily (UC1/UC4). rate = count/request.",
+  "type": "object",
+  "properties": {
+    "local_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "driver_id": {
+      "type": "string"
+    },
+    "completed_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "accepted_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "cancelled_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total_request_calculate_complete": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total_request_calculate_cancel": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total_request_calculate_accept": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "count_cancel_not_relate_driver": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total_rating": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "total_order_rating": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "count_rating_5_star": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "acceptance_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "fulfillment_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "cancellation_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "acceptance_rate",
+    "accepted_count",
+    "cancellation_rate",
+    "cancelled_count",
+    "completed_count",
+    "driver_id",
+    "fulfillment_rate",
+    "local_date",
+    "schema_version",
+    "source"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id"
+  ]
+}

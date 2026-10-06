@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1/payout_ledger",
+  "title": "payout_ledger",
+  "description": "Sổ tiền — TÁCH gross/payout tại nguồn (US-F1-02, US-F3-01). Pain #2 #4. Amount phải TÁI TÍNH được từ (policy_bundle_version, trip).",
+  "type": "object",
+  "properties": {
+    "entry_id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string",
+      "x-sensitivity": "PII-id"
+    },
+    "t": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "trip_payout",
+        "day_bonus",
+        "week_bonus",
+        "adjustment",
+        "deduction"
+      ]
+    },
+    "amount_vnd": {
+      "type": "integer",
+      "description": "VND — adjustment/deduction có thể âm"
+    },
+    "basis": {
+      "type": "object",
+      "properties": {
+        "trip_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "policy_bundle_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_bundle_version"
+      ],
+      "additionalProperties": false
+    },
+    "gross_vnd": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "gross tương ứng khi kind=trip_payout"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "amount_vnd",
+    "basis",
+    "driver_id",
+    "entry_id",
+    "kind",
+    "schema_version",
+    "source",
+    "t"
+  ],
+  "additionalProperties": false
+}

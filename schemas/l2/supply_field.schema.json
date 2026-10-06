@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l2/supply_field",
+  "title": "supply_field",
+  "description": "Mật độ tài xế online/idle theo (bucket, cell) — data thật GSM.",
+  "type": "object",
+  "properties": {
+    "bucket": {
+      "type": "string",
+      "description": "bucket 15ph ISO start"
+    },
+    "h3": {
+      "type": "string"
+    },
+    "n_online": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "n_idle": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "derivation_version": {
+      "type": "string",
+      "description": "version của derivation job (code, không sửa tay)"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "bucket",
+    "derivation_version",
+    "h3",
+    "n_idle",
+    "n_online",
+    "schema_version",
+    "source"
+  ],
+  "additionalProperties": false
+}

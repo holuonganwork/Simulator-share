@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1/swap_transaction",
+  "title": "swap_transaction",
+  "description": "Giao dịch đổi pin. US-F2-02; S2 SOC constraint + S4. Pain #1. Queue/wait: TBC.",
+  "type": "object",
+  "properties": {
+    "tx_id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string",
+      "x-sensitivity": "PII-id"
+    },
+    "station_id": {
+      "type": "string"
+    },
+    "t": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "wait_min": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "TBC-với-GSM — null nếu không đo; fallback ESTIMATED từ mật độ tx"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "schema_version",
+    "source",
+    "station_id",
+    "t",
+    "tx_id"
+  ],
+  "additionalProperties": false
+}

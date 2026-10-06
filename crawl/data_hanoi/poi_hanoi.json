@@ -1,0 +1,2707 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-09-18T03:17:51Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+    {
+      "type": "node",
+      "id": 481837535,
+      "lat": 20.9357261,
+      "lon": 106.0481806,
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "ĐH Chu Văn An CS2"
+      }
+    },
+    {
+      "type": "node",
+      "id": 481837735,
+      "lat": 20.9209274,
+      "lon": 106.0948577,
+      "tags": {
+        "amenity": "hospital",
+        "highway": "emergency_access_point",
+        "name": "Trạm y tế"
+      }
+    },
+    {
+      "type": "node",
+      "id": 1685291681,
+      "lat": 20.9723698,
+      "lon": 105.7455509,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Chiều Thắng Lợi"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2093083282,
+      "lat": 21.0291095,
+      "lon": 105.8115454,
+      "tags": {
+        "addr:district": "Quận Ba Đình",
+        "addr:province": "Thành phố Hà Nội",
+        "addr:street": "Phố Phạm Huy Thông",
+        "amenity": "university",
+        "education": "university",
+        "name": "Đại học RMIT - Cơ sở Hà Nội",
+        "name:en": "RMIT Vietnam Hanoi Campus"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2136318858,
+      "lat": 21.0682495,
+      "lon": 105.8272643,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Hoa Quảng Bá",
+        "name:de": "Frischmarkt",
+        "name:ja": "マーケット"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2136318878,
+      "lat": 21.0770945,
+      "lon": 105.8360083,
+      "tags": {
+        "amenity": "marketplace",
+        "sport": "soccer"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2290037023,
+      "lat": 21.0250151,
+      "lon": 105.8479567,
+      "tags": {
+        "amenity": "marketplace",
+        "name:en": "Book Market and Cafes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2297911469,
+      "lat": 21.0596487,
+      "lon": 105.8927714,
+      "tags": {
+        "amenity": "marketplace"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2471647464,
+      "lat": 20.9858966,
+      "lon": 105.7937986,
+      "tags": {
+        "addr:country": "VN",
+        "addr:housenumber": "số 2",
+        "amenity": "marketplace",
+        "name": "Chợ Phùng Khoang"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2874225019,
+      "lat": 20.9542742,
+      "lon": 105.8384237,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:country": "VN",
+        "addr:housenumber": "60",
+        "addr:street": "Tựu Liệt, Tam Hiệp, Thanh Trì",
+        "amenity": "hospital",
+        "ele": "4",
+        "emergency": "yes",
+        "healthcare": "hospital",
+        "name": "Bệnh Viện Đa Khoa Thăng Long",
+        "phone": "+84 4 3687 3058"
+      }
+    },
+    {
+      "type": "node",
+      "id": 3389007927,
+      "lat": 20.9983875,
+      "lon": 105.8093027,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Nhân Chính"
+      }
+    },
+    {
+      "type": "node",
+      "id": 3752331075,
+      "lat": 21.0492003,
+      "lon": 105.8400348,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Phường Ba Đình",
+        "addr:housenumber": "32",
+        "addr:province": "Thành phố Hà Nội",
+        "addr:street": "Phố Đức Chính",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Paris Miki Vietnam",
+        "operator": "Paris Miki Vietnam",
+        "website": "https://www.paris-miki.vn/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4171931890,
+      "lat": 21.0022833,
+      "lon": 105.8160462,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:country": "VN",
+        "addr:district": "Thanh Xuân",
+        "addr:housenumber": "72A",
+        "addr:street": "Đường Nguyễn Trãi",
+        "addr:subdistrict": "Thượng Đình",
+        "air_conditioning": "yes",
+        "brand": "Vincom",
+        "contact:facebook": "https://www.facebook.com/vmmroyalcity",
+        "currency:VND": "yes",
+        "email": "v.cskh-vmmroyalcity@vincom.com.vn",
+        "internet_access": "wlan",
+        "level": "0;-1;-2",
+        "name": "Vincom Mega Mall Royal City",
+        "opening_hours": "Mo-Su 10:00-21:30",
+        "phone": "+84979901101",
+        "shop": "mall",
+        "toilets": "yes",
+        "website": "https://vincom.com.vn/vincom-mega-mall-royal-city"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4272697291,
+      "lat": 20.983329,
+      "lon": 105.8630539,
+      "tags": {
+        "addr:country": "VN",
+        "addr:street": "Phố Tân Mai",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến Xe Bus Mai Động",
+        "opening_hours": "Mo-Su 05:00-22:00",
+        "public_transport": "station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4489385889,
+      "lat": 21.0335078,
+      "lon": 105.8509571,
+      "tags": {
+        "addr:street": "Hàng Đào",
+        "amenity": "marketplace",
+        "name": "Chợ Đêm Hàng Đào – Đồng Xuân",
+        "name:en": "Hanoi Weekend Night Market",
+        "name:fr": "Marché de nuit d'Hanoi",
+        "name:ko": "하노이 야시장",
+        "name:zh": "河内夜市",
+        "opening_hours": "Fr-Su 18:00-00:00",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4572907889,
+      "lat": 21.0332192,
+      "lon": 105.8523763,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "amenity": "marketplace",
+        "name": "Chợ Đêm",
+        "name:de": "Nachtmarkt",
+        "name:en": "Night Market",
+        "name:zh": "夜市",
+        "opening_hours": "Fr-Su 19:00-22:00",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4698571049,
+      "lat": 21.0248258,
+      "lon": 105.9911384,
+      "tags": {
+        "amenity": "marketplace"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4712969789,
+      "lat": 20.9750222,
+      "lon": 105.9117762,
+      "tags": {
+        "amenity": "marketplace",
+        "name:en": "Ceramic market"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5132779523,
+      "lat": 20.9394689,
+      "lon": 105.7083802,
+      "tags": {
+        "amenity": "college",
+        "name": "Đại Học Sư Phạm Thể Dục Thể Thao"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5209662235,
+      "lat": 21.1633089,
+      "lon": 106.0749746,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đa khoa Kinh Bắc",
+        "name:en": "Kinh Bắc Hopital"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5243867642,
+      "lat": 20.9677609,
+      "lon": 105.7789877,
+      "tags": {
+        "addr:district": "Hà Đông",
+        "addr:street": "Tô Hiệu",
+        "addr:subdistrict": "Hà Cầu",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "community;general",
+        "name": "Trung tâm y tế dự phòng quận Hà Đông"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5485651759,
+      "lat": 21.0170546,
+      "lon": 105.8270102,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Sáng Trần Quang Diệu",
+        "source": "Grab_Hanoi_2018_T2"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5485657266,
+      "lat": 21.008478,
+      "lon": 105.8133716,
+      "tags": {
+        "addr:housenumber": "1",
+        "addr:province": "Hà Nội",
+        "addr:street": "Quan Nhân",
+        "amenity": "marketplace",
+        "name": "Chợ Tình Sapa",
+        "source": "grab_hanoi_2018_t2",
+        "takeaway": "no"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5485660083,
+      "lat": 21.0236535,
+      "lon": 105.8048715,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Láng Thượng",
+        "source": "grab_hanoi_2018_t3"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5485665267,
+      "lat": 21.0679022,
+      "lon": 105.8272796,
+      "tags": {
+        "addr:housenumber": "236",
+        "addr:street": "Đường Âu Cơ",
+        "amenity": "marketplace",
+        "name": "Chợ Hoa Quảng An",
+        "source": "grab_hanoi_2018_t2"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5485711487,
+      "lat": 21.0282006,
+      "lon": 105.841697,
+      "tags": {
+        "amenity": "marketplace",
+        "source": "grab_hanoi_2018_t1"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5485810415,
+      "lat": 21.0378988,
+      "lon": 105.772465,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Nam Từ Liêm",
+        "addr:street": "Đường Hồ Tùng Mậu",
+        "addr:subdistrict": "Mai Dịch",
+        "name": "Thế giới di động",
+        "shop": "mall",
+        "source": "grab_hanoi_2018_t4"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5618095144,
+      "lat": 21.1945675,
+      "lon": 105.9557221,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Chờ"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5620874321,
+      "lat": 20.921967,
+      "lon": 105.882146,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5808582515,
+      "lat": 21.0101268,
+      "lon": 105.8382699,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Hà Nội",
+        "addr:housenumber": "152",
+        "addr:postcode": "100000",
+        "addr:province": "Hà Nội",
+        "addr:street": "Phố Xã Đàn",
+        "addr:subdistrict": "Đống Đa",
+        "amenity": "hospital",
+        "description": "Địa chỉ phòng khám đa khoa quốc tế Hà nội chuyên điều trị bệnh nam khoa, phụ khoa bệnh xã hội uy tín tại Việt Nam",
+        "emergency": "no",
+        "healthcare": "hospital",
+        "healthcare:speciality": "clinic",
+        "name": "Phòng khám Đa khoa Quốc tế Hà Nội",
+        "website": "https://ytequocte.vn/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5839478946,
+      "lat": 21.024432,
+      "lon": 105.8548261,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Hoàn Kiếm",
+        "addr:housenumber": "36",
+        "addr:postcode": "10000",
+        "addr:province": "Hà Nội",
+        "addr:street": "Ngô Quyền",
+        "addr:subdistrict": "Hàng Bài",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "general;internal",
+        "name": "Nhà hộ sinh A",
+        "operator": "Trung tâm y tế Hoàn Kiếm"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6185334967,
+      "lat": 20.9727604,
+      "lon": 105.6144225,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm Y tế xã Nghĩa Hương"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6185888337,
+      "lat": 21.0941944,
+      "lon": 105.9253183,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Yên Viên",
+        "public_transport": "station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6545240595,
+      "lat": 21.1835259,
+      "lon": 106.0590959,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Bắc Ninh",
+        "addr:province": "Bac Ninh",
+        "addr:subdistrict": "Phường Tiền Ninh Vệ",
+        "amenity": "university",
+        "check_date": "2024-06-02",
+        "education": "university",
+        "name": "Khu B - Trường Sĩ quan Chính trị - Bộ Quốc phòng",
+        "name:en": "Political Officers College",
+        "official_name": "Trường Đại học Chính trị",
+        "official_name:en": "Political University",
+        "operator": "Bộ Quốc phòng",
+        "website": "http://daihocchinhtri.edu.vn/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6545871088,
+      "lat": 21.1744345,
+      "lon": 106.0543626,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Bắc Ninh",
+        "addr:housenumber": "144",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Nguyễn Văn Cừ",
+        "addr:subdistrict": "Phường Võ Cường",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh Viện Đa Khoa Thành An - Thăng Long"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6557784984,
+      "lat": 21.0361826,
+      "lon": 105.8159056,
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Đại Học Nguyễn Trãi"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6666528584,
+      "lat": 20.9848186,
+      "lon": 105.7748336,
+      "tags": {
+        "amenity": "bus_station",
+        "bench": "yes",
+        "bin": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "lit": "yes",
+        "name": "Nhà chờ Vạn Phúc 2",
+        "network": "Hanoi BRT",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "11",
+        "shelter": "yes",
+        "wheelchair": "limited"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6685404399,
+      "lat": 21.0066433,
+      "lon": 105.8614475,
+      "tags": {
+        "addr:street": "Phố Kim Ngưu",
+        "amenity": "marketplace",
+        "name": "Viet Mark"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6685506998,
+      "lat": 21.0201039,
+      "lon": 105.8010869,
+      "tags": {
+        "amenity": "marketplace",
+        "button_operated": "no",
+        "crossing": "traffic_signals",
+        "highway": "traffic_signals",
+        "source": "https://www.streetview.vn/?lat=21.020100849&lng=105.801108429&picId=963d84f0-1715-4cca-a1cb-5b2f25e3295a&yaw=235&pitch=-5",
+        "traffic_signals:direction": "forward",
+        "traffic_signals:sound": "no",
+        "traffic_signals:vibration": "no"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6815011885,
+      "lat": 21.344241,
+      "lon": 105.623448,
+      "tags": {
+        "amenity": "bus_station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6849181831,
+      "lat": 20.9658478,
+      "lon": 105.83422,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Xanh Linh Đàm",
+        "note": "Hiện Chợ Xanh Linh Đàm sắp giải toả, sau này sẽ không còn tồn tại nữa!"
+      }
+    },
+    {
+      "type": "node",
+      "id": 7055975987,
+      "lat": 20.9891267,
+      "lon": 105.8080635,
+      "tags": {
+        "addr:city": "hà nội",
+        "addr:district": "thanh xuân",
+        "addr:housenumber": "190",
+        "addr:province": "hà nội",
+        "addr:street": "Phố Hạ Đình",
+        "addr:subdistrict": "thanh xuân trung",
+        "amenity": "marketplace",
+        "name": "TK mark"
+      }
+    },
+    {
+      "type": "node",
+      "id": 7061733386,
+      "lat": 21.032155,
+      "lon": 105.8125797,
+      "tags": {
+        "amenity": "marketplace",
+        "name:en": "Lotte Centre"
+      }
+    },
+    {
+      "type": "node",
+      "id": 7148520378,
+      "lat": 20.8014384,
+      "lon": 105.6765966,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Thôn Hoành"
+      }
+    },
+    {
+      "type": "node",
+      "id": 7178806762,
+      "lat": 21.1098019,
+      "lon": 105.8772089,
+      "tags": {
+        "amenity": "marketplace",
+        "name:en": "Sa Market"
+      }
+    },
+    {
+      "type": "node",
+      "id": 7202554793,
+      "lat": 21.032633,
+      "lon": 105.8530217,
+      "tags": {
+        "amenity": "marketplace"
+      }
+    },
+    {
+      "type": "node",
+      "id": 7229303135,
+      "lat": 20.9013465,
+      "lon": 105.7179216,
+      "tags": {
+        "amenity": "marketplace"
+      }
+    },
+    {
+      "type": "node",
+      "id": 7409549828,
+      "lat": 20.9471543,
+      "lon": 105.7078282,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Chương Mỹ",
+        "addr:province": "Việt Nam",
+        "addr:street": "Phượng Nghĩa",
+        "addr:subdistrict": "Phụng Châu",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm Y tế Phụng Châu"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8111972850,
+      "lat": 21.064144,
+      "lon": 105.8280612,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Tây Hồ",
+        "addr:housenumber": "51",
+        "addr:province": "Hà Nội",
+        "addr:street": "Đường Xuân Diệu",
+        "addr:subdistrict": "Quảng An",
+        "name": "Trung Tâm Mua Sắm Syrena",
+        "opening_hours": "Mo-Su 09:00-22:00",
+        "shop": "mall",
+        "website": "https://syrena.vn/project/syrena-shopping-center-1420"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8185432737,
+      "lat": 20.9680682,
+      "lon": 105.7788857,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Trước Cổng Trung Tâm Y Tế"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8237661959,
+      "lat": 20.9822771,
+      "lon": 105.7697899,
+      "tags": {
+        "amenity": "bus_station",
+        "bench": "yes",
+        "bin": "yes",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "lit": "yes",
+        "name": "Nhà chờ Vạn Phúc 1",
+        "network": "Hanoi BRT",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "10",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8237661960,
+      "lat": 20.9794492,
+      "lon": 105.7658813,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Nhà chờ Dương Nội",
+        "network": "Hanoi BRT",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "9",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8237661961,
+      "lat": 20.9765799,
+      "lon": 105.7622311,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Nhà chờ Văn Khê",
+        "network": "Hanoi BRT",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "8",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8237661962,
+      "lat": 20.9732321,
+      "lon": 105.7579152,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Nhà chờ An Hưng",
+        "network": "Hanoi BRT",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "7",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8237661963,
+      "lat": 20.9702597,
+      "lon": 105.7546847,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Nhà chờ Cầu La Khê",
+        "network": "Hanoi BRT",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "6",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8237661964,
+      "lat": 20.9676805,
+      "lon": 105.7554593,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Nhà chờ KĐT Park City",
+        "network": "Hanoibus",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "5",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8237661965,
+      "lat": 20.9654082,
+      "lon": 105.7595464,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Nhà chờ La Khê",
+        "network": "Hanoi BRT",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "4",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8237661966,
+      "lat": 20.9628298,
+      "lon": 105.7640737,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Nhà chờ Văn Phú",
+        "network": "Hanoi BRT",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "3",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8237661967,
+      "lat": 20.9600405,
+      "lon": 105.7619604,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Nhà chờ Văn La",
+        "network": "Hanoi BRT",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "2",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8237661968,
+      "lat": 20.9568735,
+      "lon": 105.7578525,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "highway": "bus_stop",
+        "name": "Nhà chờ Ba La",
+        "network": "Hanoi BRT",
+        "operator": "Hanoi BRT",
+        "public_transport": "platform",
+        "ref": "1",
+        "shelter": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8282900558,
+      "lat": 20.9038065,
+      "lon": 105.7232177,
+      "tags": {
+        "amenity": "marketplace"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8317321610,
+      "lat": 21.039913,
+      "lon": 105.7472566,
+      "tags": {
+        "addr:district": "quận Nam Từ Liêm",
+        "addr:postcode": "10000",
+        "addr:province": "Hà Nội",
+        "addr:street": "Phố Trịnh Văn Bô",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "geriatrics;elderly_care",
+        "name": "Trung tâm Chăm sóc Sức khoẻ Người cao tuổi Hoa Sen - Lotus Care",
+        "name:en": "Lotus Care"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8360208001,
+      "lat": 21.0651797,
+      "lon": 105.7628554,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Nha Khoa"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8405189751,
+      "lat": 20.9634554,
+      "lon": 105.8230233,
+      "tags": {
+        "name": "Rice City Mall",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8588635222,
+      "lat": 21.0472605,
+      "lon": 105.8140405,
+      "tags": {
+        "addr:city": "Phường Bưởi",
+        "addr:housenumber": "99",
+        "addr:province": "Hà Nội",
+        "addr:street": "Phố Trích Sài",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Phòng Khám Đa Khoa Medlatec"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8823695658,
+      "lat": 21.048152,
+      "lon": 105.8011776,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Cầu Giấy",
+        "addr:housenumber": "18",
+        "addr:province": "Hà Nội",
+        "addr:street": "Đường Hoàng Quốc Việt",
+        "addr:subdistrict": "Nghĩa Đô",
+        "amenity": "university",
+        "education": "university",
+        "email": "officeusth@usth.edu.vn",
+        "name": "Trường Đại học Khoa học và Công nghệ Hà Nội",
+        "name:en": "University of Science and Technology of Hanoi",
+        "operator": "Viện Hàn lâm Khoa học và Công nghệ Việt Nam",
+        "phone": "+84 24 37 91 69 60",
+        "website": "https://www.usth.edu.vn/",
+        "wikidata": "Q15260958",
+        "wikimedia_commons": "Category:University of Science and Technology of Hanoi",
+        "wikipedia": "vi:Trường Đại học Khoa học và Công nghệ Hà Nội"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8823695659,
+      "lat": 21.0481017,
+      "lon": 105.8012606,
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Học Viện Khoa Học Và Công Nghệ",
+        "name:en": "Graduate University of Science and Technology",
+        "operator": "Viện Hàn lâm Khoa học và Công nghệ Việt Nam",
+        "website": "http://gust.edu.vn/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8938435127,
+      "lat": 21.0115909,
+      "lon": 105.7961933,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Vitalmart"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9005878157,
+      "lat": 20.9301336,
+      "lon": 105.8483459,
+      "tags": {
+        "addr:city": "Hanoi",
+        "addr:district": "Km 13 Đ. Ngọc Hồi, Ngọc Hồi, Thanh Trì, Hà Nội 100000, Vietnam",
+        "addr:housenumber": "Km 13",
+        "addr:postcode": "100000",
+        "addr:street": "Đường Ngọc Hồi",
+        "addr:subdistrict": "Km 13 Đ. Ngọc Hồi, Ngọc Hồi, Thanh Trì, Hà Nội 100000, Vietnam",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "general",
+        "name": "Trung tâm tiêm ᴄhủng Fivevac",
+        "operator": "person",
+        "operator:type": "government"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9109702917,
+      "lat": 21.0293821,
+      "lon": 106.0093056,
+      "tags": {
+        "amenity": "college",
+        "name": "Trường Đại học công nghiệp dệt may Hà Nội"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9237323772,
+      "lat": 21.0273881,
+      "lon": 105.8871527,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Tư Đình"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9516430620,
+      "lat": 21.2315563,
+      "lon": 105.7067868,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Phúc Yên",
+        "public_transport": "station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9584817367,
+      "lat": 21.0150675,
+      "lon": 105.7768155,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Siêu Thị K"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9586940681,
+      "lat": 21.0534891,
+      "lon": 105.7807993,
+      "tags": {
+        "name": "Vincom Plaza Bắc Từ Liêm",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9587086998,
+      "lat": 21.0429241,
+      "lon": 105.870996,
+      "tags": {
+        "addr:housenumber": "137",
+        "addr:street": "Đường Nguyễn Văn Cừ",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh Viện Đa Khoa Quốc Tế Bắc Hà"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9587087000,
+      "lat": 20.9848352,
+      "lon": 105.833731,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Xanh Định Công"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9587108043,
+      "lat": 20.960142,
+      "lon": 105.7884888,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm Y Tế Phường KIến Hưng"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9587296909,
+      "lat": 21.0653061,
+      "lon": 105.8270716,
+      "tags": {
+        "name": "Trung Tâm Thương Mại Lion Mall",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9587296911,
+      "lat": 20.9837567,
+      "lon": 105.7913433,
+      "tags": {
+        "name": "Mac Plaza",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9593258920,
+      "lat": 20.8487843,
+      "lon": 105.7573208,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm Y Tế Xã Kim An"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9593623734,
+      "lat": 21.0380074,
+      "lon": 105.7468965,
+      "tags": {
+        "addr:district": "quận Nam Từ Liêm",
+        "addr:province": "thành phố Hà Nội",
+        "addr:street": "Phố Trịnh Văn Bô",
+        "amenity": "college",
+        "education": "college",
+        "name": "Cao đẳng FPT Polytechnic"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9658535627,
+      "lat": 20.9992267,
+      "lon": 105.8141044,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Thanh Xuân",
+        "addr:housenumber": "136",
+        "addr:province": "Hà Nội",
+        "addr:street": "Nguyễn Trãi",
+        "addr:subdistrict": "Thanh Xuân Trung",
+        "amenity": "hospital",
+        "description": "Cơ sở Nguyễn Trãi của hệ thống bệnh viện đa khoa quốc tế Thu Cúc",
+        "emergency": "yes",
+        "healthcare": "hospital",
+        "name": "Thu Cúc TCI Thanh Xuân",
+        "name:en": "Thu Cuc International General Hospital",
+        "opening_hours": "Mo-Su 08:00-17:00",
+        "phone": "+84 936 188 584",
+        "website": "https://benhvienthucuc.vn/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9788576207,
+      "lat": 21.0511017,
+      "lon": 105.790782,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Quận Bắc Từ Liêm",
+        "addr:housenumber": "25 An Sinh",
+        "addr:postcode": "10000",
+        "addr:street": "Ngõ 208 Trần Cung",
+        "addr:subdistrict": "Phường Cổ Nhuế 1",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "health",
+        "name": "Trung tâm Nghiên cứu và Ứng dụng Y học cổ truyền CTA",
+        "operator": "Lương y Đỗ Tuấn Nam",
+        "operator:type": "public"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9875885617,
+      "lat": 20.984612,
+      "lon": 105.7928536,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Tuệ Tĩnh"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9976457533,
+      "lat": 21.0086201,
+      "lon": 105.8330627,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Trung Tự"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9976457534,
+      "lat": 21.0117663,
+      "lon": 105.8283958,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Nam Đồng"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10019105710,
+      "lat": 20.9777275,
+      "lon": 105.9018259,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "source": "hospital"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10035906581,
+      "lat": 21.0202008,
+      "lon": 105.7812518,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Nam Từ Liêm",
+        "addr:province": "Hà Nội",
+        "addr:street": "Đường Phạm Hùng",
+        "addr:subdistrict": "Mỹ Đình 1",
+        "air_conditioning": "yes",
+        "brand": "Vincom",
+        "currency:VND": "yes",
+        "email": "v.cskh-vcpskylake@vincom.com.vn",
+        "name": "Vincom Plaza Skylake",
+        "opening_hours": "Mo-Su 10:00-21:30",
+        "operator": "Vincom Retail",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "phone": "+84 869 163 840",
+        "shop": "mall",
+        "stroller": "yes",
+        "website": "https://vincom.com.vn/vincom-plaza-skylake"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10048614528,
+      "lat": 21.0400027,
+      "lon": 105.741891,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Nam Từ Liêm",
+        "addr:province": "Hà Nội",
+        "addr:street": "Phố Trịnh Văn Bô",
+        "addr:subdistrict": "Phương Canh",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Công nghệ Đông Á",
+        "name:en": "East Asia University of Technology",
+        "website": "https://eaut.edu.vn/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10166537628,
+      "lat": 21.0689223,
+      "lon": 105.7616027,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10213838981,
+      "lat": 21.0795622,
+      "lon": 105.7732546,
+      "tags": {
+        "addr:city": "Phường Đức Thắng",
+        "addr:district": "Bắc Từ Liêm",
+        "addr:province": "Hà Nội",
+        "addr:street": "Ngõ 113 Phố Văn Hội",
+        "addr:subdistrict": "Cổ Nhuế",
+        "name": "shop quần áo Mon",
+        "payment:v_pay": "yes",
+        "phone": "0369265598",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10316420839,
+      "lat": 20.9920389,
+      "lon": 105.8166469,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm y tế Khương Hạ"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10720585225,
+      "lat": 21.0016618,
+      "lon": 105.845399,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Bách Khoa"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10749951833,
+      "lat": 21.0106769,
+      "lon": 105.826811,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Đống Đa",
+        "addr:housenumber": "29",
+        "addr:province": "Hà Nội",
+        "addr:street": "Ngách 31/167 Tây Sơn",
+        "addr:subdistrict": "Quang Trung",
+        "name": "COMPLEX 01",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10855401102,
+      "lat": 20.9245983,
+      "lon": 105.8885189,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10855443211,
+      "lat": 20.924333,
+      "lon": 105.8908793,
+      "tags": {
+        "addr:city": "Thanh Trì",
+        "addr:district": "Duyên Hà",
+        "addr:province": "Hà Nội",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Nhà thuốc đông y Bùi Tộc"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10858085458,
+      "lat": 21.0481877,
+      "lon": 105.8066076,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Bưởi",
+        "opening_hours": "PH,Mo-Su 07:00-21:30"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10893013859,
+      "lat": 20.991372,
+      "lon": 105.7974652,
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Giáo dục - ĐHQGHN"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10893013871,
+      "lat": 20.9908736,
+      "lon": 105.7965721,
+      "tags": {
+        "addr:housenumber": "182",
+        "addr:street": "Đường Lương Thế Vinh",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đại học Quốc gia Hà Nội"
+      }
+    },
+    {
+      "type": "node",
+      "id": 10976263692,
+      "lat": 21.0319516,
+      "lon": 105.7869939,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:country": "VN",
+        "addr:street": "31 P. Dịch Vọng Hậu, Dịch Vọng Hậu, Cầu Giấy, Hà Nội",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Tài chính - Ngân hàng Hà Nội",
+        "phone": "024 3793 1340"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11104405789,
+      "lat": 21.0334322,
+      "lon": 105.7714164,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Nam Từ Liêm",
+        "addr:housenumber": "108",
+        "addr:province": "Hà Nội",
+        "addr:street": "Phố Nguyễn Hoàng",
+        "addr:subdistrict": "Mỹ Đình 2",
+        "amenity": "hospital",
+        "email": "info@dolifehospital.vn",
+        "healthcare": "hospital",
+        "healthcare:speciality": "general",
+        "name": "Bệnh viện Quốc tế Dolife",
+        "opening_hours": "Mo-Su 07:00-16:30",
+        "operator": "Công ty Cổ phần Trung Tín",
+        "operator:type": "private",
+        "phone": "+84 1900 1984",
+        "website": "https://dolifehospital.vn/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11169202590,
+      "lat": 21.0662593,
+      "lon": 105.7819381,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "dentist",
+        "name": "Duck's Hospital"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11176709229,
+      "lat": 20.9948145,
+      "lon": 105.8685654,
+      "tags": {
+        "air_conditioning": "yes",
+        "brand": "Vincom",
+        "contact:facebook": "https://www.facebook.com/vmmtimescity",
+        "currency:VND": "yes",
+        "email": "v.cskh-vmmtimescity@vincom.com.vn",
+        "internet_access": "wlan",
+        "internet_access:fee": "no",
+        "level": "0;-1",
+        "name": "Vincom Mega Mall Times City",
+        "opening_hours": "Mo-Su 10:00-21:30",
+        "operator": "Vincom Retail",
+        "phone": "+84 974 876 218",
+        "shop": "mall",
+        "toilets": "yes",
+        "website": "https://vincom.com.vn/vincom-mega-mall-times-city"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11190957339,
+      "lat": 21.0576234,
+      "lon": 105.7836205,
+      "tags": {
+        "addr:street": "Đường Trần Cung",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Tram Xa Co Nhue"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11204387971,
+      "lat": 21.0527996,
+      "lon": 105.7809996,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Quận Bắc Từ Liêm",
+        "addr:housenumber": "234",
+        "addr:province": "Hà Nội",
+        "addr:street": "Đường Phạm Văn Đồng",
+        "addr:subdistrict": "Phường Cổ Nhuế 1",
+        "brand": "Vincom",
+        "name": "Vincom Plaza Bắc Từ Liêm",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11506051549,
+      "lat": 20.9629327,
+      "lon": 105.8268188,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Hoàng Mai",
+        "addr:postcode": "1000000",
+        "addr:province": "Hà Nội",
+        "addr:street": "Phố Linh Đường",
+        "addr:subdistrict": "Hoàng Liệt",
+        "amenity": "marketplace",
+        "name": "Chợ dân sinh HH"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11591853849,
+      "lat": 21.0018973,
+      "lon": 105.7512096,
+      "tags": {
+        "addr:housenumber": "11",
+        "addr:province": "Thành phố Hà Nội",
+        "addr:street": "Ngõ 27 Đường Tây Mỗ",
+        "addr:subdistrict": "Phường Tây Mỗ",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm y tế phường Tây Mỗ (Cơ sở 2)",
+        "wheelchair": "limited"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11601353636,
+      "lat": 21.0168006,
+      "lon": 105.849466,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Hai Bà Trưng",
+        "addr:housenumber": "51-53-55",
+        "addr:province": "Hà Nội",
+        "addr:street": "Phố Trần Nhân Tông",
+        "addr:subdistrict": "Nguyễn Du",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "ophthalmology",
+        "name": "Bệnh viện Mắt Kỹ thuật cao Hà Nội",
+        "opening_hours": "Mo-Fr 07:30-12:00,13:30-17:00; Sa-Su 07:30-12:00,13:30-18:00",
+        "phone": "+84 984 122 153",
+        "website": "https://benhvienmat.vn/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11609443059,
+      "lat": 21.0379689,
+      "lon": 105.7828716,
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Đại học Kinh tế",
+        "name:en": "University of Economics and Business",
+        "operator": "Trường Đại học Quốc gia Hà Nội",
+        "website": "https://ueb.edu.vn/",
+        "wikidata": "Q5146680",
+        "wikipedia": "vi:Trường Đại học Kinh tế, Đại học Quốc gia Hà Nội"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11609443060,
+      "lat": 21.0378978,
+      "lon": 105.7824482,
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Đại học Luật",
+        "name:en": "University of Law",
+        "operator": "Trường Đại học Quốc gia Hà Nội",
+        "website": "https://law.vnu.edu.vn/",
+        "wikidata": "Q114132145",
+        "wikipedia": "vi:Trường Đại học Luật, Đại học Quốc gia Hà Nội"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11609443061,
+      "lat": 21.0382738,
+      "lon": 105.7824572,
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Đại học Công nghệ",
+        "name:en": "University of Engineering and Technology",
+        "operator": "Trường Đại học Quốc gia Hà Nội",
+        "website": "https://uet.vnu.edu.vn/",
+        "wikidata": "Q10829028",
+        "wikipedia": "vi:Trường Đại học Công nghệ, Đại học Quốc gia Hà Nội"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11609590538,
+      "lat": 21.040311,
+      "lon": 105.7816961,
+      "tags": {
+        "addr:city": "Phường Dịch Vọng Hậu",
+        "addr:district": "Quận Cầu Giấy",
+        "addr:housenumber": "Y1",
+        "addr:province": "Hà Nội",
+        "addr:street": "144 Xuân Thuỷ",
+        "amenity": "university",
+        "education": "university",
+        "internet_access": "yes",
+        "internet_access:fee": "no",
+        "name": "Trường Đại học Y Dược",
+        "operator": "Đại học Quốc gia Hà Nội",
+        "operator:type": "university",
+        "website": "https://ump.vnu.edu.vn/",
+        "wikidata": "Q105335883",
+        "wikipedia": "vi:Trường Đại học Y Dược, Đại học Quốc gia Hà Nội"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11625397936,
+      "lat": 21.0145775,
+      "lon": 105.8502987,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Hai Bà Trưng",
+        "addr:housenumber": "122",
+        "addr:province": "Hà Nội",
+        "addr:street": "Phố Triệu Việt Vương",
+        "addr:subdistrict": "Nguyễn Du",
+        "amenity": "hospital",
+        "contact:email": "info@matvietnhat.com.vn",
+        "contact:facebook": "https://www.facebook.com/matvietnhat",
+        "contact:phone": "+84 24 3974 8307",
+        "contact:website": "https://matvietnhat.com.vn/",
+        "emergency": "no",
+        "healthcare": "hospital",
+        "healthcare:speciality": "ophthalmology",
+        "name": "Bệnh viện Mắt Việt Nhật",
+        "name:en": "Vietnam - Japan Eye Hospital",
+        "name:tr": "Vietnam-Japonya Göz Hastanesi"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11882973176,
+      "lat": 21.0040429,
+      "lon": 105.7496348,
+      "tags": {
+        "addr:city": "Phường Tây Mỗ",
+        "addr:district": "Quận Nam Từ Liêm",
+        "addr:housenumber": "68",
+        "addr:province": "Thành phố Hà Nội",
+        "addr:street": "Tây Mỗ, phường Tây Mỗ, quận Nam Từ Liêm, Hà Nội",
+        "addr:subdistrict": "Phường Tây Mỗ",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Hữu nghị Quốc tế Hà Nội",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11886200435,
+      "lat": 21.0314958,
+      "lon": 105.8150707,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Ba Đình",
+        "addr:housenumber": "447",
+        "addr:province": "Hanoi",
+        "addr:street": "Phố Kim Mã",
+        "addr:subdistrict": "Ngọc Khánh",
+        "name": "Vincom Center Metropolis Liễu Giai",
+        "opening_hours": "Mo-Su 09:30-22:00",
+        "operator": "Vingroup",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11890621269,
+      "lat": 21.1221986,
+      "lon": 105.6343626,
+      "tags": {
+        "amenity": "bus_station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11936494469,
+      "lat": 20.9671325,
+      "lon": 105.8187521,
+      "tags": {
+        "amenity": "marketplace"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11943714035,
+      "lat": 21.0328695,
+      "lon": 105.7624123,
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Việt Nhật (VJU)"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11949875397,
+      "lat": 21.0135889,
+      "lon": 105.8209988,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện đa khoa Nông nghiệp 2"
+      }
+    },
+    {
+      "type": "node",
+      "id": 11989415196,
+      "lat": 21.0856233,
+      "lon": 105.9405636,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Baza"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12000027489,
+      "lat": 21.0471714,
+      "lon": 105.8458691,
+      "tags": {
+        "addr:street": "Ngõ 53 Tân Ấp",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đa khoa Hoè Nhai - Cơ sở 2"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12015164552,
+      "lat": 21.0314507,
+      "lon": 105.762243,
+      "tags": {
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Trung cấp Thủ đô"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12033021597,
+      "lat": 21.0151651,
+      "lon": 105.7825427,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Nam Từ Liêm",
+        "addr:province": "Hà Nội",
+        "addr:subdistrict": "Phường Mễ Trì",
+        "amenity": "marketplace",
+        "name": "Hà Đăng Mart",
+        "operator": "Hà Đăng Mart"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12069445484,
+      "lat": 20.9236804,
+      "lon": 105.7285857,
+      "tags": {
+        "addr:city": "Phường Biên Giang",
+        "addr:street": "Đường Phú Mỹ",
+        "amenity": "college",
+        "name": "Trường Trung cấp Cầu đường và Dạy nghề - Binh đoàn 12"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12090162463,
+      "lat": 20.8080169,
+      "lon": 105.8533554,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ quê Nghiêm Xá"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12135053693,
+      "lat": 20.9789324,
+      "lon": 105.7751087,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm y tế Phường Vạn Phúc"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12177717116,
+      "lat": 21.0103485,
+      "lon": 105.7788194,
+      "tags": {
+        "addr:district": "Quận Nam Từ Liêm",
+        "addr:province": "Thành phố Hà Nội",
+        "addr:street": "Ngõ 32 Đỗ Đức Dục",
+        "amenity": "marketplace",
+        "name": "Chợ Mễ Trì"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12203469051,
+      "lat": 21.0311974,
+      "lon": 105.7628725,
+      "tags": {
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao đẳng Đại Việt"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12270506453,
+      "lat": 21.3463558,
+      "lon": 105.9903982,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Hiệp Hòa",
+        "public_transport": "station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12473186738,
+      "lat": 21.1733222,
+      "lon": 106.0546691,
+      "tags": {
+        "addr:city": "Thành phố Bắc Ninh",
+        "addr:housenumber": "169",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Hoàng Hoa Thám",
+        "addr:subdistrict": "Phường Võ Cường",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Phòng khám Đa Khoa Quốc Tế Việt Sing - Bắc Ninh"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12573506643,
+      "lat": 21.0382596,
+      "lon": 105.7826979,
+      "tags": {
+        "addr:housenumber": "E3",
+        "addr:street": "144 Xuân Thủy",
+        "amenity": "university",
+        "education": "university",
+        "name": "Tòa E3 - Đại học Công Nghệ"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12621772111,
+      "lat": 21.0115478,
+      "lon": 105.8104566,
+      "tags": {
+        "addr:housenumber": "532",
+        "addr:street": "đường Láng",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện mắt Sài Gòn Hà Nội 1"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12717381058,
+      "lat": 21.1144527,
+      "lon": 105.6627411,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Định",
+        "opening_hours": "05:00-12:00"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12733600067,
+      "lat": 21.3000754,
+      "lon": 105.6264954,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Vĩnh Yên",
+        "public_transport": "station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12733600086,
+      "lat": 21.2694509,
+      "lon": 105.7187647,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Phúc Yên mới",
+        "public_transport": "station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12768042019,
+      "lat": 21.0446809,
+      "lon": 105.7417518,
+      "tags": {
+        "addr:district": "Quận Bắc Từ Liêm",
+        "addr:housenumber": "Lô CN8",
+        "addr:province": "Thành phố Hà Nội",
+        "addr:street": "Đường CN2",
+        "addr:subdistrict": "Phường Minh Khai",
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao đẳng Ngoại ngữ và Công nghệ Hà Nội (Cơ sở 2)"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12768043526,
+      "lat": 21.0443049,
+      "lon": 105.7528429,
+      "tags": {
+        "addr:district": "Quận Bắc Từ Liêm",
+        "addr:housenumber": "1",
+        "addr:province": "Thành phố Hà Nội",
+        "addr:street": "Phố Kiều Mai",
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao đẳng Ngoại ngữ và Công nghệ Hà Nội (Cơ sở 1)"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12769662336,
+      "lat": 21.0520228,
+      "lon": 105.7581687,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Phú Diễn"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12769681330,
+      "lat": 21.0343959,
+      "lon": 105.7418874,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Canh"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12814113704,
+      "lat": 21.0136877,
+      "lon": 105.7801751,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Cốm Mễ Trì Hạ"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12827765013,
+      "lat": 21.0530608,
+      "lon": 105.7845722,
+      "tags": {
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao đẳng Y dược và Kinh tế Công nghệ"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12871235926,
+      "lat": 20.9406226,
+      "lon": 106.0047713,
+      "tags": {
+        "addr:province": "Hưng Yên",
+        "addr:subdistrict": "xã Nghĩa Trụ",
+        "amenity": "marketplace",
+        "name": "Chợ Gốc si",
+        "operator": "chung"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12896037598,
+      "lat": 21.1147399,
+      "lon": 105.9545261,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Từ Sơn",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Trần Phú",
+        "addr:subdistrict": "Phường Đình Bảng",
+        "name": "Trung tâm thương mại quốc tế Trung Việt Trung, Trung tâm thương mại Hồng Kông",
+        "name:zh-Hant": "中越中国际商贸城＊香港商贸中心",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12898560075,
+      "lat": 21.1829087,
+      "lon": 106.0725524,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Bắc Ninh",
+        "addr:housenumber": "86",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Hai Bà Trưng",
+        "addr:subdistrict": "Phường Suối Hoa",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trung Tâm Y Tế Dự Phòng Bắc Ninh"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12944060163,
+      "lat": 21.1662869,
+      "lon": 106.0982866,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Bắc Ninh",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Chu Mẫu",
+        "addr:subdistrict": "Phường Vân Dương",
+        "amenity": "marketplace",
+        "name": "Chợ Chu Mẫu"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12965560710,
+      "lat": 20.9870474,
+      "lon": 105.9434573,
+      "tags": {
+        "addr:district": "Gia Lâm",
+        "addr:province": "Hà Nội",
+        "addr:street": "Đường Đại Dương",
+        "addr:subdistrict": "Đa Tốn",
+        "amenity": "university",
+        "education": "university",
+        "internet_access": "yes",
+        "name": "Trường Đại Học VinUni",
+        "operator": "VinGroup",
+        "operator:type": "private",
+        "website": "https://vinuni.edu.vn/vi/trang-chu/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12980196296,
+      "lat": 21.034708,
+      "lon": 105.7373662,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Vân Canh"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12995557127,
+      "lat": 20.9801728,
+      "lon": 105.7827636,
+      "tags": {
+        "addr:street": "Đường 18M",
+        "amenity": "marketplace",
+        "name": "Chợ Mỗ Lao"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12999257910,
+      "lat": 20.9954672,
+      "lon": 105.7560256,
+      "tags": {
+        "addr:housenumber": "371",
+        "addr:province": "thành phố Hà Nội",
+        "addr:street": "Đường Đại Mỗ",
+        "addr:subdistrict": "phường Tây Mỗ",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm y tế phường Tây Mỗ (Cơ sở 1)"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13038657789,
+      "lat": 20.9323889,
+      "lon": 105.9518538,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "chợ Sở Đông"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13041538591,
+      "lat": 21.1486599,
+      "lon": 105.9572918,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Từ Sơn",
+        "addr:housenumber": "89",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Ngô Gia Tự",
+        "addr:subdistrict": "Phường Tam Sơn",
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao Đẳng Công Nghệ Bắc Hà"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13058303799,
+      "lat": 20.9834045,
+      "lon": 105.7726713,
+      "tags": {
+        "addr:street": "Phố Tố Hữu",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học CMC (Cơ sở 2)"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13124579065,
+      "lat": 21.0350951,
+      "lon": 105.7910343,
+      "tags": {
+        "addr:housenumber": "10",
+        "addr:street": "phố Trương Công Giai",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Phòng khám đa khoa Bệnh viện Đại học Y Hà Nội - Cơ sở Cầu Giấy"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13136496646,
+      "lat": 21.026761,
+      "lon": 105.8265759,
+      "tags": {
+        "addr:housenumber": "57-63",
+        "addr:street": "Phố Vũ Thạnh",
+        "amenity": "hospital",
+        "contact:facebook": "https://www.facebook.com/benhvienhathanh",
+        "email": "info@benhvienhathanh.vn",
+        "healthcare": "hospital",
+        "healthcare:speciality": "general",
+        "name": "Bệnh viện Đa khoa Hà Thành",
+        "phone": "+84 24 3765 5599",
+        "website": "https://benhvienhathanh.vn/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13173726138,
+      "lat": 21.1714063,
+      "lon": 106.0724333,
+      "tags": {
+        "addr:city": "Thành phố Bắc Ninh",
+        "addr:housenumber": "188",
+        "addr:province": "Bắc Ninh",
+        "addr:street": "Đường Nguyễn Đăng Đạo",
+        "addr:subdistrict": "Phường Võ Cường",
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao đẳng Cơ điện và Xây dựng Bắc Ninh",
+        "name:en": "BacNinh College of Electromechanics and Construction"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13189077243,
+      "lat": 20.9967313,
+      "lon": 106.057839,
+      "tags": {
+        "addr:district": "Xã Đại Đồng",
+        "addr:province": "Hưng Yên",
+        "addr:street": "ĐT.281",
+        "addr:subdistrict": "Gần Chợ Bãi Sim, Thôn Văn Ổ",
+        "internet_access": "yes",
+        "internet_access:fee": "no",
+        "level": "1",
+        "name": "Trung Tâm Mua Sắm Đại Đồng",
+        "payment:MB_Bank": "yes",
+        "payment:account_cards": "yes",
+        "payment:app": "yes",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "091698 999 236 - 0985 987 986",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13197034196,
+      "lat": 20.9557048,
+      "lon": 105.9889774,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Nghĩa Trụ"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13208170056,
+      "lat": 20.9429462,
+      "lon": 105.9478414,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh Viện Đa Khoa Quốc tế Phúc Lâm"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13208170077,
+      "lat": 20.9428812,
+      "lon": 105.94673,
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại Học Mở Hà Nội"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13230939183,
+      "lat": 21.1226782,
+      "lon": 105.9652309,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Từ Sơn",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Ngô Gia Tự",
+        "addr:subdistrict": "Phường Đồng Nguyên",
+        "amenity": "marketplace",
+        "name": "Chợ đầu mối thủy hải sản đêm khu phố Nguyễn Giáo - phường Đồng Nguyên"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13284616889,
+      "lat": 20.9422669,
+      "lon": 105.9578643,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ xã Nghĩa Trụ"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13302249601,
+      "lat": 21.0671359,
+      "lon": 105.8209737,
+      "tags": {
+        "amenity": "college",
+        "education": "college",
+        "name": "Học viện Thiết kế và Thời trang London",
+        "name:en": "London College for Design & Fashion - Hanoi"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13312474733,
+      "lat": 21.1898505,
+      "lon": 106.0889906,
+      "tags": {
+        "addr:city": "Thành phố Bắc Ninh",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Trần Bá Linh",
+        "addr:subdistrict": "Phường Vũ Ninh",
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Trung Cấp Y Tế Bắc Ninh"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13323664905,
+      "lat": 20.991089,
+      "lon": 105.8452366,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ cóc Nguyễn An Ninh",
+        "opening_hours": "24/7"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13325635551,
+      "lat": 20.952546,
+      "lon": 105.9521927,
+      "tags": {
+        "amenity": "marketplace"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13336702955,
+      "lat": 20.9846479,
+      "lon": 105.8467458,
+      "tags": {
+        "addr:district": "Tương Mai",
+        "addr:housenumber": "461",
+        "addr:province": "Hà Nội",
+        "addr:street": "Đường Trương Định",
+        "amenity": "marketplace",
+        "layer": "-1",
+        "name": "Chợ Trương Định"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13347246670,
+      "lat": 20.951753,
+      "lon": 105.9736312,
+      "tags": {
+        "addr:province": "Hưng Yên",
+        "addr:street": "Tô Quyền",
+        "addr:subdistrict": "Nghĩa Trụ",
+        "name": "Vincom Mega Mall Ocean City",
+        "operator": "Vincom",
+        "shop": "mall"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13388236690,
+      "lat": 21.0344602,
+      "lon": 105.7947104,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Phòng khám đa khoa Tâm Anh Cầu Giấy"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13388606715,
+      "lat": 20.9415003,
+      "lon": 105.9767915,
+      "tags": {
+        "amenity": "marketplace"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13390624589,
+      "lat": 20.8381767,
+      "lon": 105.9790303,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Phòng tiêm chủng Vắc-xin POTEC 89.3 Khoái Châu"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13401656240,
+      "lat": 21.0230526,
+      "lon": 105.7385865,
+      "tags": {
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao đẳng Dược Hà Nội"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13401656241,
+      "lat": 21.0254025,
+      "lon": 105.7383481,
+      "tags": {
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao đẳng Kỹ thuật Y dược Hà Nội"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13412701101,
+      "lat": 21.0808559,
+      "lon": 105.8190341,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Nhật Tân"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13449384383,
+      "lat": 20.9358446,
+      "lon": 105.8379739,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Quỳnh Đô"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13459658479,
+      "lat": 21.0658566,
+      "lon": 105.8309185,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Tứ Liên"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13463331473,
+      "lat": 21.2063908,
+      "lon": 105.7676576,
+      "tags": {
+        "addr:street": "đường Quang Minh",
+        "amenity": "hospital",
+        "name": "Trạm y tế xã Quang Minh - Điểm y tế Giai Lạc"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13464169251,
+      "lat": 20.928016,
+      "lon": 105.7894126,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ tạm Thanh Hà"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13540835998,
+      "lat": 20.9822488,
+      "lon": 105.9822717,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Như Quỳnh"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13579797755,
+      "lat": 21.1222383,
+      "lon": 105.756898,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Viện Dưỡng Lão Tuyết Thái"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13588724493,
+      "lat": 21.1781235,
+      "lon": 106.0619327,
+      "tags": {
+        "addr:city": "Thành phố Bắc Ninh",
+        "addr:housenumber": "50",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Huyền Quang",
+        "addr:subdistrict": "Phường Kinh Bắc",
+        "amenity": "marketplace",
+        "name": "4T Mart"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13607661047,
+      "lat": 20.9642885,
+      "lon": 105.8260417,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Quận Hoàng Mai",
+        "addr:housenumber": "Kiot 02 HH1A Linh Đàm",
+        "addr:postcode": "100000",
+        "addr:province": "Thành phố Hà Nội",
+        "addr:street": "Phố Linh Đường",
+        "addr:subdistrict": "Phường Hoàng Liệt",
+        "amenity": "hospital",
+        "contact:facebook": "https://www.facebook.com/nhakhoathientaman/",
+        "healthcare": "clinic",
+        "healthcare:speciality": "dentistry",
+        "mobile": "+84982652699",
+        "name": "Nha Khoa Thiện Tâm An",
+        "official_name": "Nha Khoa Thiện Tâm An",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13632874206,
+      "lat": 21.2004778,
+      "lon": 105.8469957,
+      "tags": {
+        "amenity": "marketplace"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13640117265,
+      "lat": 20.9385117,
+      "lon": 106.002463,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Báu"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13703724841,
+      "lat": 21.0820842,
+      "lon": 105.7792611,
+      "tags": {
+        "addr:housenumber": "1A",
+        "addr:street": "Đường Đức Thắng",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đa khoa Phạm Ngọc Thạch"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13712858876,
+      "lat": 20.9847142,
+      "lon": 105.8567309,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ đồ cũ hồ Đền Lừ",
+        "name:en": "Den Lu Lake flea market"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13725392292,
+      "lat": 21.1133274,
+      "lon": 105.9507427,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Từ Sơn",
+        "addr:housenumber": "266",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Trần Phú",
+        "addr:subdistrict": "Phường Đình Bảng",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trung tâm tiêm chủng VNVC Từ Sơn"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13727353794,
+      "lat": 20.9574793,
+      "lon": 106.0001,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "public_transport": "station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13735267672,
+      "lat": 21.1679579,
+      "lon": 106.0460768,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Bắc Ninh",
+        "addr:housenumber": "434",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Nguyễn Văn Cừ",
+        "addr:subdistrict": "Phường Võ Cường",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "level": "8",
+        "name": "Bệnh viện Đa khoa Hồng Phúc"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13793231137,
+      "lat": 20.9389658,
+      "lon": 105.9902383,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh Viện Vinmec"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13797859252,
+      "lat": 20.9670329,
+      "lon": 105.9564038,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trung Tâm Y Tế Đường Bộ 2"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13800665823,
+      "lat": 21.0411601,
+      "lon": 105.8131014,
+      "tags": {
+        "addr:housenumber": "112",
+        "addr:street": "Phố Đốc Ngữ",
+        "amenity": "hospital",
+        "name": "Trạm y tế phường Ngọc Hà"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13814740988,
+      "lat": 21.1813224,
+      "lon": 106.0693631,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Bắc Ninh",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Nguyễn Đăng Đạo",
+        "addr:subdistrict": "Phường Tiền Ninh Vệ",
+        "amenity": "marketplace",
+        "name": "Trung tâm thương mại quốc tế điện tử Việt Trung"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13898953317,
+      "lat": 20.981276,
+      "lon": 105.8818189,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Lòng Thuyền"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13900935728,
+      "lat": 21.1666269,
+      "lon": 106.0448357,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Bắc Ninh",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Nguyễn Văn Cừ",
+        "addr:subdistrict": "Phường Võ Cường",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trung tâm tiêm chủng VNVC Bắc Ninh"
+      }
+    },
+    {
+      "type": "node",
+      "id": 13916784573,
+      "lat": 20.9839814,
+      "lon": 105.8742897,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ đêm Lĩnh Nam"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14005747112,
+      "lat": 20.9643683,
+      "lon": 105.864097,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ cá Yên Sở"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14041166737,
+      "lat": 21.0186272,
+      "lon": 105.7951999,
+      "tags": {
+        "addr:city": "Hà Nội",
+        "addr:district": "Cầu Giấy",
+        "addr:housenumber": "21,Ngõ 20",
+        "addr:province": "Hà Nội",
+        "addr:street": "Trần Kim Xuyến, Yên Hòa, Cầu Giấy, Hà Nội",
+        "addr:subdistrict": "Yên Hoà",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "traditional_chinese_medicine;palliative;pathology;spa;meditate",
+        "name": "Bình An Spa"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14058346304,
+      "lat": 21.1367632,
+      "lon": 106.0716206,
+      "tags": {
+        "addr:city": "Bắc Ninh",
+        "addr:district": "Thành phố Bắc Ninh",
+        "addr:province": "Bac Ninh",
+        "addr:street": "Đường Vũ Nghi Hướng",
+        "addr:subdistrict": "Phường Hạp Lĩnh",
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao đẳng Cơ điện và Xây dựng Cơ sở 2"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14102549102,
+      "lat": 21.2033071,
+      "lon": 105.9962562,
+      "tags": {
+        "addr:city": "Thành phố Bắc Ninh",
+        "addr:province": "Bac Ninh",
+        "addr:subdistrict": "Xã Yên Trung",
+        "name": "Cửa hàng LocknLock F2C Bắc Ninh",
+        "shop": "mall"
+      }
+    }
+  ]
+}

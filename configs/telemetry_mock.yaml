@@ -1,0 +1,40 @@
+# Cau hinh cho service mock telemetry (Buoc 3 cua ke hoach - chua build).
+# Cac tham so duoi day lay tu quan sat truc tiep UI (Buoc 1), khong phai spec that
+# tu VinFast/GSM (ho khong cong khai). Xem schemas/telemetry/ va docs/telemetry-research.md.
+
+ping:
+  interval_seconds:
+    ui_observed: [3, 5]        # tan suat CAP NHAT TREN BAN DO app khach - khong chac la tan suat ping goc
+    note: >
+      App client dung noi suy (polyline interpolation / dead reckoning) giua 2 diem ping
+      de icon xe di muot - tan suat ping GOC tu thiet bi CO THE thua hon 3-5s. Chua kiem
+      chung duoc; can gia dinh 3-5s cho pha mock dau tien, ghi ro day la CAN THAN.
+
+driver_app_offer:
+  countdown_seconds: 15         # xac nhan tu UI - dem nguoc nhan/bo qua cuoc
+
+battery_swap:
+  stay_duration_seconds: [120, 300]   # quan sat: 2-5 phut tai tu doi pin
+  soc_jump_from_pct: 20               # < 20% truoc khi doi
+  soc_jump_to_pct: 95                 # >= 95% sau khi doi (khac duong cong sac tu tu cua o to)
+
+vehicle_by_service_type:
+  bike:
+    source_device: phone_gps_bike
+    models: ["Feliz S", "Evo200", "Klara S"]
+    has_tcu: false
+  car:
+    source_device: vehicle_tcu_car
+    models: ["VF 5", "VF e34", "VF 8"]
+    has_tcu: true
+
+xanhnow:
+  otp_length: 4
+  requires_central_dispatch: false
+  fraud_note: >
+    Khop cuoc truc tiep giua tai xe va khach qua ma OTP, KHONG qua tong dai dieu phoi -
+    khong co kiem chung cheo. Ung vien mau hinh moi: ty le cuoc via_xanhnow bat thuong
+    cao so voi tong cuoc cua mot tai xe (proxy thong ke, KHONG can du lieu thiet bi/IP).
+
+arrival_geofence:
+  radius_m: null   # CHUA XAC DINH - can do thuc nghiem, xem trip_lifecycle_event.schema.json

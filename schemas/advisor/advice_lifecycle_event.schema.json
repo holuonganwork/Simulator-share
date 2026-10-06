@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/advisor/advice_lifecycle_event",
+  "title": "advice_lifecycle_event",
+  "description": "ĐA-05 (Cycle W): một event trong vòng đời advice — append-only, idempotent theo event_id. IDs tách vai trò: decision_id (quyết định logic tại context revision) / display_id (một lần present) / event_id (idempotency key). Envelope theo audit 04-* §6: occurred_at + observed_at, actor/origin/source, reason code, context revision. Projections (gsm_core/lifecycle/projections.py) là MỘT LUẬT chung cho UI (đọc SQLite) và sim (đọc RAM).",
+  "type": "object",
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Idempotency key — PK của log; append trùng bị bỏ qua (INSERT OR IGNORE)"
+    },
+    "decision_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Quyết định logic. Namespace theo origin: pipeline=adv-*, ui=s1-*, sim=slth-{run}-{actor}-{channel}-{bucket}"
+    },
+    "display_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Một lần card được present; null khi chưa/không có bước present tách riêng (sim hiện tại)"
+    },
+    "driver_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Tài xế (UI/pipeline) hoặc str(actor_id) của sim — run_id phân định không gian"
+    },
+    "run_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Sim run identity deterministic từ runner.derive_run_id: {seed}-{A|B}-{kênh|none}-{coverage[.actor]}[-pos.{mode}]-c{digest8 của config}. Multi-day: ngày nằm trong seed (multiday.day_seed), KHÔNG có hậu tố -d. null = đường production/UI. KHÔNG parse chuỗi này — dùng như opaque key."
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "decided",
+        "displayed",
+        "followed",
+        "dismissed",
+        "suppressed",
+        "superseded",
+        "expired"
+      ]
+    },
+    "reason_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Vd: duplicate_window, topic_cooldown, dismissed_for_window, superseded, low_value, wait_only"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z|[+-]([01]\\d|2[0-3]):[0-5]\\d)$",
+      "description": "ISO 8601 CÓ OFFSET BẮT BUỘC — lúc sự việc XẢY RA. Offset không phải trang trí: ba origin ghi ba múi giờ (pipeline UTC, sim/UI +07:00); một record naive lọt vào làm chết TOÀN BỘ projection của store (sorted() nổ TypeError khi so naive với aware). Chặn tại boundary, không fail muộn ở consumer."
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])T([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(\\.\\d+)?(Z|[+-]([01]\\d|2[0-3]):[0-5]\\d)$",
+      "description": "ISO 8601 CÓ OFFSET BẮT BUỘC — lúc hệ thống GHI NHẬN (sim: = occurred_at; UI: server time)"
+    },
+    "actor": {
+      "type": "string",
+      "enum": [
+        "driver",
+        "advisor",
+        "system"
+      ],
+      "description": "Ai thực hiện hành động của event"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "pipeline",
+        "ui",
+        "sim"
+      ],
+      "description": "Subsystem sinh event"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn dữ liệu (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "context_revision": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Revision của context tại lúc quyết định (ĐA-04 material_revision sẽ dùng)"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Detail tự do theo event_type (topic, action, verify verdict, t_min sim, ...)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "event_id",
+    "decision_id",
+    "driver_id",
+    "event_type",
+    "occurred_at",
+    "observed_at",
+    "actor",
+    "origin",
+    "source",
+    "payload",
+    "schema_version"
+  ],
+  "additionalProperties": false
+}

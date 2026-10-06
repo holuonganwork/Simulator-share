@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/telemetry/charging_session_log",
+  "title": "charging_session_log",
+  "description": "Hang muc 6 'Chien luoc lam giau du lieu' (mentor giao 2026-09-18, phan LOG - KHONG bao gom mo rong ban do tram, xem README.md muc gioi han pham vi). GSM_SIMULATOR da mo phong hanh vi doi pin (trang thai SWAPPING trong src/gsm_sim/behavior.py, pin nhay 15%->98% trong 120-300s) nhung chua ghi thanh mot phien rieng - schema nay vá dung khoang trong do. station_id THAM CHIEU station_registry.schema.json CUA GSM_SIMULATOR (khong dinh nghia lai/mo rong danh sach tram).",
+  "type": "object",
+  "properties": {
+    "session_id": { "type": "string" },
+    "driver_id": { "type": "string" },
+    "vehicle_vin": {
+      "type": ["string", "null"],
+      "description": "Doi voi xe may (khong co VIN oto), dung driver_id lam dinh danh xe thay the - xem vehicle_registry.schema.json."
+    },
+    "station_id": {
+      "type": "string",
+      "description": "Tham chieu station_registry.schema.json cua GSM_SIMULATOR - KHONG dinh nghia tram moi o day."
+    },
+    "started_at": { "type": "string", "format": "date-time" },
+    "ended_at": { "type": ["string", "null"], "format": "date-time" },
+    "soc_before_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+    "soc_after_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+    "duration_seconds": { "type": ["integer", "null"], "minimum": 0 },
+    "cost_vnd": { "type": ["integer", "null"], "minimum": 0 },
+    "status": {
+      "type": "string",
+      "enum": ["in_progress", "completed", "aborted"]
+    }
+  },
+  "required": ["session_id", "driver_id", "station_id", "started_at", "soc_before_pct", "status"],
+  "additionalProperties": false
+}

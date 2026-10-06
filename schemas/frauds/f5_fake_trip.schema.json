@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/frauds/f5_fake_trip",
+  "title": "f5_fake_trip",
+  "description": "Thực thể phát hiện gian lận F5: Tạo cuốc xe ảo (Fake Trips / Ghost Rides / Cấu kết trục lợi Sàn đảm bảo 650.000đ/ngày & KPI). Áp dụng cho mô hình Taxi Cơ Hữu theo FRAUDS.md và Quy tắc Ứng xử 11/09/2026 (Lỗi Nhóm 1b - STT 1). Bằng chứng chí mạng khi app báo cuốc hoàn thành có tính cước (billed_distance_km >= 0.8 km) nhưng viễn thám TCU cho thấy xe đứng yên (vận tốc < 3 km/h, ODO biến thiên < 0.3 km, cần số ở P/N không vào số D) và camera cabin xác nhận không có hành khách.",
+  "type": "object",
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "description": "Mã định danh duy nhất của vụ việc vi phạm F5 (vd: f5-20260924-e5f6a1b2)"
+    },
+    "fraud_type": {
+      "type": "string",
+      "const": "F5_FAKE_TRIP",
+      "description": "Mã định danh loại vi phạm F5"
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm hệ thống phát hiện vi phạm (ISO-8601 UTC+7)"
+    },
+    "driver_id": {
+      "type": "string",
+      "description": "Mã tài xế vi phạm"
+    },
+    "vehicle_id": {
+      "type": "string",
+      "description": "Mã phương tiện ô tô điện"
+    },
+    "vin": {
+      "type": "string",
+      "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+      "description": "Số khung xe VinFast"
+    },
+    "depot_id": {
+      "type": "string",
+      "enum": [
+        "depot_gia_lam",
+        "depot_nam_tu_liem",
+        "depot_yen_nghia",
+        "hub_noi_bai",
+        "hub_my_dinh",
+        "hub_giap_bat"
+      ]
+    },
+    "track": {
+      "type": "string",
+      "const": "core_owned"
+    },
+    "trip_id": {
+      "type": "string",
+      "description": "Mã cuốc xe ảo được tạo trên hệ thống"
+    },
+    "customer_id": {
+      "type": ["string", "null"],
+      "description": "Mã tài khoản khách hàng đặt chuyến (thường là tài khoản phụ hoặc người quen cấu kết)"
+    },
+    "trip_status": {
+      "type": "string",
+      "const": "completed",
+      "description": "Cuốc xe đã được bấm hoàn thành chớp nhoáng trên app"
+    },
+    "request_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm đặt cuốc"
+    },
+    "pickup_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm tài xế bấm đón khách"
+    },
+    "complete_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm tài xế bấm hoàn thành cuốc"
+    },
+    "duration_seconds": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Thời lượng chuyến đi ghi nhận trên app (thường ngắn bất thường so với cự ly)"
+    },
+    "billed_distance_km": {
+      "type": "number",
+      "minimum": 0.8,
+      "description": "Quãng đường ảo tính cước ghi nhận trên app (ngưỡng >= 0.8 km)"
+    },
+    "gross_fare_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Số tiền cước ảo phát sinh trên app"
+    },
+    "hardware_speed_max_kmh": {
+      "type": "number",
+      "maximum": 3.0,
+      "description": "Vận tốc tối đa ghi nhận từ hộp đen TCU trong suốt thời gian diễn ra cuốc (< 3.0 km/h: xe đứng yên)"
+    },
+    "hardware_odo_range_km": {
+      "type": "number",
+      "maximum": 0.3,
+      "description": "Độ biến thiên ODO phần cứng trong suốt thời gian cuốc (< 0.3 km)"
+    },
+    "can_bus_gear": {
+      "type": "string",
+      "enum": ["P", "N", null],
+      "description": "Trạng thái cần số CAN-bus trong suốt cuốc (luôn ở P hoặc N, không hề gạt sang D để lăn bánh)"
+    },
+    "seat_occupied_passenger": {
+      "type": "boolean",
+      "const": false,
+      "description": "Cảm biến trọng lượng xác nhận không hề có hành khách ngồi trên xe"
+    },
+    "camera_passenger_count": {
+      "type": "integer",
+      "const": 0,
+      "description": "Camera AI trong cabin xác nhận ghế sau hoàn toàn trống không (0 người)"
+    },
+    "standing_location": {
+      "type": "object",
+      "properties": {
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "h3": { "type": "string" },
+        "location_type": {
+          "type": "string",
+          "description": "Vị trí xe đứng im (vd: bãi đỗ xe, lề đường, tại nhà riêng)"
+        }
+      },
+      "description": "Tọa độ vị trí xe đứng bất động trong khi cuốc ảo đang chạy"
+    },
+    "fraud_motive": {
+      "type": "object",
+      "properties": {
+        "targeting_daily_floor_650k": {
+          "type": "boolean",
+          "description": "true nếu nhằm đạt chỉ tiêu 6 cuốc/ngày để ngồi im nhận trọn tiền bù Sàn GF-VIP 650.000đ/ngày (bù 90k/cuốc thiếu)"
+        },
+        "targeting_monthly_quota_18m": {
+          "type": "boolean",
+          "description": "true nếu nhằm cày đủ số cuốc tháng để hưởng trọn mức lương cam kết 18.000.000 VNĐ/tháng"
+        },
+        "voucher_subsidy_exploited_vnd": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Số tiền trợ giá mã khuyến mãi/voucher của GSM bị chiếm đoạt"
+        }
+      },
+      "description": "Phân tích mục đích trục lợi chính sách của tài xế"
+    },
+    "clawback_trip_fare_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Thu hồi 100% doanh thu cước của cuốc xe ảo: gross_fare_vnd"
+    },
+    "clawback_floor_subsidy_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Thu hồi toàn bộ tiền bù Sàn đảm bảo 650.000 VNĐ/ngày bị trục lợi bất chính"
+    },
+    "group_1b_penalty_vnd": {
+      "type": "integer",
+      "enum": [5000000, 8000000, 10000000],
+      "description": "Mức phạt tiền vi phạm Lỗi Nhóm 1b theo Quy tắc Ứng xử 11/09/2026 (5 - 10 triệu đồng)"
+    },
+    "total_financial_recovery_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Tổng số tiền truy thu và xử phạt: clawback_trip_fare + clawback_floor + penalty_1b"
+    },
+    "legal_consequence": {
+      "type": "string",
+      "const": "labor_contract_termination_and_car_repossession",
+      "description": "CHẤM DỨT HỢP ĐỒNG LAO ĐỘNG VĨNH VIỄN, THU HỒI XE Ô TÔ VỀ DEPOT (và chuyển cơ quan điều tra nếu trên 500k)"
+    },
+    "severity": {
+      "type": "string",
+      "const": "heavy",
+      "description": "Gian lận có tổ chức / cấu kết tạo cuốc ma thuộc nhóm vi phạm nặng nhất (heavy)"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.95,
+      "maximum": 1.0,
+      "description": "Độ tin cậy gần như tuyệt đối do phần cứng CAN-bus, GPS và camera AI cùng đồng thời chứng minh xe đứng im"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["flagged", "under_review", "confirmed", "appealed", "dismissed"]
+    }
+  },
+  "required": [
+    "incident_id",
+    "detected_at",
+    "driver_id",
+    "vehicle_id",
+    "vin",
+    "track",
+    "trip_id",
+    "trip_status",
+    "billed_distance_km",
+    "hardware_speed_max_kmh",
+    "hardware_odo_range_km",
+    "seat_occupied_passenger",
+    "camera_passenger_count",
+    "clawback_trip_fare_vnd",
+    "group_1b_penalty_vnd",
+    "legal_consequence",
+    "severity",
+    "confidence",
+    "status"
+  ],
+  "additionalProperties": false
+}

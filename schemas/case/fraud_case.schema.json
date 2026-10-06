@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/case/fraud_case",
+  "title": "fraud_case",
+  "description": "Case gian lan duoc tao boi tool flag_case, luu trong var/cases/cases.jsonl (xem src/lcx_core/labels/label_store.py). Mo rong public_frauds cua GSM_SIMULATOR voi 3 truong review con thieu (docs/gsm-simulator-alignment.md).",
+  "type": "object",
+  "properties": {
+    "case_id": { "type": "string", "pattern": "^case-[a-f0-9]{10}$" },
+    "driver_id": { "type": "string" },
+    "pattern": {
+      "type": "string",
+      "enum": [
+        "abnormal_cancel",
+        "route_deviation",
+        "gps_distance_inflation",
+        "split_long_trip",
+        "location_dropout",
+        "wait_fee_manipulation",
+        "fake_ride_for_kpi",
+        "ride_preview_selection",
+        "fake_no_show",
+        "off_app_cash_pressure"
+      ]
+    },
+    "severity": { "type": "string", "enum": ["low", "medium", "high"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "evidence": { "type": "object" },
+    "status": {
+      "type": "string",
+      "enum": ["open", "reviewing", "cleared", "confirmed"],
+      "description": "4 gia tri dung nguyen ban public_frauds.schema.json cua GSM_SIMULATOR."
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "reviewer_id": { "type": ["string", "null"] },
+    "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+    "review_note": { "type": ["string", "null"] }
+  },
+  "required": [
+    "case_id", "driver_id", "pattern", "severity", "confidence",
+    "evidence", "status", "created_at"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l2/demand_field",
+  "title": "demand_field",
+  "description": "Đơn theo (bucket, cell). US-F2-01. unserved: TBC request-log — fallback ESTIMATED.",
+  "type": "object",
+  "properties": {
+    "bucket": {
+      "type": "string",
+      "description": "bucket 15ph ISO start"
+    },
+    "h3": {
+      "type": "string"
+    },
+    "n_requests": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "n_served": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "n_unserved": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "unserved_label": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "MEASURED",
+        "ESTIMATED",
+        null
+      ]
+    },
+    "derivation_version": {
+      "type": "string",
+      "description": "version của derivation job (code, không sửa tay)"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "bucket",
+    "derivation_version",
+    "h3",
+    "n_served",
+    "schema_version",
+    "source"
+  ],
+  "additionalProperties": false
+}

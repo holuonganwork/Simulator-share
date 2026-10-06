@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/map_match_trace",
+  "title": "map_match_trace",
+  "description": "Xem src/lcx_core/agent/tools/map_match_trace.py - proxy 'teleport hex', KHONG phai HMM map-matching that.",
+  "input": {
+    "type": "object",
+    "properties": {
+      "driver_id": { "type": "string" },
+      "local_date": { "type": ["string", "null"], "format": "date" }
+    },
+    "required": ["driver_id"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "driver_id": { "type": "string" },
+      "local_date": { "type": ["string", "null"] },
+      "n_records_checked": { "type": "integer" },
+      "teleport_events": { "type": "array" },
+      "n_teleport_events": { "type": "integer" },
+      "caveat": { "type": "string" }
+    }
+  }
+}

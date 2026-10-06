@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/public_mission",
+  "title": "public_mission (public_mission)",
+  "description": "Catalog mini-task (UC8) — NỀN S6 knapsack. rewards + khung giờ + rule.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "updated_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "deleted_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "updated_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mission_type": {
+      "type": "string",
+      "enum": [
+        "trip_count",
+        "revenue",
+        "rush_hour",
+        "reposition",
+        "rating",
+        "stoppoint"
+      ]
+    },
+    "parent_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "state": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "audience": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "start_time": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "end_time": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "point_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rewards": {
+      "type": "object",
+      "description": "phần thưởng (vnd/point) + điều kiện"
+    },
+    "mission_claim": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mission_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "time_claim_reward": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rule_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "meta_data": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "contract_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "qualify_execute_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "datastream_metadata": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "CDC Datastream metadata — không dùng logic"
+    },
+    "business_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "show_only": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "is_ddi_mission": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "end_time",
+    "id",
+    "mission_type",
+    "name",
+    "rewards",
+    "schema_version",
+    "source",
+    "start_time"
+  ],
+  "additionalProperties": false
+}

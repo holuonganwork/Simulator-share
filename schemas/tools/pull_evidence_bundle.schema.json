@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/pull_evidence_bundle",
+  "title": "pull_evidence_bundle",
+  "description": "Xem src/lcx_core/agent/tools/pull_evidence_bundle.py. photos_available/sensor_logs_available/chat_history_available LUON false o repo hien tai (chua co du lieu that).",
+  "input": {
+    "type": "object",
+    "properties": { "case_id": { "type": "string" } },
+    "required": ["case_id"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "case_id": { "type": "string" },
+      "driver_id": { "type": "string" },
+      "pattern": { "type": "string" },
+      "case_evidence": { "type": "object" },
+      "hex_trace_available": { "type": "boolean" },
+      "hex_trace_sample": { "type": "array" },
+      "n_hex_trace_records": { "type": "integer" },
+      "photos_available": { "type": "boolean", "const": false },
+      "sensor_logs_available": { "type": "boolean", "const": false },
+      "chat_history_available": { "type": "boolean", "const": false },
+      "bundle_gap_note": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l3/penalty_explain_input",
+  "title": "penalty_explain_input",
+  "description": "Input S8 PenaltyExplain (UC6). Số tiền trừ TỪ driver_penalization_ATA (đo được); ngưỡng từ policy. Guardrail: giải thích QUY TẮC + cách tuân thủ — KHÔNG dạy lách, KHÔNG nêu ngưỡng phát hiện.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string"
+    },
+    "t_now": {
+      "type": "string"
+    },
+    "period_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "period_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "penalties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "penalization_id",
+          "penalty_type",
+          "amount_vnd"
+        ],
+        "properties": {
+          "penalization_id": {
+            "type": "string"
+          },
+          "local_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "penalty_type": {
+            "type": "string"
+          },
+          "amount_vnd": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "VND nguyên"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "week_key": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "rates": {
+      "type": "object",
+      "properties": {
+        "acceptance": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fulfillment": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "cancellation": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "min_acceptance": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "min_completion": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "khoan_gap_vnd": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "Khoảng thiếu khoán tuần (nếu có) — liên kết nguyên nhân clawback"
+    },
+    "view_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "penalties",
+    "schema_version",
+    "source",
+    "t_now",
+    "view_version"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l0/policy_bundle@1.0.0",
+  "title": "policy_bundle",
+  "description": "Nguồn số tài chính DUY NHẤT cùng payout_ledger. Version hóa — US-F0-03. Pain #4.",
+  "type": "object",
+  "properties": {
+    "bundle_id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "effective_from": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "effective_to": {
+      "type": "string",
+      "format": "date-time",
+      "description": "null = đang hiệu lực"
+    },
+    "track": {
+      "type": "string",
+      "enum": [
+        "core_owned",
+        "platform",
+        "rto",
+        "green_bike_unspecified"
+      ],
+      "description": "guardrail T-004: unspecified KHÔNG auto-map"
+    },
+    "service": {
+      "type": "string"
+    },
+    "fare": {
+      "type": "object",
+      "required": [
+        "base_vnd",
+        "base_km",
+        "per_km_vnd"
+      ],
+      "properties": {
+        "base_vnd": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "VND nguyên (không âm)"
+        },
+        "base_km": {
+          "type": "number",
+          "minimum": 0
+        },
+        "per_km_vnd": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "VND nguyên (không âm)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "driver_share": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1
+    },
+    "points": {
+      "type": "object",
+      "required": [
+        "peak",
+        "normal",
+        "peak_hours",
+        "window_hours"
+      ],
+      "properties": {
+        "peak": {
+          "type": "integer"
+        },
+        "normal": {
+          "type": "integer"
+        },
+        "peak_hours": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "window_hours": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "day_bonus_tiers": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "VND nguyên (không âm)"
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+    "weekly_quota": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Khoán tuần + truy thu (Vận Doanh 23/02/2026). Optional — số TBC-với-GSM (image-locked). money basis = GROSS (doanh số) theo quyết định (d) 2026-07-24.",
+      "properties": {
+        "min_revenue_vnd": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Doanh số (GROSS) tối thiểu/tuần. null = chưa có số thật → solver KHÔNG được bịa"
+        },
+        "min_active_days": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "clawback_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "0.20 toàn quốc; tới 0.40 HN/HCM (04/05/2026) — versioned theo market"
+        },
+        "market_scope": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "bonus_min_acceptance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "bonus_min_completion": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "forced_accept_below": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "bundle_id",
+    "driver_share",
+    "effective_from",
+    "fare",
+    "schema_version",
+    "service",
+    "source",
+    "track",
+    "version"
+  ],
+  "additionalProperties": false
+}

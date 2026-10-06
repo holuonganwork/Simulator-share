@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l0/zone_map",
+  "title": "zone_map",
+  "description": "Không gian H3 — hạ tầng.",
+  "type": "object",
+  "properties": {
+    "zone_id": {
+      "type": "string"
+    },
+    "h3_res_ops": {
+      "type": "integer",
+      "enum": [
+        7,
+        8,
+        9
+      ],
+      "description": "Độ phân giải H3 vận hành: Res 7 cho toàn Hà Nội, Res 9 cho pilot Đống Đa"
+    },
+    "h3_res_report": {
+      "type": "integer",
+      "enum": [
+        6,
+        7,
+        8
+      ],
+      "description": "Độ phân giải H3 báo cáo/tổng hợp: Res 6 cho toàn Hà Nội, Res 8 cho pilot Đống Đa"
+    },
+    "cells": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "poi_weights": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "cells",
+    "schema_version",
+    "source",
+    "zone_id"
+  ],
+  "additionalProperties": false
+}

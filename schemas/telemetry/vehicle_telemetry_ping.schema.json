@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/telemetry/vehicle_telemetry_ping",
+  "title": "vehicle_telemetry_ping",
+  "description": "Buoc 2 cua ke hoach mock telemetry (docs/telemetry-research.md). Hop dong NHAP, tong hop tu quan sat truc tiep app Xanh SM (khach), Xanh SM Driver, V-Green va cau truc telemetry cua du an mo vinfast-connected-car - KHONG phai API that cua VinFast/GSM (ho khong cong khai spec). Muc dich: du de vá lai schemas/l1/gps_ping.schema.json cua GSM_SIMULATOR (dang danh dau 'TBC-voi-GSM').\n\nPHAT HIEN QUAN TRONG: he thong that dung lat/lng + heading + speed tho (tu GPS dien thoai hoac TCU xe), KHONG phai o H3. Lop H3 trong 13 bang GSM_SIMULATOR (public_driver_hex_tracking) la MOT TANG TONG HOP/AN DANH tren telemetry tho, khong phai dinh dang goc he thong nhan. Day la ly do tan suat ban ghi trong public_driver_hex_tracking khong deu (33-74s) - no chi ghi lai MOI LAN DOI O HEX, khong phai moi lan ping (3-5s theo quan sat UI).",
+  "type": "object",
+  "properties": {
+    "ping_id": { "type": "string" },
+    "driver_id": { "type": "string" },
+    "trip_id": { "type": ["string", "null"], "description": "null neu dang o trang thai cho cuoc (chua ghep)" },
+    "source_device": {
+      "type": "string",
+      "enum": ["phone_gps_bike", "vehicle_tcu_car"],
+      "description": "Xe may dien (Feliz S/Evo200/Klara S) khong co TCU rieng - dinh vi lay tu dien thoai tai xe qua app Xanh SM Driver. Xe hoi VinFast (VF 5/VF e34/VF 8) co TCU rieng, giau tren xe, tach biet voi dien thoai."
+    },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "lat": { "type": "number" },
+    "lng": { "type": "number" },
+    "current_hex_h3_res9": {
+      "type": ["string", "null"],
+      "description": "Suy tu lat/lng o tang xu ly (khong phai truong goc tu thiet bi) - de tuong thich nguoc voi cac detector Tier A dang dung H3."
+    },
+    "speed_kmh": { "type": "number", "minimum": 0 },
+    "heading_deg": { "type": ["number", "null"], "minimum": 0, "maximum": 360 },
+
+    "vin": {
+      "type": ["string", "null"],
+      "description": "17 ky tu ISO - bat buoc khac null khi source_device='vehicle_tcu_car', luon null voi xe may (xe may khong co so khung dang VIN oto)."
+    },
+    "gear": {
+      "type": ["string", "null"],
+      "enum": ["P", "R", "N", "D", null],
+      "description": "CHI CO O XE HOI (CAN-bus) - xe may dien khong co hop so/gear. Tin hieu cot loi cho F5/cuoc ao: bam 'bat dau chuyen' nhung gear != 'D' va odometer dung yen."
+    },
+    "odometer_km": {
+      "type": ["number", "null"], "minimum": 0,
+      "description": "CHI CO O XE HOI (doc tu CAN-bus). Xe may khong co odometer dien tu dang nay trong pham vi quan sat duoc."
+    },
+    "battery_level_pct": {
+      "type": ["number", "null"], "minimum": 0, "maximum": 100,
+      "description": "CO O CA HAI loai xe - da sua so voi ban nhap dau (Buoc 2 ghi nham la 'chi xe hoi'). Xe may dien MOI la doi tuong chinh cua doi pin V-Green (Feliz S/Evo200/Klara S) - pin nhay tu thap len ~95-100% trong 120-300s khi dung tai tu, KHAC voi duong cong sac tu tu cua o to. Nguon so lieu khac nhau theo source_device: xe may doc tu app/BLE cua pack pin, xe hoi doc tu BMS qua TCU."
+    },
+    "remaining_range_km": { "type": ["number", "null"], "minimum": 0 },
+    "charging_status": {
+      "type": ["string", "null"],
+      "enum": ["DISCHARGING", "CHARGING", "IDLE", null],
+      "description": "CO O CA HAI loai xe. Voi xe may, 'CHARGING' thuc chat la trang thai dang doi pin tai tu (khong sac tai cho, chi hoan doi pin) - phan biet voi xe hoi co the sac cham that su."
+    },
+    "seat_occupancy": {
+      "type": ["object", "null"],
+      "description": "Chi co o xe hoi. Tin hieu cot loi cho F1 (cho khach khong tao cuoc) va ep huy: ghe co nguoi ngoi nhung khong co trip_id dang active.",
+      "properties": {
+        "driver": { "type": "boolean" },
+        "any_passenger_seat": { "type": "boolean" }
+      }
+    },
+    "door_lock_status": { "type": ["string", "null"], "enum": ["LOCKED", "UNLOCKED", null] },
+    "trunk_status": { "type": ["string", "null"], "enum": ["OPEN", "CLOSED", null] },
+
+    "phone_connectivity_lost": {
+      "type": "boolean",
+      "default": false,
+      "description": "true khi ping nay den tu vehicle_tcu (xe van online qua modem rieng cua xe) TRONG LUC dien thoai tai xe duoc ghi nhan mat ket noi/tat dinh vi - bang chung manh cho 'ngat dinh vi giua chuyen' vi xe van stream duoc du lieu qua kenh khac dien thoai."
+    }
+  },
+  "required": ["ping_id", "driver_id", "source_device", "occurred_at", "lat", "lng", "speed_kmh"],
+  "additionalProperties": false
+}

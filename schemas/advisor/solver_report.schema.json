@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/advisor/solver_report",
+  "title": "solver_report",
+  "description": "Envelope output solver — cách agent 'hiểu' bài toán (spec §2).",
+  "type": "object",
+  "properties": {
+    "solver": {
+      "type": "string",
+      "enum": [
+        "bonus_feasibility",
+        "shift_dp",
+        "f3_patterns",
+        "capacity_alloc",
+        "weekly_khoan",
+        "mission_knapsack",
+        "idle_reduction",
+        "penalty_explain",
+        "anomaly_alert"
+      ]
+    },
+    "problem_digest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "inputs_used": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "view_id",
+          "version",
+          "freshness"
+        ],
+        "properties": {
+          "view_id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "freshness": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "solution": {
+      "type": "object"
+    },
+    "numbers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "value",
+          "unit",
+          "source"
+        ],
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "description": "policy_v:X | ledger | dp_expectation — trace được"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sensitivity": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "caveats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "infeasible_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "confidence",
+    "inputs_used",
+    "numbers",
+    "problem_digest",
+    "schema_version",
+    "solution",
+    "solver"
+  ],
+  "additionalProperties": false
+}

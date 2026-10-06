@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l3/mission_select_input",
+  "title": "mission_select_input",
+  "description": "Input S6 MissionKnapsack (UC8 mini-task). Mission còn hiệu lực + tiến độ; reward CHỈ từ mission_catalog (không bịa).",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string"
+    },
+    "t_now": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "hours_budget_remaining": {
+      "type": "number",
+      "minimum": 0
+    },
+    "trips_per_hour": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "ĐO ĐƯỢC từ lịch sử (cuốc/giờ) — dùng quy đổi effort→giờ (ASSUMPTION tuyến tính)"
+    },
+    "missions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "mission_id",
+          "reward_vnd",
+          "remaining_count"
+        ],
+        "properties": {
+          "mission_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mission_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reward_vnd": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "TỪ mission_catalog.rewards — không bịa"
+          },
+          "remaining_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "target_count − progress_count"
+          },
+          "window_start": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "window_end": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "view_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "hours_budget_remaining",
+    "missions",
+    "schema_version",
+    "source",
+    "t_now",
+    "trips_per_hour",
+    "view_version"
+  ],
+  "additionalProperties": false
+}

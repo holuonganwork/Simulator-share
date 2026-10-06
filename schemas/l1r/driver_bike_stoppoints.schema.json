@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/driver_bike_stoppoints",
+  "title": "driver_bike_stoppoints",
+  "description": "Số điểm dừng/ngày (UC2/UC5 idle proxy). rush ⊆ total.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string"
+    },
+    "local_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "total_stoppoints": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total_stoppoints_rush_hour": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "local_date",
+    "schema_version",
+    "source",
+    "total_stoppoints",
+    "total_stoppoints_rush_hour"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id"
+  ]
+}

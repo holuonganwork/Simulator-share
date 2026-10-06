@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1/gps_ping",
+  "title": "gps_ping",
+  "description": "GPS trace. Nuôi InferredActivity + SupplyField. x-availability: tần suất TBC-với-GSM.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string",
+      "x-sensitivity": "PII-id"
+    },
+    "t": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "location": {
+      "type": "object",
+      "required": [
+        "lat",
+        "lon",
+        "h3"
+      ],
+      "properties": {
+        "lat": {
+          "type": "number",
+          "x-sensitivity": "PII-location"
+        },
+        "lon": {
+          "type": "number",
+          "x-sensitivity": "PII-location"
+        },
+        "h3": {
+          "type": "string",
+          "description": "res 9 vận hành"
+        }
+      },
+      "additionalProperties": false
+    },
+    "speed_kmh": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "location",
+    "schema_version",
+    "source",
+    "t"
+  ],
+  "additionalProperties": false,
+  "x-availability": "TBC-với-GSM: tần suất/độ trễ; fallback COARSE bucket 30ph"
+}

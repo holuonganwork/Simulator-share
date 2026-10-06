@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/telemetry/trip_lifecycle_event",
+  "title": "trip_lifecycle_event",
+  "description": "Buoc 2 cua ke hoach mock telemetry. Hop dong NHAP tong hop tu quan sat truc tiep may trang thai tren app Xanh SM Driver - CHI TIET HON HAN trips.schema.json cua GSM_SIMULATOR (chi co enum status ['completed','cancelled','assigned']). Day chinh la du lieu con thieu ma docs/appendix-pending-data.md va tier_a/fake_no_show.py, off_app_cash_pressure.py da neu ('khong co trang thai arrived') - quan sat thuc te xac nhan trang thai nay TON TAI THAT trong san pham, chi la GSM_SIMULATOR chua mock no. Day la thay doi phan loai quan trong: tu 'chua co bang chung' sang 'da co bang chung UI/quy trinh that, chi thieu trong bo mock'.",
+  "type": "object",
+  "properties": {
+    "event_id": { "type": "string" },
+    "trip_id": {
+      "type": ["string", "null"],
+      "description": "null cho su kien CAP PHIEN/tai khoan, khong gan voi mot cuoc cu the - went_online, went_offline, app_foreground, app_background, driver_break_started, driver_break_ended, manual_location_toggle (hang muc 4 'Chien luoc lam giau du lieu'). Bat buoc khac null cho moi event_type con lai (vong doi mot cuoc cu the)."
+    },
+    "driver_id": { "type": "string" },
+    "customer_id": {
+      "type": ["string", "null"],
+      "description": "Co the null tam thoi cho toi khi tong dai ghep - cuoc XanhNow (via_xanhnow=true) van co customer_id sau khi khop OTP, chi la khong qua dieu phoi trung tam."
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "went_online",
+        "went_offline",
+        "offer_received",
+        "offer_accepted",
+        "offer_declined",
+        "offer_expired",
+        "enroute_to_pickup",
+        "arrived_at_pickup",
+        "trip_started",
+        "trip_completed",
+        "trip_cancelled",
+        "no_show_reported",
+        "xanhnow_otp_matched",
+        "app_foreground",
+        "app_background",
+        "manual_location_toggle",
+        "driver_break_started",
+        "driver_break_ended"
+      ]
+    },
+    "occurred_at": { "type": "string", "format": "date-time" },
+
+    "offer_countdown_seconds": {
+      "type": ["integer", "null"],
+      "description": "Chi dinh (khac null) khi event_type='offer_received' - quan sat thuc te: dem nguoc 15 giay de tai xe bam Xac nhan/Bo qua. LUU Y THIET KE: KHONG dung 'const:15' o day - const ap dung cho CA gia tri null (JSON Schema doi khop instance null voi const, khong mien tru), se lam moi event KHAC offer_received (dung null hop le) bi tu choi sai. Da phat hien loi nay khi chay thu Buoc 3 (17/24 event bi tu choi oan) - sua lai thanh khong rang buoc const, chi ghi chu gia tri quan sat duoc."
+    },
+
+    "arrival_geofence_check_passed": {
+      "type": ["boolean", "null"],
+      "description": "Chi dinh khi event_type='arrived_at_pickup'. He thong that KIEM TRA GPS tai xe co nam trong ban kinh cho phep quanh diem hen truoc khi cho bam 'Da den diem don' - day CHINH LA du lieu can cho fake_no_show.py va off_app_cash_pressure.py. Ban kinh cu the (met) CHUA quan sat duoc tu UI - can do thuc nghiem hoac hoi doi GSM."
+    },
+    "arrival_geofence_radius_m": {
+      "type": ["number", "null"],
+      "description": "CHUA XAC DINH - placeholder. Uu tien lam ro o buoc 1 tiep theo (do thuc nghiem: dung xa diem hen bao nhieu m thi nut 'Da den' bi khoa)."
+    },
+
+    "cancel_reason": {
+      "type": ["string", "null"],
+      "description": "Chi dinh khi event_type='trip_cancelled' hoac 'no_show_reported'."
+    },
+    "cancel_actor": {
+      "type": ["string", "null"],
+      "enum": ["driver", "customer", "system", null]
+    },
+
+    "via_xanhnow": {
+      "type": "boolean",
+      "default": false,
+      "description": "true neu cuoc duoc khop qua tinh nang XanhNow (khach vay xe doc duong, nhap ma OTP 4 so vao app tai xe) THAY VI qua dieu phoi trung tam. Quan sat: day la KE HO that su - khong co kiem chung cheo tu tong dai, tai xe co the bat tay voi 'khach quen' bam vay xe gia. Ung vien mau hinh MOI (chua co trong F1-F6 hay 15 mau hinh cu) - xem docs/telemetry-research.md."
+    },
+    "xanhnow_otp_code_masked": {
+      "type": ["string", "null"],
+      "description": "Mask OTP that (vd 'XXXX') khi luu log - day la du lieu nhay cam ngan han, khong can luu nguyen ban."
+    },
+
+    "payment_method": {
+      "type": ["string", "null"],
+      "enum": ["cash", "wallet", "card", null],
+      "description": "Chi dinh khi event_type='trip_completed'."
+    },
+
+    "location_enabled": {
+      "type": ["boolean", "null"],
+      "description": "Chi dinh khi event_type='manual_location_toggle' - true neu tai xe VUA BAT lai dinh vi, false neu VUA TAT. Day la tin hieu cot loi cho 'giu trang thai online ao': tat dinh vi thu cong nhung khong goi went_offline nghia la tai xe van hien 'dang online' voi khach/he thong dieu phoi trong khi thuc te khong the nhan cuoc."
+    }
+  },
+  "required": ["event_id", "trip_id", "driver_id", "event_type", "occurred_at"],
+  "additionalProperties": false
+}

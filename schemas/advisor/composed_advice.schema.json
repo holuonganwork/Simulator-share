@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/advisor/composed_advice",
+  "title": "composed_advice",
+  "description": "Output cuối pipeline. advice_spec machine-checkable (twin-world §7.1) cho adherence.",
+  "type": "object",
+  "properties": {
+    "advice_id": {
+      "type": "string"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "numbers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "value",
+          "unit",
+          "source"
+        ],
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "caveats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "advice_spec": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "action_type": {
+          "type": "string"
+        },
+        "target_window": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "target_zone_or_station": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expiry": {
+          "type": "string",
+          "format": "date-time",
+          "description": "hết hạn advice"
+        }
+      },
+      "required": [
+        "action_type"
+      ],
+      "additionalProperties": false
+    },
+    "fallback_used": {
+      "type": "boolean",
+      "description": "true nếu template fallback (LLM-off/veto)"
+    },
+    "residual_path": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "R6_verify_fail = AUDIT A3 FAILCLOSED-1 (UPDATE-070): verify hỏng cả 2 lần → advice bị hạ về thông báo an toàn (trước đây FAIL-OPEN: trả message chưa verify)",
+      "enum": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "R6_verify_fail",
+        null
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "advice_id",
+    "confidence",
+    "fallback_used",
+    "message",
+    "numbers",
+    "request_id",
+    "schema_version"
+  ],
+  "additionalProperties": false
+}

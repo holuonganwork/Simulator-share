@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1/policy_change_event",
+  "title": "policy_change_event",
+  "description": "Chính sách đổi — nuôi US-F0-03/F1-01. Pain #4.",
+  "type": "object",
+  "properties": {
+    "change_id": {
+      "type": "string"
+    },
+    "bundle_id": {
+      "type": "string"
+    },
+    "from_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "to_version": {
+      "type": "string"
+    },
+    "effective_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "changed_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "bundle_id",
+    "change_id",
+    "effective_at",
+    "schema_version",
+    "source",
+    "to_version"
+  ],
+  "additionalProperties": false
+}

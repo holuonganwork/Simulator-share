@@ -1,0 +1,744 @@
+# Config pilot Đống Đa — nguồn số: specs/simulation-pilot-world.md, sim-policy-bundle-v0.md,
+# advisor-optimization-layer-a.md §4 (harmonize), research/simulation/*.
+# MỌI SỐ LÀ MOCK — xem assumption log trong các spec. Không phải số thật của GSM.
+
+meta:
+  spec_version: sim-core-slice-v0
+  policy_bundle_version: sim-policy-v0
+  data_mode: synthetic
+  is_mock: true
+
+world:
+  data_dir: research/simulation/data
+  geom_file: hanoi_geom.json          # 5 relation phường (proxy quận Đống Đa cũ)
+  stations_file: batt_hanoi.json      # 11 tủ đổi pin thật (OSM)
+  poi_file: poi_hanoi.json            # 59 POI (26 BV, 13 ĐH, ...)
+  h3_res: 7                        # lưới vận hành Res 7 (~925 cells phủ kín toàn Hà Nội)
+  h3_res_report: 6                 # tổng hợp/heatmap Res 6
+
+  buffer_ring_k: 1                 # đích OD có thể rơi ngoài lõi trong vành k<=4
+  # V-44a (UPDATE-215/216, Cường uỷ quyền 2026-08-12): CHỖ ĐỨNG QUEN — placement centroid được
+  # thay bằng điểm tất định hash(seed|actor|cell) trong bán kính này. 0.025 MƯỢN từ poi_jitter_km
+  # (geo.py — địa chỉ khách đã là "POI ± 25 m"; test xích hai nguồn: test_cho_dung_quen_r25).
+  # `0` = khôi phục thế giới thế-hoà cũ (84% chồng điểm, gini đọc nhiễu thứ tự mảng — lý do sửa).
+  # Đã đo TRƯỚC khi thi công: Δ nền −4.726,2đ SIG · advisor sống +3.931,7đ SIG · cấm quét r khác.
+  driver_spot_jitter_km: 0.025
+
+time:
+  # Harmonize §4: run window 05:00-24:00, warm-up 1h (metrics từ 06:00)
+  start_min: 300                   # 05:00 tính theo phút từ 00:00
+  end_min: 1440                    # 24:00
+  warmup_min: 60                   # 05:00-06:00 không tính metrics
+  dispatch_tick_s: 5               # T1
+  # `metrics_bucket_min: 15` XOÁ 2026-08-01 (D-M3-15): không dòng code nào đọc nó, và sim gộp
+  # metrics theo GIỜ cứng (`int(t_min // 60)` ở sim_metrics.py:66/77/258/259). Giữ nó lại là
+  # nói với người đọc rằng metrics chia theo 15′ — sai. Muốn bucket 15′ thật thì phải sửa 4 chỗ
+  # hardcode kia và đo lại mọi số theo-giờ; đó là đổi hành vi, cần plan riêng (D-M3-16).
+
+demand:
+  orders_per_day: 50000            # kỳ vọng TRONG window (renormalize hour-shape trên 05-24h)
+  # hour-shape relative weights (mock-order-distribution.md §3) — chỉ dùng các giờ trong window
+  hour_weights:
+    0: 0.25
+    1: 0.15
+    2: 0.10
+    3: 0.10
+    4: 0.15
+    5: 0.35
+    6: 0.80
+    7: 1.00
+    8: 1.00
+    9: 0.70
+    10: 0.60
+    11: 0.65
+    12: 0.65
+    13: 0.55
+    14: 0.55
+    15: 0.65
+    16: 0.90
+    17: 1.20
+    18: 1.30
+    19: 1.10
+    20: 0.90
+    21: 0.80
+    22: 0.60
+    23: 0.40
+  # trọng số cell: w = a*pop_density + b*poi_score  (chuẩn hóa tổng = 1)
+  zone_weight_pop_coeff: 0.5
+  zone_weight_poi_coeff: 0.5
+  poi_type_weights:        # hệ số theo loại POI (mock)
+    hospital: 3.0
+    university: 2.0
+    college: 1.5
+    marketplace: 1.5
+    bus_station: 2.5
+    mall: 2.0
+    default: 1.0
+  # OD: đích sample theo distance-decay quanh pickup
+  trip_km_median: 3.5
+  trip_km_sigma: 0.55              # lognormal sigma
+  trip_km_max: 25.0                # Res 7 toàn Hà Nội: nới trần từ 12km lên 25km (phủ cuốc liên quận/sân bay)
+  # math-audit fixes (đưa magic numbers ra config):
+  detour_factor: 1.3              # A4: khoảng cách thực / chim bay (đô thị ~1.3-1.4)
+  drop_km_per_cell: 2.2           # Res 7: khoảng cách tâm ô kề nhau ~2.2km (thay vì 0.35km của Res 9)
+  drop_softness_km: 1.5           # Res 7: bán kính mềm chọn cell trả giãn từ 0.5km lên 1.5km theo bước nhảy ô
+  # b0-D (2026-07-28): điểm TRẢ khách bám CẦU — m(c) = 1 + α·(w(c)/w̄ − 1), kẹp ≥ 0.
+  # Vì sao: bản thuần-khoảng-cách cho corr(cầu, nơi trả) = −0,22 (anti-tương quan!) và 81% cuốc
+  # trả NGOÀI lõi ⇒ thế giới chủ động ném tài xế ra chỗ vắng, deadhead 12% thời gian. Người thật
+  # đi TỚI chỗ đông (nhà/văn phòng/TTTM) — chính nơi phát sinh cầu.
+  # Quét 5 mức × 3 seed (hồ sơ 20-sweep-drop-alpha.json; mục tiêu Cường duyệt corr ≈ +0,3..0,5):
+  #   α   | corr   | ngoài lõi | med km | served | km rỗng | deadhead
+  #   0.0 | −0.222 |   80.9%   |  3.22  | 0.791  |  40.5%  |  636 km
+  #   0.2 | +0.071 |   73.7%   |  3.19  | 0.786  |  39.8%  |  590
+  #   0.4 | +0.418 |   65.3%   |  3.14  | 0.790  |  38.9%  |  539   ← CHỌN (giữa dải mục tiêu,
+  #   0.6 | +0.638 |   54.5%   |  3.09  | 0.799  |  38.1%  |  458      med km chỉ −2,5%)
+  #   0.8 | +0.777 |   37.9%   |  2.94  | 0.809  |  36.9%  |  353   ← méo quãng đường −8,7%
+  # α = 0 ⇒ trace cũ Y HỆT từng bit (test canh). ⚠ α ≠ 0 làm LỆCH MỌI BASELINE cũ ⇒ b4 đo lại.
+  drop_demand_alpha: 0.4
+  # (AUDIT A1 DEMAND-1: cờ `hour_interp` đã GỠ — nó là cờ chết, code chưa từng nội suy.
+  #  Muốn nội suy thật → D-SIM-19, kèm regate 30 seed vì đổi phân phối cầu.)
+
+speed_kmh:                         # world-parameters.md §2 (Cập nhật vận tốc thực tế ô tô Hà Nội)
+  peak: 30                         # Giờ cao điểm đường thường: 30 km/h (đã nâng từ 25 km/h)
+  offpeak: 40                      # Giờ bình thường đường thường: 40 km/h (đã nâng từ 35 km/h)
+  night: 50                        # Đêm đường thường: 50 km/h (đã nâng từ 45 km/h)
+  peak_hours: [6, 7, 8, 16, 17, 18]
+  night_hours: [21, 22, 23, 0, 1, 2, 3, 4, 5]
+
+  # Phân cấp vận tốc theo loại đường (km/h)
+  expressway_base: 80.0            # Cao tốc: 80 km/h (luôn giữ nguyên tốc độ, không bao giờ bị tắc)
+  arterial_base: 60.0              # Đường vành đai / trục chính: 60 km/h
+  arterial_jam_prob: 0.01          # Xác suất tắc đường vành đai: 1% mỗi giờ (khi tắc giảm 1/2 tốc độ = 30 km/h)
+
+# Congestion spatiotemporal: độ tắc suy từ phân phối đơn (cell đông giờ cao điểm chạy chậm).
+# Kết hợp mưa qua survival product. cap=0 hoặc enabled=false → tắt (baseline speed cũ).
+congestion:
+  enabled: true
+  cap: 0.35                        # r_cong tối đa (cell đông nhất giờ đông nhất giảm ~35% tốc độ)
+  normalize: global_peak           # global_peak (so đỉnh toàn ngày) | hour_peak (so đỉnh trong giờ)
+
+dispatcher:
+  # TẦNG 2 (UPDATE-080, hồ sơ `15-*`): "batch" = bipartite Hungarian trên cost = ETA_pickup,
+  # đúng đặc tả `world-parameters.md` §3 (dẫn công bố DiDi) — tầng này trước đây bị hoãn
+  # ("Hungarian để vòng sau") và không bao giờ được xây.
+  # "greedy" giữ lại làm BASELINE SO SÁNH theo yêu cầu của chính đặc tả, và là đường lui khi
+  # ma trận gán quá lớn.
+  #
+  # Đo 12 seed (so với greedy-haversine gốc, cùng k=6):
+  #   served 0.761 → 0.764 · hết hạn 233 → 228 · pickup TB 1.04 → 0.98 km · runtime 2.9s → 2.7s
+  #   lệch accept_base P7 −0.042 → −0.047 (vẫn trong dung sai 5pp)
+  # Pickup NGẮN LẠI là cơ chế then chốt: gán tối ưu TỔNG thay vì greedy theo `order_id`.
+  matching: batch
+  candidate_ring_k: 2              # Res 7: grid_disk k=2 (~ bán kính 4.6km, 19 ô); nới nếu rỗng
+  # ⛔ BUG-DISPATCH-SHORTLIST (UPDATE-079, hồ sơ `14-*` §2) — ĐÃ TÌM RA, **CHƯA SỬA ĐƯỢC**.
+  #
+  # Lỗi: `k_max` chỉ là SHORTLIST; ràng buộc thật là `eta_max_min`. k=6 phủ **2,22 km** trong
+  # khi ETA 11′ còn cho phép tới **3,14 km** (điều kiện trung bình) ⇒ tài xế thoả ETA ở
+  # 2,2–3,1 km bị loại **ÂM THẦM**, không log. Hệ quả: đơn chết dù có người trong tầm với.
+  #
+  # Vì sao CHƯA nới: nới làm ghép đơn tốt lên nhưng **phá realism** — đơn mới được phục vụ
+  # chính là đơn PICKUP XA, tài xế từ chối nhiều hơn ⇒ tỷ lệ nhận thực tế trôi khỏi
+  # `accept_base` quá dung sai 5pp của `tests/test_sim_realism.py`:
+  #
+  #   k | served | hết hạn | lệch lớn nhất vs accept_base | 18h hết hạn
+  #   6 | 0.761  |   233   | P7 −0.042  ✅ (đã sát ngưỡng) |   38.8%
+  #   7 | 0.778  |   211   | P7 −0.053  ❌                 |     —
+  #   8 | 0.788  |   196   | P7 −0.057  ❌                 |   34.5%
+  #  12 | 0.789  |   195   | P7 −0.067  ❌                 |   38.5%
+  #
+  # (12 seed cho cột lệch; 3 seed cho 18h. Đã LOẠI giả thuyết "center logit cũ": đo lại net
+  #  trung vị thị trường = 20.760đ vs config 21.200đ ⇒ chỉ ~+0,3pp acceptance, không đủ bù.)
+  #
+  # ⚠ KHÔNG được nới dung sai test để đi tiếp — đó là che khuyết tật. Cần Cường quyết
+  # (Q-07): ưu tiên **ghép đơn đúng** hay **trung thành archetype**? Xem hồ sơ `14-*` §2.
+  #
+  # ✅ 2026-08-09 — 6 → 8. **Q-07 TỰ TAN, không phải được đánh đổi.** Cycle 1 (`UPDATE-185`)
+  # phát hiện mẫu số tỷ lệ nhận đếm cả lượt tài xế **chưa từng được hỏi** (bị chặn vì pin,
+  # `decide_accept` không hề được gọi). Với mẫu số SẠCH, k=8 qua cổng realism ở **CẢ 7
+  # archetype**, lệch lớn nhất **−0,0148** so với dung sai 0,05 — P7 (cái từng chặn mọi thứ)
+  # chỉ lệch **−0,0124**. Tức "drift" trước đây phần lớn là **hiện vật đo**, không phải suy
+  # thoái realism ⇒ **không phải nới dung sai, không phải che khuyết tật**.
+  #
+  # Bằng chứng hiệu quả (30 seed ghép cặp, `cycle3-ma-tran-tuong-tac-k-va-gop.json`):
+  #   payout +6.945đ SIG · đơn hết hạn −29,1 SIG · served +0,022 SIG
+  #   advisor TẮT cũng tốt lên: served 0,794 → 0,816 · expired 191,3 → 162,4
+  # ⚠ `k` là tham số **DISPATCHER**: nó cải thiện thế giới cho **mọi** arm, kể cả arm không có
+  # advisor ⇒ **không được** đọc phần này thành "advisor tốt lên".
+  candidate_ring_k_max: 3
+  # SIM-XANH: 10 → 11. KHÔNG phải nới chuẩn: ETA giờ tính trên hệ số đường THẬT (median
+  # 1.46) thay vì detour 1.3 ⇒ cùng bán kính VẬT LÝ, số phút tính ra cao hơn ~12%.
+  # Ngưỡng tương đương bán kính cũ = 10 × 1.46/1.3 ≈ 11.2 ⇒ 11 là GIỮ NGUYÊN tầm với,
+  # không phải mở rộng. (SIM-1 cũ: 8 → 10 theo research 8-10ph.)
+  eta_max_min: 11
+  # Patience khách 2 tầng (realism-benchmarks.md: patience ~5ph, không phải 90s):
+  # tầng 1: chờ match ~ lognormal(median, sigma) cap max — per-order, exogenous (CRN-safe)
+  # tầng 2: sau gán, hủy nếu pickup ETA > eta_max_min (đã có ở trên)
+  # SIM-1: 3.0 → 5.0. Nguồn GỐC (arXiv 2503.13200) nói khách huỷ sau ~5 PHÚT chưa match;
+  # calibration cũ đặt 3.0 chặt hơn nguồn ⇒ đơn chết trước khi kịp ghép (served 62%).
+  patience_median_min: 5.0
+  patience_sigma: 0.5
+  patience_max_min: 10.0
+  # Cycle 3 (2026-08-07): khoá này TRƯỚC ĐÂY KHÔNG CÓ ở đây, trong khi `world.py:172` đọc
+  # `dispatcher.offer_cooldown_min` ⇒ `Config.get` trả default 10.0 IM LẶNG. Ai muốn đo ảnh
+  # hưởng của cooldown sẽ thêm khoá, sweep, thấy Δ=0 và kết luận SAI rằng nó không ảnh hưởng.
+  # Giá trị 10 = ĐÚNG default cũ ⇒ thêm khoá này là BIT-IDENTICAL, không đổi hành vi.
+  # ⛔ Đọc `D-SIM-K6` TRƯỚC KHI SWEEP: cooldown (10′) ≥ `patience_max_min` (10′) ⇒ một đơn hết
+  # kiên nhẫn trước khi được chào lại lần hai ⇒ cooldown hiện là ràng buộc CÂM. Sweep mà không
+  # biết điều đó sẽ đọc ra một đường phẳng và tưởng đã đo xong.
+  offer_cooldown_min: 10
+
+station:
+  slots: 6                         # 5 pin + 1 trống
+  swap_time_s_min: 60
+  swap_time_s_max: 120
+  battery_recharge_min: 105        # 1.75h/viên (giữa 1.5-2h)
+  ready_soc_pct: 90                # ngưỡng "pin sẵn sàng" để phát cho tài xế
+  wait_cap_min: 60                 # trần chờ (đuôi hiếm giờ đỉnh); giảm để mô phỏng đi trạm khác
+
+behavior:                          # math-audit A5: accept logit params ra config (VND)
+  # B4 (2026-07-29, đổi tên từ accept_cost_per_pickup_km_vnd — GIÁ TRỊ KHÔNG ĐỔI):
+  # đây là DISUTILITY CẢM NHẬN trong quyết định nhận đơn, KHÔNG phải tiền mặt
+  # (tiền thật 30–250đ/km — hồ sơ driver-cost-structure-2026 §6; đọc nhầm là lệch 10–20×).
+  pickup_disutility_vnd_per_km: 3000
+  # SIM-1: center = NET TRUNG VỊ của thị trường (đo thật: median net ≈ 15.4k).
+  # Trước đây để 6000 (mốc "hoà vốn") ⇒ z = (15417−6000)/8000 = +1.18 với MỌI cuốc
+  # ⇒ số hạng kinh tế luôn dương, đẩy accept của mọi archetype lên 94-99%
+  # ⇒ accept_base vô nghĩa. Đặt center ≈ median để cuốc TRUNG BÌNH cho z≈0
+  # ⇒ realized accept bám accept_base; chỉ cuốc xa/rẻ mới bị từ chối nhiều hơn.
+  # SIM-XANH: 15400 → 21200. Cước giờ tính trên KM LỘ TRÌNH THẬT (OSRM, factor median
+  # 1.46) nên net trung vị thị trường tăng — đo lại 8 seed: 21.225đ. Không cập nhật thì
+  # số hạng kinh tế lại dương với mọi cuốc ⇒ tái diễn khuyết tật SIM-1 (archetype vô nghĩa).
+  accept_logit_center_vnd: 21200
+  accept_logit_scale_vnd: 8000
+  # SIM-1 fix C: tỷ lệ huỷ SAU KHI nhận (khách bom/khách huỷ/sự cố), xảy ra khi tài xế
+  # đang trên đường đón. Sim cũ hoàn thành 99.6% cuốc đã nhận — "quá sạch" (Cường §5.7).
+  # 0.05 = ASSUMPTION hiệu chỉnh để completion rơi vào dải thực tế [0.92, 0.97]
+  # (bảng chẩn đoán spec `00-sim-overhaul-master.md` §2: thực tế ~95%). Đo lại: 0.943.
+  cancel_after_accept_rate: 0.05
+  # --- T-045d (UPDATE-081): tài xế BIẾT SỐT RUỘT ---
+  # Đo được: khoảng chờ tới **269 phút** trong khi 20-30% đơn giờ cao điểm hết hạn. Truy nguyên:
+  # `_actor_demand_hint` là PRIOR cache theo (actor, giờ), KHÔNG cập nhật từ trải nghiệm; nếu ô
+  # hiện tại là cực đại địa phương thì `best_cell == actor.cell` suốt cả giờ ⇒ ngồi im.
+  # Người thật rỗi 40 phút không đơn nào sẽ kết luận mình sai chỗ và đi — kể cả tới chỗ mình
+  # NGHĨ là kém hơn. Vì vậy không thể chỉ hạ ngưỡng; phải BỎ HẲN phép so sánh khi sốt ruột kịch.
+  #
+  # Escalation theo `idle_streak_min` (phút rỗi liên tục kể từ lần được CHÀO gần nhất):
+  #   n = idle_streak // step, cắt trần `max_steps`
+  #   ring 1→1+n · ngưỡng 1.25→1.25−0.10n · p(đi) 0.5→0.5+0.20n · n≥max_steps ⇒ thôi tin niềm tin
+  #
+  #   step/max | served |  max  |  p99  | >90′ | cuốc/tx
+  #      TẮT   | 0.764  | 269′  | 152′  | 45.3 |  10.1
+  #    20 / 2  | 0.787  |  59′  |  41′  |  0.0 |  10.4   ← chốt
+  #    30 / 2  | 0.777  |  76′  |  60′  |  0.3 |  10.3
+  #    15 / 3  | 0.786  |  79′  |  46′  |  0.0 |  10.4
+  #
+  # ⚠ RANH GIỚI Q-08: đây là BẢN NĂNG, không phải lời khuyên — chỉ nới bán kính/bỏ kén, KHÔNG
+  # cấp thêm thông tin nào về cầu. served chỉ +0.023 so với tắt (ngưỡng tự đặt: ≤ +0.05) để
+  # không ăn mất dư địa của advisor. `test_idle_impatience.py` canh cả hai phía.
+  idle_impatience_enabled: true
+  idle_impatience_step_min: 20
+  idle_impatience_max_steps: 2
+
+actors:
+  # SIM-1: 50 → 60. Căn cứ research `realism-benchmarks.md`: "nếu unserved vẫn >20% mới
+  # giảm demand về ~1.000-1.050 HOẶC tăng 55-60 tài xế". Ta GIỮ cầu 1200 (không vặn cầu)
+  # nên dùng đòn bẩy CUNG. Tính: phục vụ 85% × 1251 ≈ 1063 cuốc; ~18-20 cuốc/tài xế/ngày
+  # (đã trừ nghỉ/sạc/idle) ⇒ cần 53-59 tài xế.
+  #
+  # SIM-1 CHỐT: 50 → 74 (đo, không đoán). Ước tính 53-59 ở trên giả định 18-20 cuốc/tài
+  # xế/ngày — nhưng mix mới có NHIỀU part-time (P1 3-4h) nên số cuốc TRUNG BÌNH thấp hơn.
+  # Sweep thật (8 seed, đã bật huỷ-sau-nhận): n=65→77.7% · 70→78.8% · 74→80.4% · 78→81.2%.
+  # Chọn 74 = giá trị đầu tiên đạt dải mục tiêu 80-85% với ít cung dư nhất.
+  # GIỚI HẠN ĐÃ BIẾT: trips/driver/day ≈ 12.3 < 18-22 của research. Nguyên nhân CƠ CẤU,
+  # không phải bug: cầu 1 quận = 1200 đơn/ngày ⇒ trần tuyệt đối 1200/74 ≈ 16 cuốc/tài xế
+  # kể cả phục vụ 100%. Thực tế tài xế chạy LIÊN QUẬN. Mở rộng zone đã được Cường DEFER
+  # ⇒ ghi nhận là giới hạn phạm vi, mở lại khi enlarge zone (xem DEFERRED).
+  # SIM-XANH: 74 → 90 (đo, không đoán). Đường THẬT dài hơn ~12% (factor 1.46 vs 1.3)
+  # ⇒ mỗi cuốc ngốn nhiều thời gian hơn ⇒ năng lực đội xe giảm tương ứng ⇒ cần thêm cung
+  # để giữ served trong dải thực tế. Sweep 8 seed (center 21200, eta 11):
+  #   74→0.742 · 78→0.760 · 84→0.779 · 90→0.797 ✅. Trips/driver tụt còn ~10 — giới hạn
+  # cơ cấu 1-quận (D-SIM-01) NẶNG THÊM do đường thật; mở lại khi enlarge zone.
+  n: 3000
+  archetype_mix:                   # tỷ trọng (twin-world §5.1)
+    # SIM-1: tái phân bổ để CUNG phủ ĐƯỜNG CẦU 24h. Trước đây không ai bắt đầu <6h và
+    # ca tan sớm ⇒ 05-06h có 0 tài xế, 21-23h chỉ 8-10 người trong khi cầu 168 đơn
+    # (served chỉ 61.9%). GIỮ P4 (tân binh lệch khung) làm dư địa advisor THEO CÁ NHÂN,
+    # nhưng không để thị trường trống. KHÔNG đổi tổng cầu.
+    P1: 0.14                       # part-time tối
+    P2: 0.20                       # full-time phủ 2 đỉnh
+    P3: 0.06                       # top performer
+    P4: 0.18                       # tân binh lệch khung (dư địa advisor)
+    P5: 0.12                       # lão làng chiều-tối
+    # SIM-1 vòng 2: P6 0.14→0.18, bù từ P2/P3 (khung trưa DƯ cung: 1.1-1.5 đơn/tài xế,
+    # hết hạn 4-19%) sang khung 06h (4.9 đơn/tài xế, hết hạn 43% — giờ ĐÓI cung duy nhất).
+    P6: 0.18                       # ca SÁNG SỚM (5:00-6:30) — phủ khung vàng 6-8h
+    P7: 0.12                       # ca TỐI-ĐÊM (15-16h → 23-24h)
+  charge_fleet_ratio_p3p5: 0.5     # P3/P5: 50% sạc cắm, còn lại swap (sim-policy-bundle §6)
+
+policy:                            # sim-policy-bundle-v0.md - Chuẩn hóa 100% Taxi Cơ Hữu (core_owned)
+  track: "core_owned"              # 100% 1000 xe là Taxi Cơ Hữu công ty
+  guaranteed_daily_floor_vnd: 650000.0  # Sàn đảm bảo GF-VIP / Taxi cơ hữu 650k/ngày (31/08/2026)
+  subsidy_per_missing_trip_vnd: 90000.0 # Bù 90k/cuốc thiếu nếu hệ thống phát thiếu < 6 cuốc
+  min_required_trips: 6            # Chỉ tiêu cuốc tối thiểu để xét bù
+  base_fare_vnd: 13000
+  base_km: 2.0
+  per_km_vnd: 4300
+  driver_share: 0.75             # ⚠ CẬN DƯỚI của dải mâu thuẫn nguồn [0,75–0,91]
+                                   # (driver-cost-structure-2026 §5: 91% official image-locked
+                                   # / 90→85% / 84,5% / 75%) — chọn bảo thủ, chờ D-POL-05
+  # ⚠ Thực tế có **5 mức** điểm/chuyến (5-10-15-20-30, Q&A official câu 1); sim chỉ mô hình 2.
+  point_peak: 10
+  point_normal: 5
+  # ✅ VERIFIED 2026-08-10 (UPDATE-202) — khớp CHÍNH XÁC với chính sách thật.
+  # Q&A official (cdn.xanhsm.com 07/2025) câu 1, nguyên văn: "Khung giờ cao điểm được quy đổi thành
+  # mốc điểm thưởng 5-10-15-20-30 theo từng dịch vụ ... (TỪ 22h-6h KHÔNG ÁP DỤNG TÍNH ĐIỂM THƯỞNG)".
+  # Câu 8 xác nhận lần hai. Dải [6..21] = có điểm 6:00–22:00 ⇒ khớp từng giờ.
+  # ⇒ Cổng `outside_point_window` của Cycle 5 (UPDATE-192) mô hình hoá một LUẬT CÓ THẬT.
+  # 🔴 KHOẢNG THIẾU đi kèm: chuyến trong khung 22h-6h được **phụ phí 10.000đ/chuyến** (câu 8) —
+  #   sim KHÔNG có. Đo: 9,6% số cuốc rơi vào khung này ⇒ thiếu ~10.722đ/người/ngày = 4,1% payout
+  #   (cận DƯỚI: sim chạy 05:00-24:00 nên không mô phỏng 0h-5h). Thêm = đổi payout ⇒ cần duyệt.
+  # ⚠ Nguồn là 07/2025; bản 12/2025 KHÔNG nhắc lại điều khoản 22h-6h ⇒ chưa chắc còn hiệu lực.
+  # ✅ CẬP NHẬT 2026-08-11 (UPDATE-207) theo **bảng official 01/12/2025** đọc từ ảnh
+  #   cdn.xanhsm.com/2025/12/74d896e5-3_bang-quy-doi-diem-1024x576.png
+  # Bảng đó **BỔ SUNG** điểm cho khung 22h00–5h59 (chú thích nguyên văn: "Bổ sung điểm
+  # thưởng khung giờ 22h00 - 5h59") ⇒ **KHÔNG còn khung 0 điểm**. Dải cũ [6..21] khớp bản
+  # Q&A 07/2025 ("từ 22h-6h không áp dụng tính điểm thưởng") — bản đó **đã bị thay thế**.
+  # ⚠ Giữ khoá này (thay vì xoá) để policy đổi lại thì chỉ sửa config, không sửa code.
+  point_window_hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+  # ✅ CẬP NHẬT 2026-08-11 (UPDATE-207): bảng official ghi **6h00–8h59** và **16h00–18h59**
+  # ⇒ giờ-bucket 6,7,**8** và 16,17,**18**. Bản cũ [6,7,16,17] **thiếu giờ 8 và 18**.
+  # 🔴 Vì sao đây là chỗ ĐAU: `hour_weights` cho 8h = 1,00 và 18h = **1,30 (cao nhất ngày)**
+  #   — tức phần thưởng đang bị mô hình hoá THẤP MỘT NỬA đúng hai giờ kênh vị trí bận nhất.
+  point_peak_hours: [6, 7, 8, 16, 17, 18]   # giờ khách ĐẶT (Q&A official câu 5)
+  # ⚠ NGUỒN GỐC (verified 2026-08-10, UPDATE-201 — trước đó KHÔNG ghi ở đâu):
+  # đây là **mốc thưởng TUẦN THẬT của Hà Nội chia 7**, không phải số tự đặt.
+  #   thật (greensm.com official):  400đ→200k · 700→400k · 1100→800k · 1400→1,2tr / TUẦN
+  #   ÷7:                            57,1/28.571 · 100/57.143 · 157,1/114.286 · 200/171.429
+  #   sim:                           60/30.000 · 100/60.000 · 160/115.000 · 200/170.000  (lệch <5%)
+  # ⇒ Sim KHÔNG thiếu lớp thưởng tuần — nó đã quy về ngày. `UPDATE-200` từng kết luận ngược,
+  #   đã RÚT ở `UPDATE-201`.
+  # ⚠ CHƯA VERIFY: có bảng thưởng tuần MỚI tới 1,6tr/tuần từ 23/03/2026 — bảng dưới có thể đã cũ.
+  # ⚠ LỆCH ĐÃ BIẾT: điều kiện thưởng thật tính theo **TUẦN** (tỷ lệ nhận & hoàn thành ≥85%/tuần
+  #   + ≥5 hoặc =4 ngày hoạt động/tuần); sim áp theo **NGÀY**. Xem
+  #   `research/policy/bike-income-policy-verified-2026-08-10.md`.
+  day_bonus_tiers:                 # điểm -> thưởng VND (nhận mốc cao nhất đạt được)
+    - [60, 30000]
+    - [100, 60000]
+    - [160, 115000]
+    - [200, 170000]
+  bonus_min_acceptance: 0.85
+  bonus_min_completion: 0.85
+
+  # ✅ MỞ KHOÁ 2026-08-17 — khối này đã có trong schema `policy_bundle` từ PI-4b (2026-07-24)
+  # nhưng để TRỐNG vì số còn image-locked; `D-POL-05` đã đọc được từ ảnh official 2026-08-10.
+  # Trước hôm nay chưa producer nào ghi `weekly_quota`, nên S5 luôn rơi vào nhánh
+  # `quota_available=False` và S8 không có `khoan_gap_vnd` — hai solver sống mà không có số.
+  #
+  # 🔴 Đây là số của **HÀ NỘI** (pilot Đống Đa). Khoán khác theo thị trường
+  # (HCM+Bình Dương/Đồng Nai 1,1tr · Đà Nẵng 1,0tr · QN/HP/NA/Huế/KH 500k), nên đổi pilot
+  # sang thành phố khác thì phải đổi CẢ KHỐI, không chỉ một số — đó là lý do khối này nằm
+  # trong config (một bundle mỗi thị trường) thay vì một bảng `by_market` trong code.
+  weekly_quota:
+    # Nguyên văn ảnh official 23/02/2026: "Trong trường hợp không đạt mức doanh số tối thiểu,
+    # Đối tác Tài xế sẽ bị truy thu 20% phần Doanh số khoán chưa đạt bằng hình thức Trừ Ví
+    # tài xế." — research/policy/bike-income-policy-verified-2026-08-10.md:148-160
+    # ⚠ Đơn vị tiền là DOANH SỐ (gross), KHÔNG phải payout của tài xế.
+    min_revenue_vnd: 1400000
+    min_active_days: 5
+    # 0.20 = official/HIGH, có trích nguyên văn (23/02/2026, toàn quốc).
+    # ⚠ Bản HN/HCM 04/05/2026 nhắc "tới 40%" — nhưng đó là official/MEDIUM, nằm trong Q&A, và
+    # chữ "tới" là TRẦN chứ không phải mức. Dùng 40% làm rate là biến một trần thành một con
+    # số phạt cụ thể trên ví tài xế. Giữ 0.20; mâu thuẫn khai trong caveat của solver.
+    clawback_rate: 0.20
+    market_scope: hanoi
+
+vehicle:                           # world-parameters.md §2
+  # Phạm vi pin là số DẪN XUẤT, không phải tham số: `behavior.soc_range_km` tính
+  # `soc_pct / consume_pct_per_km`, nên ở 100% SOC ta có swap = 100/1.6 = 62.5 km,
+  # charge = 100/0.85 = 117.6 km. D-M3-15 (2026-08-01): hai khoá `*_range_km` từng được chép
+  # cứng ở đây (60 và 110) và KHÔNG được đọc bởi bất kỳ dòng code nào — chúng đã lệch với giá
+  # trị hiệu dụng 4,2% và 6,9%, tức là tài liệu SAI nằm trong nguồn sự thật về cấu hình. Đã
+  # xoá thay vì sửa số: giữ một giá trị dẫn xuất trong config là mời gọi nó lệch lần nữa.
+  # Dải tham chiếu (world-parameters.md §2): pin swap ~55-70 km; Feliz S dịch vụ 100-130 km.
+  swap_consume_pct_per_km: 1.6     # 1.4-1.8  ⇒ phạm vi 62.5 km ở SOC 100%
+  charge_consume_pct_per_km: 0.85  #          ⇒ phạm vi 117.6 km ở SOC 100%
+  swap_soc_threshold_pct: 20       # đi đổi pin khi SOC dưới ngưỡng
+  home_charge_min: 210             # sạc cắm 3-4h (đội sạc)
+  # T-045b (Cycle P, 2026-07-28): chi phí TIỀN MẶT — sổ riêng `actor.cost_vnd`, KHÔNG đụng
+  # payout (tách gross/payout/net §5). Mặc định 0 = ĐÚNG chính sách hiện hành cho tài xế
+  # Platform độc quyền (đổi pin miễn phí official tới 31/03/2029 — research/economics/
+  # driver-cost-structure-2026.md). Số cho sweep: swap_fee 9000đ/lượt sau ưu đãi; cash/km:
+  # sạc nhà 70–93đ, sau ưu đãi 150đ. Đây là biến THEO COHORT × THỜI ĐIỂM, không phải hằng số.
+  swap_fee_vnd: 0
+  cash_cost_vnd_per_km: 0
+
+# Cấu hình xe ô tô điện (Taxi / Car phân hạng A, B, C, D) tại Hà Nội
+car_simulation:
+  enabled: true
+  primary_mode: true               # Hướng simulator thiên về mô phỏng ô tô
+  classes:
+    A_COMPACT:
+      name: "Green Car Compact (Hạng A)"
+      models: ["VF5", "Herio Green"]
+      base_fare_vnd: 20000
+      base_km: 1.0
+      per_km_vnd: 13000
+      seat_capacity: 4
+      battery_kwh: 37.23
+      kwh_per_100km: 14.5
+      range_km: 285
+    B_SEDAN:
+      name: "Green Car Sedan / Crossover (Hạng B)"
+      models: ["VF6"]
+      base_fare_vnd: 20500
+      base_km: 1.0
+      per_km_vnd: 13800
+      seat_capacity: 5
+      battery_kwh: 42.0
+      kwh_per_100km: 15.0
+      range_km: 318
+    C_SUV:
+      name: "Green Car Standard / Plus (Hạng C)"
+      models: ["VF e34", "VF7"]
+      base_fare_vnd: 21000
+      base_km: 1.0
+      per_km_vnd: 14500
+      seat_capacity: 5
+      battery_kwh: 42.0
+      kwh_per_100km: 15.5
+      range_km: 318
+    D_LUXURY:
+      name: "Green Luxury / GF-VIP (Hạng D)"
+      models: ["VF8", "VF9"]
+      base_fare_vnd: 25000
+      base_km: 1.0
+      per_km_vnd: 19000
+      seat_capacity: 5
+      battery_kwh: 87.7
+      kwh_per_100km: 19.5
+      range_km: 420
+
+  charging:
+    station_type: "vgreen_fast_dc"
+    charger_powers_kw: [30, 60, 150, 250]
+    avg_charge_duration_min: 35
+    low_soc_threshold_pct: 20
+    electricity_price_kwh_vnd: 3858
+
+# === BIẾN MÔI TRƯỜNG (specs/environment-variables.md) — mọi factor tắt được về 1 ===
+# scenario mặc định = dry_weekday (không mưa/sự kiện) → baseline. Đổi trên UI hoặc override.
+environment:
+  scenario: dry_weekday
+  rain:
+    # series: [] không mưa | [[t_min, mm/h],...] cố định | auto: sinh đợt mưa ngắn
+    series: []
+    auto: null                    # {duration_min_per_day: 30, peak_mmph: 12, window_min: [900,1200]}
+    demand: {delta_peak: 0.22, r_peak_mmph: 8.0}      # unimodal: tăng rồi giảm
+    speed:  {r_max: 0.28, r0_mmph: 9.0, v_floor_kmh: 7.0}
+    supply: {r_s_mmph: 10.0, p_cap: 0.5,
+             alpha: {P1: 0.45, P2: 0.20, P3: 0.10, P4: 0.15, P5: 0.30,
+                     P6: 0.25, P7: 0.35}}   # MOCK — độ tin thấp, hỏi tài xế sau
+             # P6 sáng sớm / P7 đêm: nhạy mưa hơn TB (tầm nhìn kém, đường trơn) — ASSUMPTION
+  temp:
+    const_c: 28.0
+    series: []
+    demand_factor: 1.0            # off (độ tin thấp)
+    range: {t_opt_hi_c: 30.0, beta_hot_per_c: 0.005, floor: 0.85}
+  dow:
+    type: weekday                 # weekday | friday | weekend
+    level: {weekday: 1.0, friday: 1.10, weekend: 1.05}
+  # events: [{venue_cell, t_start_min, t_end_min, attendance, capture_rate, sigma_cells,
+  #           route_effect: {speed_multiplier: 0.6, sigma_cells: 1.5}}]  # route_effect = giảm tốc cục bộ (survival)
+  events: []
+  combine:
+    demand_total_clamp: [0.3, 3.0]
+    log_raw_and_capped: true
+
+# === CƠ CHẾ LÀM GIÀU DỮ LIỆU & SỰ KIỆN ĐỘNG (gsm_sim/event) ===
+event_dynamics:
+  enabled: true                    # Bật/tắt toàn bộ cơ chế biến thiên ngày & thời tiết
+  start_date: "2026-07-01"         # Ngày xuất phát của chuỗi mô phỏng
+  demand_variation:
+    enabled: true
+    stochastic_sigma: 0.045        # Nhiễu hàng ngày ~4.5%
+    stochastic_clamp: [0.88, 1.15] # Giới hạn nhiễu an toàn
+  weather:
+    enabled: true
+    pleasant_speed_mult: 1.00
+    pleasant_demand_mult: 1.00
+    rain_speed_mult: 0.85          # Mưa: vận tốc giảm ~15%
+    rain_demand_mult: 0.92         # Mưa: khách giảm ~8%
+    fog_speed_mult: 0.58           # Sương mù: vận tốc giảm ~42%
+    fog_demand_mult: 0.94          # Sương mù: khách giảm ~6%
+    flood_city_demand_mult: 0.72   # Lũ lụt: cầu toàn thành giảm ~28%
+    flood_severe_speed_mult: 0.25  # Lũ lụt: ô ngập vừa vận tốc giảm trầm trọng còn 25% (3-5 km/h)
+    probabilities:
+      pleasant: 0.78               # Mát trời cao nhất: 78%
+      rain: 0.18                   # Trời mưa ít hơn: 18%
+      fog: 0.025                   # Sương mù siêu hiếm: 2.5%
+      flood: 0.015                 # Lũ lụt/ngập úng siêu hiếm: 1.5%
+
+output:
+  runs_dir: runs
+
+# --- SIM-3: cầu nối advice → action (UPDATE-046) ---
+# MẶC ĐỊNH TẮT. Bật lên là chuyển từ "World A: tự làm" sang "World B: làm theo chỉ dẫn".
+# SIM-4 sẽ chạy 2 nhánh cùng seed, chỉ khác cờ này (paired-seed / CRN).
+advice:
+  enabled: false
+  # Ai được nhận advice: none | single (theo `single_actor_id`) | share (theo `share`) | all
+  # Cường chốt 2026-07-26: mặc định **1 tài xế** — để SIM-4 đo được ảnh hưởng RIÊNG lên
+  # người đó, không bị nhiễu bởi việc cả thị trường cùng đổi hành vi. Bật `all` sau để
+  # kiểm guardrail (advice có làm xấu queue trạm / served của hệ thống không).
+  coverage: single
+  single_actor_id: null            # null = lấy tài xế P4 (tân binh) đầu tiên; xem runner
+  share: 0.0                       # chỉ dùng khi coverage=share
+  interval_min: 30                 # tài xế không mở app 30 giây/lần
+  # SIM-4: mỗi KÊNH tác động bật/tắt RIÊNG ⇒ đo được kênh nào tạo ra giá trị (attribution).
+  channels:
+    # ⛔ shift_plan TẮT theo điều khoản BẢN-CUỐI của ĐA-07 — Cường DUYỆT 2026-07-28 (UPDATE-087).
+    # Bằng chứng đúng chuẩn: n=100 seed TƯƠI, so biến thể hợp lệ đầu tiên (B1 vs B3w) — thêm
+    # shift_plan trên nền positioning: thu nhập ns, served −0,33đp SIG, đơn chết +4,1 SIG,
+    # Gini/HHI nhích xấu SIG. "Không hiệu quả thì TẮT để advisor IM LẶNG" — đây là lệnh đó.
+    # Bật lại để nghiên cứu: đổi true + đọc lại UPDATE-085 (REST visibility) trước.
+    shift_plan: false              # S2 shift_dp → REST/SWAP/END (SIM-3) — OFF theo ĐA-07
+    accept_lift: false             # cảnh báo tỷ lệ nhận dưới ngưỡng ĐỦ ĐIỀU KIỆN thưởng
+    shift_extend: false            # hoãn kết ca khi SÁT mốc điểm
+    rest_window: false             # D-SIM-03: dồn nghỉ/đổi pin vào khung vắng khách (solver S7)
+    swap_early: false              # E4/E-03 (UPDATE-156): đổi pin SỚM lúc rảnh + trạm vắng
+    station_choice: false          # E4/E-01: gợi TRẠM theo queue+pin+đường. ⛔ NO-GO bật mặc định
+                                   #   (UPDATE-160, n=100): FAIL ĐA-08 1a (payout −33đ ns) + 1b
+                                   #   (P1 −3.863đ ÂM-SIG) dù swap_wait −3,6′ SIG. Reopen: DEFERRED D-E4-06
+  # ✅ Kênh VỊ TRÍ — Cường DUYỆT bật mặc định 2026-07-28 (UPDATE-087). PASS 9/9 ĐA-08 trên
+  # n=100 seed tươi (payout_mean_all +6.016đ/người SIG · served +1,74đp · đơn chết −23,4 ·
+  # Gini & HHI GIẢM · đội +541k · veto 8(b)/9(b) PASS). `wait_only` = chỉ ghi đè khi bản năng
+  # là ĐỨNG CHỜ — không đụng go_swap/rest/end_shift (bài học REST). Equilibrium: hồ sơ
+  # research/simulation/multi-agent-equilibrium.md (cân bằng tồn tại; phủ tăng không tự phá).
+  positioning_overrides: wait_only
+  # --- E10 (specs/simulation/e10-advisor-noisy.md §2.1). Default GIỮ nguyên đường cũ ---
+  # Nguồn cầu của MarketStateProducer: oracle = λ config (đường hiện hành, bit-identical —
+  # fingerprint 5 seed × 2 config đã kiểm 2026-07-31) | realized = λ̂ từ cuốc ĐÃ ĐÓN
+  # (advisor mất λ — arm thí nghiệm). Giá trị lạ / trộn với market_demand_override ⇒ ValueError.
+  market_demand_source: oracle
+  realized_demand:
+    window_buckets: 3              # k — placeholder; GIÁ TRỊ HEADLINE = k* từ procedure §6.2
+                                   # (MAE one-step-ahead realized-only), đọc e10-prereg-locked.json
+    min_pickups: 5                 # min_n TOÀN CỤC (per-ô sẽ tái tạo lỗi mẫu số D-M3-01)
+  # Trigger của kênh vị trí: capacity (đường cũ — ứng viên = người ở ô cap_left==0, không đổi
+  # một ký tự) | wait (E10b — ứng viên theo THỜI GIAN CHỜ của ô + zone-veto). Neo T=30′ ≈ 2×
+  # median chờ hoà-vốn (14–18′), dưới trần cụt ~40–44′ của impatience 20′×2 (spec §4.2).
+  positioning_trigger: capacity
+  # --- Cycle 8 (UPDATE-198): trọng số KHOẢNG CÁCH TỚI MỐC thưởng trong hàm mục tiêu S4 ---
+  # 0.0 = TẮT = hành vi trước cycle (`capacity_alloc` rẽ nhánh tường minh; vân tay 5 seed ghim ở
+  # `tests/test_vi_tri_biet_moc.py::test_w0_KHONG_DOI_HANH_VI`).
+  # Vì sao có: `UPDATE-195` đo được hàm thưởng BẬC THANG còn +5.067đ/người/ngày ngay cả khi giữ
+  # TỔNG ĐIỂM cố định — tiền GSM trả thêm, không lấy của tài xế khác. Cơ chế mạnh nhất (ưu tiên
+  # ĐIỀU PHỐI) bị §5 cấm; đây là đường hợp lệ: đổi AI ĐƯỢC KHUYÊN ĐI ĐÂU.
+  # ⚠ Vì sao phải NHỎ: hạng tử mốc lật được chênh lệch SOC tới `w/(1−w)`×100 điểm ⇒ w=0,5 xoá
+  # SẠCH thang ưu tiên pin (`world.py:443-444`: "người ít pin không nên bị kéo chạy rỗng").
+  # Cộng sàn cứng `SOC_SAN_AN_TOAN_PCT = 20%` — dưới đó mốc KHÔNG mua được ưu tiên, bất kể w.
+  positioning_tier_weight: 0.0
+  # --- Cycle 21 (UPDATE-211): chọn Ô ĐÍCH theo GIÁ TRỊ thay vì KHOẢNG CÁCH ---
+  # Mâu thuẫn nội tại được sửa: `gsm_core/features/market_state.py` xếp hạng ô đích theo
+  # `sd_ratio` = cầu/cung hiệu dụng, rồi `world.py` VỨT thứ hạng đó đi và chọn ô GẦN NHẤT
+  # ⇒ `sd_ratio` chỉ còn tác dụng LỌC, mất hẳn tác dụng CHỌN.
+  # Đo trước khi viết code (3 seed, 432 lượt ứng viên): ô gần nhất ≠ ô sd_ratio cao nhất ở
+  # 88,2% số lượt; sd_ratio trung vị 1,66 → 2,41 (+40%).
+  # `nearest` = HÀNH VI HIỆN HÀNH, không đổi một ký tự (nhánh tường minh, vân tay 5 seed ghim
+  # ở `tests/test_vi_tri_biet_moc.py`). Đổi sang `value` là ĐỔI HÀNH VI ⇒ cần đo lại A/B.
+  # Cycle 22 (UPDATE-214, đang đo n=900) thêm chế độ `share` — chấm ô đích bằng **PHẦN CẦU KỲ VỌNG**
+  # ⚠ Khuyết tật đã biết của bản đang đo (UPDATE-213): tài xế **tự đếm mình là đối thủ** (98% lượt)
+  #   ⇒ thước thiên vị **ở lại gần chỗ cũ**. Không sửa giữa chừng để không làm hỏng phép đo.
+  # thay vì `sd_ratio` (Cycle 21, kết quả ÂM) hay khoảng cách thuần.
+  #   diem(C) = Σ_X expected_demand(X) / (1 + người gần X hơn C + 0,5×người ngang cự ly)
+  # Vì sao: đo được `grid_disk(k=8)` phủ **87%** vùng pilot ⇒ tài xế ở ô nào cũng là ứng viên cho
+  # gần hết số đơn; cái quyết định là **thứ hạng ETA**, không phải tỷ số cầu/cung của ô.
+  # Tầm với suy TỪ `dispatcher.candidate_ring_k_max`, không gõ tay (chống trôi như `Q-07`).
+  positioning_target_mode: nearest
+  # Đơn vị `sd_ratio` trên mỗi km — chỉ dùng khi mode=value. Điểm hoà vốn đo được ≈ 0,8.
+  # Đo dưới trần 2 km: phạt 0,4 đổi ô ở 54,4% lượt (+0,51 km) · phạt 1,2 ở 25,5% (+0,43 km);
+  # cả hai giữ trọn +40% sd_ratio ⇒ công thức phạt TỰ LỌC những cải thiện rẻ.
+  positioning_km_penalty: 0.8
+  # ⛔ Lan can CỨNG, độc lập `positioning_km_penalty`: km THÊM so với ô gần nhất, không phải
+  # khoảng cách tuyệt đối (trần tuyệt đối làm kênh TRƠ ở rìa vùng — họ lỗi `swap_early`
+  # UPDATE-156). Thả tự do thì p90 khoảng cách thêm là +3,91 km; không ai nên bị gửi đi 3 km
+  # rỗng vì một chỉ số PROXY (`expected_demand` là λ từ config, không phải cầu quan sát).
+  positioning_max_extra_km: 4.5        # Res 7: nới từ 2.0km lên 4.5km vì khoảng cách giữa tâm 2 ô Res 7 kề nhau đã là ~2.2-2.4km
+  positioning_wait:
+    threshold_min: 30.0            # T — quét {15,20,25,30,35}; 45/60 LOẠI cấu trúc
+    min_idle: 2                    # n_min theo Ô — n=1 là luật per-driver lách cửa sau
+  # Kênh accept_lift: nâng TẠM THỜI accept_base khi tỷ lệ nhận dưới `bonus_min_acceptance`.
+  # Căn cứ: policy.day_bonus() trả 0 khi acceptance < ngưỡng (0.85), BẤT KỂ điểm — nên tài
+  # xế accept_base 0.80 (P4 tân binh) mất TOÀN BỘ thưởng. Đây là sự thật policy, tác động ở
+  # mức TỶ LỆ, KHÔNG phải khuyên nhận/từ chối một đơn cụ thể (ranh giới sản phẩm §5).
+  accept_lift_step: 0.10           # mỗi lần nghe lời nâng 10 điểm %
+  accept_lift_max: 0.15            # trần: không biến tài xế thành người nhận mọi cuốc
+  min_offers_before_lift: 5        # đủ mẫu rồi mới kết luận tỷ lệ
+  # D-SIM-03: trần HOÃN nghỉ. Lan can bắt buộc — không được đẩy nghỉ đi vô hạn; ngoài ra
+  # còn 2 lan can cứng trong code: SOC thấp và MỆT thật thì luôn cho nghỉ/đổi pin.
+  # ⛔ POLICY_LOCKED (D-M3-08 §1.2b): đổi phải qua src/gsm_core/policy_locks.py + duyệt —
+  # sweep/override sẽ NỔ PolicyLockViolation ngay khi dựng world. Cả khoá dưới cũng vậy.
+  rest_defer_max_min: 120
+  shift_extend_max_min: 60         # trần hoãn kết ca (không "chạy vô hạn")
+  # E4/E-05 (UPDATE-155): kênh CON của shift_plan — chỉ nói khi lịch DP bảo KẾT CA sớm
+  # (phần ca còn lại kỳ vọng ~0; DP sau ADV-01 đã cân mốc thưởng). Mặc định TẮT; bật khi đo
+  # riêng giá trị lời khuyên kết-ca mà không kéo theo full shift_plan (ĐA-07 đã bác).
+  shift_plan_end_only: false
+  # E4/E-03 (UPDATE-156): kênh ĐỔI PIN SỚM lúc rảnh + trạm vắng (channels.swap_early bật/tắt).
+  # band: chỉ khuyên khi SOC ∈ (ngưỡng, ngưỡng+band] — lần đổi kế là TẤT YẾU, chỉ đổi thời điểm.
+  # idle: chỉ khuyên khi đã rảnh liên tục ≥ X phút — cơ hội mất gần 0.
+  swap_early_band_pct: 15
+  swap_early_idle_min: 10
+  # E4/E-01: chỉ NÓI khi trạm khác tiết kiệm ≥ X phút tổng (đường + chờ) so với bản năng —
+  # chênh vặt là "không có gì để nói" (R-08).
+  station_choice_min_gain_min: 3
+  # D-SIM-05 — CHỈ khuyên khi lời khuyên thực sự có ích.
+  # ⚠ ĐÍNH CHÍNH 2026-08-07 (Cycle 2): hai dòng cũ ở đây khẳng định *"SIM-4 chứng minh hiệu ứng
+  # VÁCH ĐÁ: nâng tỷ lệ mà KHÔNG chạm ngưỡng ⇒ tài xế ôm cuốc rẻ, mất 34k"*. Khẳng định đó
+  # **ĐÃ BỊ RÚT** từ `UPDATE-048` §2 (2026-07-26): đo lại **30 seed** cho nhóm KHÔNG chạm ngưỡng
+  # Δpayout **+18.207đ — DƯƠNG**, và *"−34k là một seed cá biệt"* (seed 1000). `UPDATE-048:56-60`
+  # còn đo chính cổng dựng từ lý lẽ đó là **INERT**.
+  # Vì sao phải sửa ở ĐÂY chứ không chỉ trong UPDATE: câu này đã **lan truyền đo được** — một
+  # vòng audit sau (`mm-03 MI-8`) đọc đúng hai dòng này rồi dựng cả một finding lên chúng.
+  # Giữ tham số, BỎ lý lẽ đã bị rút.
+  max_realized_accept: 0.93        # tỷ lệ nhận cao nhất ĐẠT ĐƯỢC khi lift kịch trần (ĐO, không bịa)
+  min_online_min_for_rate: 30      # dưới mức này chưa đủ lịch sử trong ca → dùng ước lượng lý thuyết
+  trips_per_hour_est: 1.5          # ước lượng cuốc/giờ khi chưa có lịch sử (đo được ~1.4-1.5)
+  # Cycle 2 (P3) — gộp TRẦN (`capacity_left`) theo ô CHA res-N thay vì từng ô res-9.
+  # `null` = TẮT, đường cũ bit-identical (đã chứng minh bằng vân tay 5 seed).
+  # Vì sao có: `slots = int(λ_ô // 1,5)` hỏi "ô 0,35 km này nuôi nổi mấy tài xế?" — với λ trung
+  # vị 0,480 thì đáp án 0 ở **89,5%** ô-giờ có cầu, và slots=0 ⇒ ô BIẾN MẤT khỏi `ranked_cells`.
+  # Nhưng dispatcher chào đơn bán kính 2,22 km ⇒ câu đúng là "VÙNG này nuôi nổi thêm mấy người?".
+  # Gộp res-8: λ trung vị 2,750 · slots=0 còn 29,4% · tổng slots 190 → 618.
+  # ⚠ Ô cha là phân hoạch RỜI NHAU (đĩa `grid_disk` chồng lấn ⇒ đếm trùng cầu).
+  #
+  # 🔴 2026-08-09 — GIỮ `null` **CÓ CHỦ Ý**, không phải quên bật. Cường ban đầu duyệt bật cả
+  # cờ này lẫn `k=8`; đo tương tác 30 seed ghép cặp thì hai thứ **THAY THẾ nhau**:
+  #     k=8 một mình      payout +6.945đ SIG · expired −29,1 · km rỗng 130,95′
+  #     gộp trần một mình payout +2.240đ SIG · expired −15,5 · km rỗng 129,33′
+  #     CẢ HAI            payout +6.038đ SIG · expired −31,0 · km rỗng 132,67′
+  #     tương tác I(payout) = −3.146,8đ [−5.371,0; −838,8] **SIG** ⇒ dưới cộng tính
+  # ⇒ Bật cả hai làm tài xế **MẤT 907đ/người** so với chỉ bật k=8, đổi lại 1,8 đơn/ngày và
+  # tốn thêm 1,7′ km rỗng. Cơ chế: k=8 đã cho dispatcher với xa hơn nên đơn mà gộp trần lẽ ra
+  # cứu được thì đã có người với tới; gộp trần khi đó chỉ ĐIỀU TÀI XẾ ĐI THÊM mà không đổi
+  # lại được cuốc. Cường quyết: **chỉ k=8**.
+  # ⚠ Code gộp trần vẫn nguyên và có test riêng — nó tắt vì **thừa ở k=8**, KHÔNG phải vì sai.
+  # Nếu `k` đổi lại thì phải ĐO LẠI tương tác, không mặc nhiên bật.
+  slots_pool_res: null
+  # bucket của shift_dp khi advisor chạy TRONG SIM.
+  # ⚠ ĐÍNH CHÍNH 2026-07-28 (b0-B): comment cũ ghi "khớp derive_shift_plan_input_l1r" — SAI.
+  # `gsm_core/features/shift_plan.py` có `BUCKET_MIN = 30`, tức hai producer dùng bucket KHÁC
+  # nhau cho cùng một solver. Hôm nay vô hại vì đường l1r chỉ được gọi trong test, chưa nối
+  # consumer nào (`shift_dp.solve` có đúng MỘT call site production: `advice_bridge.py`).
+  # Nhưng đây là bẫy: ai nối đường l1r vào sẽ thừa hưởng lệch 30 vs 60 y như BUG-S2-PARAMS.
+  # Ghi nợ ở T-046 ("hai tên một sự thật").
+  bucket_min: 60
+  # Mức TUÂN THỦ theo archetype — ASSUMPTION có lập luận, CHƯA có số thật:
+  # tân binh nghe nhiều nhất, top/lão làng đã có hệ thống riêng nên nghe ít nhất.
+  # Cần hiệu chỉnh khi có dữ liệu adherence thật (khảo sát tài xế hoặc A/B thật).
+  # ĐA-04 (duyệt 2026-07-27, thi công 2026-07-29) — NHỊP nói dùng chung sim/UI.
+  # Số baseline do design chốt; design ghi rõ "tuning sau dựa telemetry, không bằng cảm
+  # giác" ⇒ đừng vặn tay. Siết chặt hơn = experiment ARM riêng, không đổi baseline.
+  cadence:
+    # ⚠⚠ MẶC ĐỊNH LÀ **false** — NHỊP THUỘC SẢN PHẨM, KHÔNG THUỘC SIM (Cường chất vấn
+    # 2026-07-29; `tracking/PLAN-2026-07-29-cadence-thuoc-san-pham.md`).
+    #
+    #   SIM trả lời: *"nội dung lời khuyên có giá trị không?"* — tức đo TRẦN giá trị advisor.
+    #   SẢN PHẨM trả lời: *"advisor nói bao nhiêu là không phiền?"*
+    #
+    # Cooldown 20′ và ngân sách 6/ca là **ngân sách CHÚ Ý của người nghe** ⇒ ràng buộc UX của
+    # sản phẩm, không phải thuộc tính của lời khuyên. Để chúng bật trong sim làm sim trả lời
+    # câu thứ hai trong khi mọi người đọc nó như câu thứ nhất — và đo được là nó LÀM BẨN phép
+    # đo giá trị từng kênh (tương tác FIFO +3.249đ, artifact 37).
+    #
+    # Cái giữ phép đo khỏi washout là `DECISION_BUCKET_MIN` 30′ + `_claim_effect`, **KHÔNG
+    # phải** cooldown — đã chứng minh: tắt nhịp, decision-level vẫn lệch danh nghĩa +0,057
+    # (arm bật: +0,055). Test khoá `test_tat_nhip_khong_lam_washout_song_lai` (5 seed).
+    #
+    # ⚠ **LUẬT ĐO khi nhịp TẮT: KHÔNG dùng event-level adherence, chỉ dùng decision-level.**
+    # Không cooldown ⇒ số lần HỎI phụ thuộc CÂU TRẢ LỜI (bucket bị bỏ qua bị hỏi 4,93 lần,
+    # bucket được nghe theo 2,38 lần) ⇒ event-level đếm thiếu followed, lệch tới 17đp.
+    #
+    # Bật `true` để chạy arm **"sản phẩm-như-thiết-kế"** — cơ chế còn nguyên, chỉ đổi mặc định.
+    # `enabled` CHỈ điều khiển các CỔNG; `adherence_coin` keyed là VÔ ĐIỀU KIỆN (Lỗi #13).
+    enabled: false
+    min_gap_min_per_topic: 20        # cooldown mỗi chủ đề
+    max_proactive_per_shift: 6       # ngân sách advice chủ động mỗi ca
+    # positioning NGOÀI ngân sách: là kênh DUY NHẤT đã chứng minh dương SIG (+4.000đ,
+    # artifact 29). Bật cờ này để ĐO arm siết, đừng mặc định (xem docstring bridge).
+    # ⚠ Cờ này điều khiển ĐỐI XỨNG: tắt thì positioning vừa không TIÊU ngân sách vừa không
+    # BỊ nó chặn (call site short-circuit) — đã kiểm bằng đo, không kênh `positioning` nào
+    # nằm trong danh sách bị nén ở config mặc định.
+    count_positioning_in_budget: false
+
+  adherence_by_archetype:
+    P1: 0.55
+    P2: 0.50
+    P3: 0.30
+    P4: 0.75
+    P5: 0.30
+    P6: 0.50
+    P7: 0.50
+
+# AdviceCheckpoint trace/presenter is observational only in the simulator. Keep both
+# gates off/template by default so enabling trace capture cannot enable an agent or
+# alter world dynamics (UPDATE-126).
+checkpoint_shadow:
+  enabled: false
+  presentation_mode: template
+
+# --- SIM-XANH Phase 1: đường THẬT từ OSRM (UPDATE-054) ---
+# Ma trận fetch MỘT LẦN (scripts/fetch_osrm_matrix.py), sim đọc OFFLINE. Đo được:
+# factor median 1.46 (p10 1.24 · p90 1.94) — detour hằng 1.3 cũ ƯỚC NON đường Hà Nội.
+# enabled: false ⇒ trở về đúng hành vi cũ từng con số (cổng an toàn, có test).
+routing:
+  enabled: true
+  matrix_file: osrm_matrix_hanoi.parquet
+
+
+# --- SIM-XANH Phase 2: chi tiết XanhSM (UPDATE-055) ---
+
+# Rating khách chấm sau cuốc. RNG stream RIÊNG (không đụng stream hành vi ⇒ không làm
+# trôi hiệu chỉnh SIM-1/P1). p_rated: không phải cuốc nào khách cũng chấm.
+rating:
+  p_rated: 0.75                    # ASSUMPTION (không có số công khai); benchmark 5★ ~0.78
+  p5_by_archetype:                 # chất lượng phục vụ theo kinh nghiệm — ASSUMPTION có lập luận
+    P1: 0.74
+    P2: 0.80
+    P3: 0.88                       # top: điểm sao cao là lý do họ là top
+    P4: 0.68                       # tân binh: sai đường/chậm nhiều hơn
+    P5: 0.85
+    P6: 0.78
+    P7: 0.76
+  p4_star: 0.75                    # phần KHÔNG-5★ chia: 75% là 4★, còn lại 1-3★
+
+# Chương trình TÂN BINH — cấu trúc THẬT từ greensm.com (fetch 2026-07-26, Q-01):
+#   bike: combo đồng phục 810k miễn phí, TRUY THU nếu <200 cuốc/tháng trong 2 tháng đầu;
+#   mốc ≥50 cuốc trong 7 ngày đầu (điều kiện thưởng chuyển nền tảng);
+#   "bảo lãnh doanh thu" 90 ngày đầu — SỐ TIỀN nằm trong ảnh (image-locked, D-POL-05).
+# Các SỐ TIỀN dưới đây là PROXY/ASSUMPTION (tham chiếu cấu trúc taxi 3M/90 ngày, scale bike):
+newbie_program:
+  enabled: true
+  tenure_newbie_max_days: 90       # "tài xế mới" = tenure < 90 ngày (khớp cửa sổ bảo lãnh)
+  first_week_trip_target: 50       # THẬT (greensm.com: ≥50 cuốc trong 7 ngày đầu)
+  first_week_bonus_vnd: 500000     # PROXY — bike scale từ cấu trúc taxi 700k×3
+  guarantee_days: 90               # THẬT (bảo lãnh doanh thu 90 ngày)
+  guarantee_gross_floor_vnd: 350000  # PROXY/ASSUMPTION — sàn doanh số/ngày khi đủ chuyên cần
+  guarantee_min_online_h: 6.0      # chống lạm dụng: chỉ bù khi thực sự vận doanh
+  combo_value_vnd: 810000          # THẬT (combo đồng phục 810.000đ)
+  combo_min_trips_per_month: 200   # THẬT (điều kiện giữ combo 2 tháng đầu)
+
+# Mission ngày (nền cho solver S6 mission_knapsack có kênh tác động).
+# Catalog MOCK — cấu trúc mô phỏng "Nhiệm Vụ Tiếp Theo" trong app (research đợt 4);
+# số tiền/mốc là MOCK, số thật image-locked (D-POL-05).
+missions:
+  enabled: true
+  daily_catalog:
+    - {mission_id: m-morning4,  name: "4 cuốc khung sáng 6-9h",   window: [6, 9],   target: 4,  reward_vnd: 20000}
+    - {mission_id: m-evening6,  name: "6 cuốc khung tối 17-20h",  window: [17, 20], target: 6,  reward_vnd: 30000}
+    - {mission_id: m-allday12,  name: "12 cuốc trong ngày",       window: null,     target: 12, reward_vnd: 40000}
+
+# E10b §4.7 — observer log-only cho control-run (World A): per-cell (n_idle, median streak)
+# + streak per-actor. 0 RNG, 0 ghi state; fingerprint bật/tắt phải IDENTICAL (test canh).
+probe:
+  wait_stats: false

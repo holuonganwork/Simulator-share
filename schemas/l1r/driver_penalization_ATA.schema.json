@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/driver_penalization_ATA",
+  "title": "driver_penalization_ATA (penalization_ATA)",
+  "description": "Sự kiện phạt/trừ tiền (UC6) — ENGINEER. amount có source policy.",
+  "type": "object",
+  "properties": {
+    "penalization_id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string"
+    },
+    "local_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "week_key": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "penalty_type": {
+      "type": "string",
+      "enum": [
+        "clawback_khoan",
+        "conduct",
+        "late",
+        "acceptance",
+        "other"
+      ]
+    },
+    "amount_vnd": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "related_metric": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ata_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "applied",
+        "pending",
+        "waived"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "amount_vnd",
+    "driver_id",
+    "local_date",
+    "penalization_id",
+    "penalty_type",
+    "schema_version",
+    "source",
+    "status"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id"
+  ],
+  "x-availability": "TBC-với-GSM (bảng thiếu cột — field ENGINEER)"
+}

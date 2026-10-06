@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l3/anomaly_alert_input",
+  "title": "anomaly_alert_input",
+  "description": "Input S9 AnomalyAlert (UC7). Cờ bất thường từ public_frauds — nhãn INFERRED. Guardrail: KHÔNG kết tội; chỉ 'ghi nhận dấu hiệu' + confidence + khuyến nghị kiểm tra. KHÔNG lộ evidence_ref/ngưỡng phát hiện (chống dạy lách).",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string"
+    },
+    "t_now": {
+      "type": "string"
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "fraud_id",
+          "fraud_type",
+          "severity",
+          "confidence",
+          "status"
+        ],
+        "properties": {
+          "fraud_id": {
+            "type": "string"
+          },
+          "detected_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fraud_type": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "reviewing",
+              "cleared",
+              "confirmed"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "view_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "explain_deadline_hours": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "Hạn giải trình trực tuyến (giờ) — official 48h từ 15/12/2025. null = không áp dụng."
+    }
+  },
+  "required": [
+    "driver_id",
+    "flags",
+    "schema_version",
+    "source",
+    "t_now",
+    "view_version"
+  ],
+  "additionalProperties": false
+}

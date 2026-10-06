@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/frauds/f2_route_deviation",
+  "title": "f2_route_deviation",
+  "description": "Thực thể phát hiện gian lận F2: Kéo dài hành trình cuốc xe (Route Deviation / Route Inflation). Áp dụng cho mô hình Taxi Cơ Hữu tại Hà Nội theo FRAUDS.md. Cơ chế phát hiện so sánh quãng đường thực tế tính cước (trips.distance_km) với quãng đường tối ưu đường bộ tra từ ma trận OSRM (osrm_matrix.road_km) giữa cặp ô đón/trả H3. Vi phạm khi độ lệch deviation_pct vượt ngưỡng Percentile P99 cùng phân hạng xe và không có cảnh báo ngập lụt hay cấm đường.",
+  "type": "object",
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "description": "Mã định danh duy nhất của vụ việc vi phạm F2 (vd: f2-20260924-b2c3d4e5)"
+    },
+    "fraud_type": {
+      "type": "string",
+      "const": "F2_ROUTE_DEVIATION",
+      "description": "Mã định danh loại vi phạm F2"
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm hệ thống phát hiện vi phạm (ISO-8601 UTC+7)"
+    },
+    "driver_id": {
+      "type": "string",
+      "description": "Mã tài xế vi phạm"
+    },
+    "vehicle_id": {
+      "type": "string",
+      "description": "Mã phương tiện"
+    },
+    "vin": {
+      "type": "string",
+      "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+      "description": "Số khung xe VinFast"
+    },
+    "depot_id": {
+      "type": "string",
+      "enum": [
+        "depot_gia_lam",
+        "depot_nam_tu_liem",
+        "depot_yen_nghia",
+        "hub_noi_bai",
+        "hub_my_dinh",
+        "hub_giap_bat"
+      ]
+    },
+    "track": {
+      "type": "string",
+      "const": "core_owned"
+    },
+    "trip_id": {
+      "type": "string",
+      "description": "Mã cuốc xe hoàn thành bị kéo dài cự ly"
+    },
+    "pickup_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm đón khách lên xe"
+    },
+    "complete_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm trả khách và chốt cước"
+    },
+    "pickup_h3": {
+      "type": "string",
+      "description": "Mã ô H3 đón khách"
+    },
+    "drop_h3": {
+      "type": "string",
+      "description": "Mã ô H3 trả khách"
+    },
+    "actual_distance_km": {
+      "type": "number",
+      "minimum": 0.3,
+      "description": "Quãng đường thực tế dùng để tính cước khách hàng trên trips.parquet"
+    },
+    "optimal_road_km": {
+      "type": "number",
+      "minimum": 0.3,
+      "description": "Quãng đường tối ưu đường bộ tính qua ma trận OSRM giữa pickup_h3 và drop_h3"
+    },
+    "deviation_km": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Số km chạy dôi dư so với đường tối ưu: actual_distance_km - optimal_road_km"
+    },
+    "deviation_pct": {
+      "type": "number",
+      "description": "Tỷ lệ lệch cự ly: (actual_distance_km - optimal_road_km) / optimal_road_km"
+    },
+    "percentile_p99_threshold": {
+      "type": "number",
+      "description": "Ngưỡng P99 của nhóm phương tiện cùng loại (chuẩn hóa outlier tương đối)"
+    },
+    "travel_mode": {
+      "type": "string",
+      "const": "car",
+      "description": "Phương thức vận chuyển (ô tô điện Taxi Cơ Hữu)"
+    },
+    "vehicle_class": {
+      "type": "string",
+      "enum": ["A_COMPACT", "B_SEDAN", "C_SUV", "D_LUXURY", "LIMO"],
+      "description": "Phân hạng xe"
+    },
+    "road_tier": {
+      "type": "string",
+      "enum": ["EXPRESSWAY", "ARTERIAL", "LOCAL_STREET"],
+      "description": "Phân loại phân cấp tuyến đường OSRM giữa pickup_h3 và drop_h3: EXPRESSWAY (Cao tốc, >= 70 km/h), ARTERIAL (Trục chính/Vành đai/Suýt cao tốc, 50-70 km/h), LOCAL_STREET (Đường thường/nội đô, < 50 km/h)"
+    },
+    "gross_fare_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Tổng tiền cước đã thu của khách hàng"
+    },
+    "fare_per_km_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Đơn giá cước mỗi km tương ứng với phân hạng xe"
+    },
+    "excess_fare_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Số tiền cước thu vượt của khách: deviation_km * fare_per_km_vnd"
+    },
+    "customer_refund_status": {
+      "type": "string",
+      "enum": ["pending", "refunded_to_wallet", "refunded_to_bank"],
+      "description": "Trạng thái hoàn trả 100% tiền cước vượt cho khách hàng"
+    },
+    "traffic_justification": {
+      "type": "object",
+      "properties": {
+        "severe_congestion_detected": { "type": "boolean" },
+        "flooding_detour_detected": { "type": "boolean" },
+        "road_closure_detected": { "type": "boolean" },
+        "highway_alternative_taken": {
+          "type": "boolean",
+          "description": "true nếu tài xế chọn lộ trình Cao tốc/Vành đai trên cao (nhanh hơn nhưng cự ly dài hơn) -> miễn trừ"
+        },
+        "justified": {
+          "type": "boolean",
+          "description": "true nếu đi vòng do lý do bất khả kháng (ngập lụt/phân luồng/chọn cao tốc hợp lệ) -> miễn trừ"
+        }
+      },
+      "required": ["justified"],
+      "description": "Kết quả thẩm định điều kiện giao thông/thời tiết tại thời điểm diễn ra cuốc xe"
+    },
+    "ata_penalty_vnd": {
+      "type": "integer",
+      "enum": [500000, 1000000],
+      "description": "Mức phạt hành chính trừ ví tài xế theo Quy tắc Ứng xử (500k - 1 triệu đồng)"
+    },
+    "service_quality_penalty": {
+      "type": "string",
+      "description": "Chế tài hạ điểm đánh giá chất lượng dịch vụ tháng và trừ thưởng ý thức 5 sao"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["light", "medium", "heavy"]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["flagged", "under_review", "confirmed", "appealed", "dismissed"]
+    }
+  },
+  "required": [
+    "incident_id",
+    "detected_at",
+    "driver_id",
+    "vehicle_id",
+    "vin",
+    "track",
+    "trip_id",
+    "road_tier",
+    "actual_distance_km",
+    "optimal_road_km",
+    "deviation_km",
+    "deviation_pct",
+    "percentile_p99_threshold",
+    "excess_fare_vnd",
+    "customer_refund_status",
+    "traffic_justification",
+    "severity",
+    "confidence",
+    "status"
+  ],
+  "additionalProperties": false
+}

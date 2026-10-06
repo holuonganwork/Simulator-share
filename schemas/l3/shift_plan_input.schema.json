@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l3/shift_plan_input",
+  "title": "shift_plan_input",
+  "description": "Input S2 ShiftDP. US-F1-04, F2-01/02. Pain #2.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string"
+    },
+    "t_now": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "buckets_remaining": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "soc_pct": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "points_now": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "demand_forecast": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "bucket",
+          "cell_cluster",
+          "expected_orders"
+        ],
+        "properties": {
+          "bucket": {
+            "type": "string",
+            "description": "bucket 15ph ISO start"
+          },
+          "cell_cluster": {
+            "type": "string"
+          },
+          "expected_orders": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "policy_bundle_version": {
+      "type": "string"
+    },
+    "view_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.1.0"
+    },
+    "rest_taken_min": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "Cycle R/H1 (2026-07-28, additive-optional): phút nghỉ ĐÃ nghỉ trong ca (gồm cả nghỉ bản năng). None/thiếu = nguồn không có (l1r) => solver dùng công thức mù-state cũ, nhãn degraded."
+    },
+    "shift_elapsed_min": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "Phút đã vào ca tính tới t_now — cần để quy nhu cầu nghỉ CẢ CA. Cùng lô additive với rest_taken_min."
+    }
+  },
+  "required": [
+    "buckets_remaining",
+    "driver_id",
+    "points_now",
+    "policy_bundle_version",
+    "schema_version",
+    "source",
+    "t_now",
+    "view_version"
+  ],
+  "additionalProperties": false
+}

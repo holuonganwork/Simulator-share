@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/driver_orders_rush_hours",
+  "title": "driver_orders_rush_hours",
+  "description": "Doanh số tách rush/normal hour (UC2). normal+rush=total.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string"
+    },
+    "local_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "total_order": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "commission": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "total_fee": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "revenue_not_relate_driver": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "total_order_normal_hour": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "commission_normal_hour": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "total_fee_normal_hour": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "revenue_not_relate_driver_normal_hour": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "total_order_rush_hour": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "commission_rush_hour": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "total_fee_rush_hour": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "revenue_not_relate_driver_rush_hour": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "commission",
+    "driver_id",
+    "local_date",
+    "schema_version",
+    "source",
+    "total_fee",
+    "total_order"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id"
+  ]
+}

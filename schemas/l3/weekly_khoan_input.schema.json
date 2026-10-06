@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l3/weekly_khoan_input",
+  "title": "weekly_khoan_input",
+  "description": "Input S5 WeeklyKhoanFeasibility (UC3/UC4). Khoán tuần + truy thu (Vận Doanh 23/02/2026). money_basis=gross (quyết định (d) 2026-07-24).",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string"
+    },
+    "t_now": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "week_key": {
+      "type": "string",
+      "description": "ISO week, vd 2026-W27"
+    },
+    "week_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "week_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "revenue_so_far_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "ĐO ĐƯỢC: Σ driver_income_daily.total_fee trong tuần (GROSS)"
+    },
+    "days_active": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "days_remaining": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "hours_budget_remaining": {
+      "type": "number",
+      "minimum": 0
+    },
+    "avg_revenue_per_hour": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "ĐO ĐƯỢC từ lịch sử; null = chưa đủ dữ liệu"
+    },
+    "quota": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "null = policy chưa có số khoán (TBC-với-GSM) → solver KHÔNG bịa",
+      "properties": {
+        "min_revenue_vnd": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "min_active_days": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "clawback_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "market_scope": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "money_basis": {
+      "type": "string",
+      "enum": [
+        "gross",
+        "driver_payout"
+      ],
+      "description": "Cơ sở tính khoán — mặc định gross (doanh số); ASSUMPTION chờ GSM xác nhận"
+    },
+    "policy_bundle_version": {
+      "type": "string"
+    },
+    "view_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "days_active",
+    "days_remaining",
+    "money_basis",
+    "policy_bundle_version",
+    "revenue_so_far_vnd",
+    "schema_version",
+    "source",
+    "t_now",
+    "view_version",
+    "week_key"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/advisor/advice_artifact@1.0.0",
+  "title": "advice_artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_id": {"type": "string", "minLength": 1},
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "artifact_type": {"type": "string", "enum": ["state_snapshot", "solver_artifact", "solver_input", "solver_report"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "data_mode": {"type": "string", "enum": ["synthetic", "mock-realdata", "live"]},
+    "is_mock": {"type": "boolean"},
+    "payload": {"type": "object"}
+  },
+  "required": ["schema_version", "artifact_id", "digest", "artifact_type", "created_at", "data_mode", "is_mock", "payload"]
+}

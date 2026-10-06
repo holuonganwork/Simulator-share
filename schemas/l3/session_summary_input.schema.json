@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l3/session_summary_input",
+  "title": "session_summary_input",
+  "description": "Input S3 F3Patterns. US-F3-01/02/03. Pain #1 #2 #3.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string"
+    },
+    "session_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "trips": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "inferred_activities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "từ L2i — label INFERRED giữ nguyên khi hiển thị"
+    },
+    "payout_breakdown": {
+      "type": "object",
+      "required": [
+        "gross_vnd",
+        "driver_payout_vnd"
+      ],
+      "properties": {
+        "gross_vnd": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "VND nguyên (không âm)"
+        },
+        "driver_payout_vnd": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "VND nguyên (không âm)"
+        },
+        "estimated_net_vnd": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "chỉ khi đủ known costs + definition version"
+        },
+        "net_definition_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "day_state_end": {
+      "type": "object"
+    },
+    "view_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "payout_breakdown",
+    "schema_version",
+    "session_date",
+    "source",
+    "trips",
+    "view_version"
+  ],
+  "additionalProperties": false
+}

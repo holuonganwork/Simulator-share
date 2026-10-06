@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/compare_route_to_optimal",
+  "title": "compare_route_to_optimal",
+  "description": "Xem src/lcx_core/agent/tools/compare_route_to_optimal.py",
+  "input": {
+    "type": "object",
+    "properties": { "trip_id": { "type": "string" } },
+    "required": ["trip_id"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "trip_id": { "type": "string" },
+      "driver_id": { "type": "string" },
+      "travel_mode": { "type": "string" },
+      "recorded_distance_km": { "type": "number" },
+      "recorded_duration_seconds": { "type": ["integer", "null"] },
+      "optimal_road_km": { "type": "number" },
+      "optimal_duration_seconds": { "type": "number" },
+      "deviation_pct": { "type": ["number", "null"] },
+      "caveat": { "type": "string" }
+    }
+  }
+}

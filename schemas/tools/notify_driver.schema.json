@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/notify_driver",
+  "title": "notify_driver",
+  "description": "Xem src/lcx_core/agent/tools/notify_driver.py. Fail-closed: chan neu message chua tu khoa lo nguong/thuat toan (guardrail_threshold_leak) HOAC chua so khong truy duoc nguon (unverified_numbers, xem agent/verification.py).",
+  "input": {
+    "type": "object",
+    "properties": {
+      "driver_id": { "type": "string" },
+      "message": { "type": "string" },
+      "source_texts": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Toan bo text evidence/trich dan chinh sach da dung de sinh message - dung de xac minh so lieu."
+      },
+      "case_id": { "type": ["string", "null"] }
+    },
+    "required": ["driver_id", "message", "source_texts"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "driver_id": { "type": "string" },
+      "case_id": { "type": ["string", "null"] },
+      "message": { "type": "string" },
+      "sent_at": { "type": "string", "format": "date-time" }
+    }
+  },
+  "error_codes": ["guardrail_threshold_leak", "unverified_numbers"]
+}

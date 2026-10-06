@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/get_driver_risk_profile",
+  "title": "get_driver_risk_profile",
+  "description": "Xem src/lcx_core/agent/tools/get_driver_risk_profile.py",
+  "input": {
+    "type": "object",
+    "properties": { "driver_id": { "type": "string" } },
+    "required": ["driver_id"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "driver_id": { "type": "string" },
+      "days_observed_in_window": { "type": "integer" },
+      "days_observed_caveat": { "type": "string" },
+      "total_accepted": { "type": "integer" },
+      "total_cancelled": { "type": "integer" },
+      "total_completed": { "type": "integer" },
+      "avg_cancellation_rate": { "type": "number" },
+      "case_history": { "type": "array" },
+      "n_prior_cases": { "type": "integer" },
+      "n_confirmed_cases": { "type": "integer" }
+    }
+  }
+}

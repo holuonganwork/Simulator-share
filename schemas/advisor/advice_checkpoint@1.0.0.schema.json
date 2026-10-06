@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/advisor/advice_checkpoint/1.0.0",
+  "title": "advice_checkpoint",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "checkpoint_id": {"type": "string", "minLength": 1},
+    "driver_id": {"type": "string", "minLength": 1},
+    "topic": {"type": "string", "enum": ["bonus_eligibility", "energy", "rest", "shift_boundary", "shift_timing", "positioning_sim_only", "policy_info", "safety_reserved"]},
+    "surface": {"type": "string", "enum": ["brief", "nudge", "recap"]},
+    "trigger_type": {"type": "string", "enum": ["state_change", "poll", "user_pull", "timer", "solver_update"]},
+    "current_action": {"type": ["object", "null"], "additionalProperties": false, "properties": {"code": {"type": "string"}, "label_id": {"type": "string"}}, "required": ["code", "label_id"]},
+    "future_plan": {"type": "array", "items": {"type": "object", "additionalProperties": false, "properties": {"code": {"type": "string"}, "label_id": {"type": "string"}, "window": {"type": ["object", "null"]}}, "required": ["code", "label_id"]}},
+    "action_window": {"type": ["object", "null"], "additionalProperties": false, "properties": {"start": {"type": "string", "format": "date-time"}, "end": {"type": "string", "format": "date-time"}}, "required": ["start", "end"]},
+    "validity": {"type": "object", "additionalProperties": false, "properties": {"valid_from": {"type": "string", "format": "date-time"}, "valid_until": {"type": "string", "format": "date-time"}, "freshness_deadline": {"type": "string", "format": "date-time"}}, "required": ["valid_from", "valid_until", "freshness_deadline"]},
+    "urgency_band": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+    "material_revision": {"type": "string", "minLength": 1},
+    "reason_code": {"type": "string", "minLength": 1},
+    "confidence_band": {"type": "string", "enum": ["low", "medium", "high"]},
+    "snapshot_ref": {"type": "string", "minLength": 1},
+    "solver_artifact_ref": {"type": "string", "minLength": 1},
+    "solver_set": {"type": "array", "items": {"type": "string"}},
+    "data_mode": {"type": "string", "enum": ["synthetic", "mock-realdata", "live"]},
+    "is_mock": {"type": "boolean"},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "required": ["schema_version", "checkpoint_id", "driver_id", "topic", "surface", "trigger_type", "current_action", "future_plan", "action_window", "validity", "urgency_band", "material_revision", "reason_code", "confidence_band", "snapshot_ref", "solver_artifact_ref", "solver_set", "data_mode", "is_mock", "created_at"]
+}

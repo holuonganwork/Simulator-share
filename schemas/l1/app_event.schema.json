@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1/app_event",
+  "title": "app_event",
+  "description": "App events observable (action-space研究). US-F3-02, cảnh báo ngưỡng. Pain #3.",
+  "type": "object",
+  "properties": {
+    "event_id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string",
+      "x-sensitivity": "PII-id"
+    },
+    "t": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "go_online",
+        "go_offline",
+        "set_offline_after_trip",
+        "offer_shown",
+        "accept",
+        "decline",
+        "cancel",
+        "complete",
+        "forced_auto_accept_on",
+        "forced_auto_accept_off"
+      ]
+    },
+    "order_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "cancel_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "event_id",
+    "kind",
+    "schema_version",
+    "source",
+    "t"
+  ],
+  "additionalProperties": false
+}

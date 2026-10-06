@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/telemetry/vehicle_registry",
+  "title": "vehicle_registry",
+  "description": "Hang muc 6 'Chien luoc lam giau du lieu' (mentor giao 2026-09-18). Danh sach xe DA DANG KY voi driver_id dang duoc giao - dung de doi chieu vehicle_telemetry_ping.vin va charging_session_log.vehicle_vin voi mot xe THAT SU ton tai trong he thong (phat hien 'xe ma' - VIN khong khop bat ky dong nao o day).",
+  "type": "object",
+  "properties": {
+    "vin": {
+      "type": ["string", "null"],
+      "description": "17 ky tu ISO cho oto. null cho xe may (dung driver_id + vehicle_id lam dinh danh)."
+    },
+    "vehicle_id": {
+      "type": "string",
+      "description": "Dinh danh noi bo on dinh cho CA xe may lan oto (vd 'veh-<uuid>') - khac VIN, luon khac null."
+    },
+    "vehicle_type": { "type": "string", "enum": ["bike", "car"] },
+    "model": { "type": "string" },
+    "battery_capacity_kwh": { "type": "number", "minimum": 0 },
+    "assigned_driver_id": {
+      "type": ["string", "null"],
+      "description": "null neu xe dang ranh (chua giao cho tai xe nao)."
+    },
+    "registered_at": { "type": "string", "format": "date-time" },
+    "status": { "type": "string", "enum": ["active", "maintenance", "retired"] }
+  },
+  "required": ["vehicle_id", "vehicle_type", "model", "registered_at", "status"],
+  "additionalProperties": false
+}

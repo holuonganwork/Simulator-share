@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l3/market_state_view",
+  "title": "market_state_view",
+  "description": "L3 view CUNG-CẦU theo ô cho solver vị trí (T-045a). Cycle V (2026-07-28): view này từng emit schema_version mà KHÔNG có schema/entity trong registry — validate không thể chạm tới (lỗ do khảo sát B-02 tìm ra). Điểm mấu chốt của view: supply_incoming trừ cả người ĐANG TỚI + advice vừa phát; thiếu dữ liệu cung ⇒ mọi trường supply là null + positioning_allowed=false (nói ra, không đoán).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "t_now", "bucket_min", "cells", "ranked_cells",
+               "availability", "positioning_allowed", "source"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "t_now": {"type": "string"},
+    "bucket_min": {"type": "integer", "minimum": 1},
+    "cells": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["expected_demand", "supply_now", "supply_incoming",
+                     "supply_effective", "sd_ratio", "capacity_left"],
+        "properties": {
+          "expected_demand": {"type": "number", "minimum": 0},
+          "supply_now": {"type": ["integer", "null"], "minimum": 0},
+          "supply_incoming": {"type": ["integer", "null"], "minimum": 0},
+          "supply_effective": {"type": ["integer", "null"], "minimum": 0},
+          "sd_ratio": {"type": ["number", "null"], "minimum": 0},
+          "capacity_left": {"type": ["integer", "null"], "minimum": 0}
+        }
+      }
+    },
+    "ranked_cells": {"type": "array", "items": {"type": "string"}},
+    "availability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["demand", "supply", "supply_incoming"],
+      "properties": {
+        "demand": {"enum": ["available", "degraded", "absent"]},
+        "supply": {"enum": ["available", "degraded", "absent"]},
+        "supply_incoming": {"enum": ["available", "degraded", "absent"]}
+      }
+    },
+    "positioning_allowed": {"type": "boolean"},
+    "source": {"enum": ["MOCK", "REAL", "PROXY", "ESTIMATED", "EXTERNAL"]}
+  }
+}

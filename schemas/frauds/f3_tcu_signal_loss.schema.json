@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/frauds/f3_tcu_signal_loss",
+  "title": "f3_tcu_signal_loss",
+  "description": "Thực thể phát hiện gian lận F3: Làm mất tín hiệu định vị viễn thám TCU (GPS/TCU Tampering / Signal Loss). Áp dụng cho mô hình Taxi Cơ Hữu theo FRAUDS.md. Cơ chế phát hiện dựa trên khoảng cách thời gian giữa 2 ping viễn thám liên tiếp trong ca trực vượt quá 15 phút tại nội thành Hà Nội, và công-tơ-mét ODO phần cứng VinFast khi có tín hiệu trở lại tăng vọt >= 3.0 km (chứng minh xe vẫn lăn bánh khi mất sóng). Truy thu cước theo độ chênh lệch ODO.",
+  "type": "object",
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "description": "Mã định danh duy nhất của vụ việc vi phạm F3 (vd: f3-20260924-c3d4e5f6)"
+    },
+    "fraud_type": {
+      "type": "string",
+      "const": "F3_TCU_SIGNAL_LOSS",
+      "description": "Mã định danh loại vi phạm F3"
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm hệ thống phát hiện vi phạm (ISO-8601 UTC+7)"
+    },
+    "driver_id": {
+      "type": "string",
+      "description": "Mã tài xế vi phạm"
+    },
+    "vehicle_id": {
+      "type": "string",
+      "description": "Mã phương tiện"
+    },
+    "vin": {
+      "type": "string",
+      "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+      "description": "Số khung xe VinFast thuộc sở hữu GSM"
+    },
+    "depot_id": {
+      "type": "string",
+      "enum": [
+        "depot_gia_lam",
+        "depot_nam_tu_liem",
+        "depot_yen_nghia",
+        "hub_noi_bai",
+        "hub_my_dinh",
+        "hub_giap_bat"
+      ],
+      "description": "Depot quản lý xe có nghĩa vụ tiếp nhận và kiểm định hộp TCU"
+    },
+    "track": {
+      "type": "string",
+      "const": "core_owned"
+    },
+    "shift_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Ngày diễn ra ca trực bị mất tín hiệu"
+    },
+    "declared_shift_start_min": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1440,
+      "description": "Phút bắt đầu ca trực cam kết theo hợp đồng (tính từ 00:00)"
+    },
+    "declared_shift_end_min": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1440,
+      "description": "Phút kết thúc ca trực cam kết theo hợp đồng"
+    },
+    "dropout_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm ghi nhận ping cuối cùng trước khi mất tín hiệu"
+    },
+    "reconnect_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm ghi nhận ping đầu tiên khi có tín hiệu trở lại"
+    },
+    "gap_minutes": {
+      "type": "integer",
+      "minimum": 15,
+      "description": "Thời gian mất sóng liên tục (ngưỡng vi phạm > 15 phút)"
+    },
+    "odo_before_dropout_km": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Chỉ số ODO CAN-bus trước khi mất tín hiệu"
+    },
+    "odo_after_reconnect_km": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Chỉ số ODO CAN-bus ngay khi kết nối lại tín hiệu"
+    },
+    "odo_jump_km": {
+      "type": "number",
+      "minimum": 3.0,
+      "description": "Số km xe đã chạy trong lúc mất sóng: odo_after_reconnect_km - odo_before_dropout_km (ngưỡng >= 3.0 km)"
+    },
+    "battery_soc_before_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Mức pin SOC trước khi mất sóng (%)"
+    },
+    "battery_soc_after_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Mức pin SOC sau khi có sóng lại (%)"
+    },
+    "battery_soc_drop_pct": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Độ sụt giảm pin trong thời gian mất sóng: battery_soc_before_pct - battery_soc_after_pct"
+    },
+    "phone_connectivity_lost": {
+      "type": "boolean",
+      "description": "true nếu điện thoại bị tắt GPS/ngắt mạng nhưng xe vẫn cấp nguồn cho hộp TCU"
+    },
+    "in_urban_4g_area": {
+      "type": "boolean",
+      "description": "Xác nhận vị trí mất sóng nằm trong khu vực nội thành Hà Nội có phủ sóng 4G tốt (loại trừ sự cố mạng viễn thông)"
+    },
+    "last_known_location": {
+      "type": "object",
+      "required": ["lat", "lng"],
+      "properties": {
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "h3": { "type": "string" }
+      },
+      "description": "Vị trí trước khi mất sóng"
+    },
+    "reconnect_location": {
+      "type": "object",
+      "required": ["lat", "lng"],
+      "properties": {
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "h3": { "type": "string" }
+      },
+      "description": "Vị trí khi xuất hiện tín hiệu trở lại"
+    },
+    "rate_per_km_vnd": {
+      "type": "integer",
+      "const": 13000,
+      "description": "Đơn giá cước trung bình áp dụng tính truy thu cho F3 (13.000 VNĐ/km theo FRAUDS.md)"
+    },
+    "clawback_amount_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Số tiền cước ước tính bị truy thu: odo_jump_km * 13.000 VNĐ"
+    },
+    "hardware_inspection_required": {
+      "type": "boolean",
+      "const": true,
+      "description": "Yêu cầu bắt buộc điều xe về Depot niêm phong và kiểm định kỹ thuật hộp TCU"
+    },
+    "hardware_seal_status": {
+      "type": "string",
+      "enum": ["pending_depot_check", "intact", "tampered_cable_cut", "tampered_rf_jammer_detected", "device_faulty"],
+      "description": "Kết quả giám định niêm phong phần cứng tại Depot"
+    },
+    "disciplinary_action": {
+      "type": "string",
+      "enum": [
+        "suspension_pending_inspection",
+        "official_reprimand_clawback",
+        "labor_contract_termination_and_damage_claim"
+      ],
+      "description": "Chế tài kỷ luật lao động tương ứng"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["light", "medium", "heavy"]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["flagged", "under_review", "confirmed", "appealed", "dismissed"]
+    }
+  },
+  "required": [
+    "incident_id",
+    "detected_at",
+    "driver_id",
+    "vehicle_id",
+    "vin",
+    "depot_id",
+    "track",
+    "shift_date",
+    "gap_minutes",
+    "odo_jump_km",
+    "clawback_amount_vnd",
+    "hardware_inspection_required",
+    "severity",
+    "confidence",
+    "status"
+  ],
+  "additionalProperties": false
+}

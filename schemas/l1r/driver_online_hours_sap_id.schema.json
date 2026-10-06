@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/driver_online_hours_sap_id",
+  "title": "driver_online_hours_sap_id",
+  "description": "Số giờ online/ngày (UC1). PII (full_name/phone/sap) optional — tool scrub bỏ.",
+  "type": "object",
+  "properties": {
+    "local_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "schedule_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "driver_id": {
+      "type": "string"
+    },
+    "full_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sap_profile_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hub_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "depot_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "phone_number": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "driver_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "online_time": {
+      "type": "number",
+      "minimum": 0,
+      "description": "giờ"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "local_date",
+    "online_time",
+    "schema_version",
+    "source"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id",
+    "full_name",
+    "sap_profile_id",
+    "phone_number"
+  ]
+}

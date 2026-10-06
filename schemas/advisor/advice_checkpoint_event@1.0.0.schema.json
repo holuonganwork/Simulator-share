@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/advisor/advice_checkpoint_event/1.0.0",
+  "title": "advice_checkpoint_event",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "event_id": {"type": "string", "minLength": 1},
+    "checkpoint_id": {"type": "string", "minLength": 1},
+    "driver_id": {"type": "string", "minLength": 1},
+    "display_id": {"type": ["string", "null"]},
+    "event_type": {"type": "string", "enum": ["created", "queued", "ready", "generation_started", "generated", "generation_failed", "offered", "displayed", "accepted", "dismissed", "expired", "superseded", "suppressed", "execution_observed"]},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "actor": {"type": "string", "enum": ["system", "advisor", "client", "driver", "observer"]},
+    "origin": {"type": "string", "enum": ["checkpoint", "product", "simulator", "client"]},
+    "reason_code": {"type": ["string", "null"]},
+    "relation_type": {"type": ["string", "null"], "enum": ["causal", "coincident", "unknown", null]},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "payload": {"type": "object"}
+  },
+  "required": ["schema_version", "event_id", "checkpoint_id", "driver_id", "display_id", "event_type", "occurred_at", "actor", "origin", "reason_code", "relation_type", "confidence", "payload"]
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/query_policy",
+  "title": "query_policy",
+  "description": "Xem src/lcx_core/agent/tools/query_policy.py. BAT BUOC truoc khi notify_driver hoac tra loi 'vi sao'/'theo quy che nao'.",
+  "input": {
+    "type": "object",
+    "properties": {
+      "question": { "type": "string" },
+      "top_k": { "type": "integer", "default": 2 }
+    },
+    "required": ["question"]
+  },
+  "output": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "source_id": { "type": "string" },
+        "title": { "type": "string" },
+        "text": { "type": "string" },
+        "cited_from": { "type": "string" },
+        "match_score": { "type": "integer" }
+      },
+      "required": ["source_id", "title", "text", "cited_from", "match_score"]
+    }
+  }
+}

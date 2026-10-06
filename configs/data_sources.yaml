@@ -1,0 +1,39 @@
+# Vi tri du lieu nguon. Sau khi gop vao repo_temp/SimulatorGSM-HaNoi (2026-09-21),
+# lcx_core song CHUNG mot repo/mot pyproject.toml voi gsm_sim/gsm_core - goc du
+# an ("." tu file config nay, tuc GOC repo) DA LA goc GSM_SIMULATOR, chua san
+# data/mock/realdata-v2 va research/simulation/data.
+# Co the override bang bien moi truong GSM_SIM_ROOT (xem src/lcx_core/data/gsm_loader.py).
+#
+# 2026-09-28: doi tu realdata-v1 (ban cu, con xe may, khong co vehicle_class)
+# sang realdata-v2 (100% Taxi Co Huu/o to, schema trips 1.1.0, phu dung 925/925
+# o Res 7 toan Ha Noi) - README tu truoc da noi lam vic nay nhung chua ai doi.
+# Schema v2 la SUPERSET cua v1 (chi them cot, khong bot), nen cac luat Tier A/B/C
+# cu van doc duoc binh thuong.
+#
+# QUAN TRONG: moi bang duoi day co source="MOCK"/"INFERRED" trong chinh du lieu -
+# day la du lieu tong hop co shape/quy mo giong san xuat, KHONG phai du lieu that.
+
+gsm_simulator_root: "."
+
+realdata_dir: "data/mock/realdata-v2"
+# Trips la H3 res 7 toan Ha Noi (configs/pilot_hanoi.yaml) => dung ma tran res 7.
+# (osrm_matrix_dd.parquet la res 9 chi Dong Da: khong khop cuoc nao => route_deviation danh gia 0 cuoc.)
+osrm_matrix_path: "research/simulation/data/osrm_matrix_hanoi.parquet"
+# 399 tram sac/doi pin that (OSM, ca xe may lan o to) - dung lam nguon vi tri
+# THAT cho lcx_core.event_sim (thay the danh sach station-dd-01..03 gia dinh cu).
+battery_stations_path: "research/simulation/data/batt_hanoi.json"
+
+tables:
+  trips: "trips.parquet"
+  driver_statistic_daily: "driver_statistic_daily.parquet"
+  driver_income_daily: "driver_income_daily.parquet"
+  driver_online_hours_sap_id: "driver_online_hours_sap_id.parquet"
+  driver_orders_rush_hours: "driver_orders_rush_hours.parquet"
+  driver_penalization_ATA: "driver_penalization_ATA.parquet"
+  driver_bike_stoppoints: "driver_bike_stoppoints.parquet"
+  kpi_driver_platform_calculator_gbq: "kpi_driver_platform_calculator_gbq.parquet"
+  public_driver_hex_tracking: "public_driver_hex_tracking.parquet"
+  public_frauds: "public_frauds.parquet"
+  public_mission: "public_mission.parquet"
+  public_mission_earn_history: "public_mission_earn_history.parquet"
+  public_user_mission_progress: "public_user_mission_progress.parquet"

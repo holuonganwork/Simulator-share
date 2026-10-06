@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l0/station_registry",
+  "title": "station_registry",
+  "description": "Tủ đổi pin — hạ tầng FK.",
+  "type": "object",
+  "properties": {
+    "station_id": {
+      "type": "string"
+    },
+    "location": {
+      "type": "object",
+      "required": [
+        "lat",
+        "lon",
+        "h3"
+      ],
+      "properties": {
+        "lat": {
+          "type": "number",
+          "x-sensitivity": "PII-location"
+        },
+        "lon": {
+          "type": "number",
+          "x-sensitivity": "PII-location"
+        },
+        "h3": {
+          "type": "string",
+          "description": "res 7 vận hành (Hà Nội) hoặc res 9 (pilot Đống Đa)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "slots": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "throughput_nominal_per_hour": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "location",
+    "schema_version",
+    "slots",
+    "source",
+    "station_id"
+  ],
+  "additionalProperties": false
+}

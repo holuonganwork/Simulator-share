@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/flag_case",
+  "title": "flag_case",
+  "description": "Xem src/lcx_core/agent/tools/flag_case.py. Tao mot ban ghi tuong ung schemas/case/fraud_case.schema.json.",
+  "input": {
+    "type": "object",
+    "properties": {
+      "driver_id": { "type": "string" },
+      "pattern": { "type": "string" },
+      "severity": { "type": "string", "enum": ["low", "medium", "high"] },
+      "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+      "evidence": { "type": "object" }
+    },
+    "required": ["driver_id", "pattern", "severity", "confidence", "evidence"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "case_id": { "type": "string" },
+      "status": { "type": "string", "const": "open" },
+      "created_at": { "type": "string", "format": "date-time" }
+    }
+  }
+}

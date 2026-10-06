@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+# GSM_FRAUD_DETECTION (sap nhap 2026-09-21) - case/label store va outbox chat
+# la du lieu sinh ra khi CHAY he thong, khong phai code nguon. Giu thu muc bang
+# .gitkeep, khong commit noi dung.
+/var/cases/*.jsonl
+/var/chat/*.jsonl
+/var/telemetry/*.jsonl
+/var/injector_eval/*/
+/var/telemetry_tier_eval/*/
+/var/surge_collusion_eval/*/
+
+# Bang dan xuat sinh boi scripts/build_driver_profile_enriched.py - tai tao
+# duoc bat cu luc nao tu du lieu that + seed co dinh, khong phai nguon.
+/data/derived/*.parquet
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Testing & Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Simulator Outputs
+runs/
+*.log
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+data/mock/my_13_tables/
+data/mock/realdata-v1/
+data/mock/realdata-v2/
+data/mock/test_out/
+data/derived/
+data/excel_export/
+report/

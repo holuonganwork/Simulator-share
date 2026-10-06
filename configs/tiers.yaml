@@ -1,0 +1,59 @@
+# Nguong Tier A: DO TU DU LIEU (percentile), khong hardcode so tuy tien.
+# method: "percentile" nghia la nguong duoc tinh lai tu chinh phan phoi du lieu
+# hien co moi lan chay (xem scripts/run_tier_a_scan.py), gia tri duoi day chi la
+# CACHE tham khao lan do gan nhat tren data/mock/realdata-v1 (90 ngay, seed 7000).
+#
+# Nguyen tac (theo docs/strategy.md muc 08, noi theo abnormal_cancel):
+#   nguong = percentile p99 cua tin hieu, tach rieng theo nhom lien quan (vd travel_mode)
+#   khi co du lieu; KHONG dat nguong tuy y.
+
+abnormal_cancel:
+  signal: "driver_statistic_daily.cancellation_rate"
+  percentile: 0.99
+  min_sample_days: 90
+
+route_deviation:
+  signal: "(trip.distance_km - osrm.road_km) / osrm.road_km"
+  percentile: 0.99
+  group_by: "travel_mode"
+  min_road_km: 0.3          # bo qua cuoc qua ngan, ty le % khong on dinh
+
+gps_distance_inflation:
+  signal: "implied_speed_kmh giua 2 ban ghi hex lien tiep cung driver"
+  hard_cap_kmh:
+    bike: 70
+    car: 110
+  percentile: 0.99           # ap dung THEM nguong mem tren phan con lai duoi hard cap
+
+split_long_trip:
+  signal: "khoang cach hex (grid_distance) drop_h3(trip N) -> pickup_h3(trip N+1) cung driver+customer"
+  max_gap_minutes: 5
+  max_hex_ring_gap: 1
+
+location_dropout:
+  signal: "khoang trong thoi gian (giay) giua 2 ban ghi hex_tracking lien tiep cung driver"
+  percentile: 0.99
+  min_gap_seconds: 300        # bo qua khoang trong tu nhien do tan suat log thap
+
+wait_fee_manipulation:
+  signal: "driver_bike_stoppoints.total_stoppoints_rush_hour"
+  percentile: 0.99
+  caveat: "THO - chua doi chieu duoc voi ly do hop le (ket xe/khach tre), xem docs/data-matrix.md"
+
+fake_ride_for_kpi:
+  signal: "public_mission_earn_history.earn theo driver, so voi trung binh + std cua chinh driver do"
+  z_score_threshold: 3.0
+  caveat: "THO - chua xac nhan duoc cau ket vi thieu lien ket thiet bi/tai khoan"
+
+ride_preview_selection:
+  signal: "driver_statistic_daily.acceptance_rate (ty le nhan cuoc thap bat thuong)"
+  percentile_low: 0.01
+  caveat: "THO - proxy gian tiep, trips.parquet chi ghi cuoc da hoan thanh, khong co log cuoc bi tu choi"
+
+# Hai mau hinh duoi day KHONG co tin hieu nao trong 13 bang de trien khai that:
+#   - fake_no_show: trips.status chi co {completed, cancelled, assigned} (thuc te 100% la
+#     'completed' trong du lieu hien co), khong co trang thai/nguyen nhan no-show.
+#   - off_app_cash_pressure: khong co trang thai "da gap khach" (arrived) de doi chieu voi
+#     huy sau do; driver_penalization_ATA.penalty_type hien chi co gia tri 'clawback_khoan'.
+# Xem src/lcx_core/tier_a/fake_no_show.py va off_app_cash_pressure.py — implement la stub
+# co tai lieu ro rang, KHONG bia du lieu, dung theo docs/appendix-pending-data.md.

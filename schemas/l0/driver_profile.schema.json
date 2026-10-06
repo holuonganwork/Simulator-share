@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l0/driver_profile",
+  "title": "driver_profile",
+  "description": "Hồ sơ tài xế — track BẮT BUỘC cho F0 (US-F0-02). Pain #4.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string",
+      "x-sensitivity": "PII-id"
+    },
+    "track": {
+      "type": "string",
+      "enum": [
+        "core_owned",
+        "platform",
+        "rto"
+      ]
+    },
+    "tier": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tenure_months": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "vehicle_type": {
+      "type": "string",
+      "description": "Loại phương tiện: car (ô tô điện), bike-electric (xe máy điện Feliz/Evo)"
+    },
+    "vehicle_class": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "A_COMPACT",
+        "B_SEDAN",
+        "C_SUV",
+        "D_LUXURY",
+        "LIMO",
+        null
+      ],
+      "description": "Phân hạng xe ô tô điện: A_COMPACT (VF5, Herio), B_SEDAN/C_SUV (VF e34, VF6), D_LUXURY (VF8, VF9), LIMO (Limo Green)"
+    },
+    "vehicle_model": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "VF5",
+        "VF6",
+        "VF_e34",
+        "VF8",
+        "VF9",
+        "Limo_Green",
+        "Feliz_S",
+        "Evo200",
+        null
+      ],
+      "description": "Mẫu phương tiện vận doanh VinFast"
+    },
+    "seat_capacity": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "enum": [
+        4,
+        5,
+        7,
+        null
+      ],
+      "description": "Số chỗ ngồi đăng kiểm của phương tiện ô tô"
+    },
+    "fleet": {
+      "type": "string",
+      "enum": [
+        "swap",
+        "charge"
+      ]
+    },
+    "home_zone_h3r8": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "res8 coarse cho privacy (không lưu home chính xác)"
+    },
+    "declared_shift_window": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "integer"
+      },
+      "description": "tự khai, optional"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "fleet",
+    "schema_version",
+    "source",
+    "track"
+  ],
+  "additionalProperties": false
+}

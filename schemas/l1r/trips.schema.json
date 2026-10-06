@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/trips",
+  "title": "trips",
+  "description": "Trip-level dispatch (UC5 mật độ cuốc). ENGINEER shape từ trip_record ta. customer_id drop.",
+  "type": "object",
+  "properties": {
+    "trip_id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string"
+    },
+    "customer_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "service_type": {
+      "type": "string"
+    },
+    "vehicle_class": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "A_COMPACT",
+        "B_SEDAN",
+        "C_SUV",
+        "D_LUXURY",
+        "LIMO",
+        null
+      ],
+      "description": "Phân hạng phương tiện phục vụ cuốc xe: A_COMPACT (VF5), B_SEDAN/C_SUV (VF e34, VF6), D_LUXURY (VF8, VF9), LIMO"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "cancelled",
+        "assigned"
+      ]
+    },
+    "request_time": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "assign_time": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pickup_time": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "complete_time": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pickup_h3": {
+      "type": "string"
+    },
+    "drop_h3": {
+      "type": "string"
+    },
+    "distance_km": {
+      "type": "number"
+    },
+    "duration_seconds": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "gross_vnd": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "commission_vnd": {
+      "type": "integer",
+      "description": "VND nguyên (không âm)",
+      "minimum": 0
+    },
+    "rush_hour": {
+      "type": "boolean"
+    },
+    "travel_mode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "datastream_metadata": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "CDC Datastream metadata — không dùng logic"
+    },
+    "cancel_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Ly do huy khi status=cancelled (null neu completed). MOCK: sim khong phan biet nguyen nhan huy, mockgen gan theo ty le co dinh"
+    },
+    "cancelled_by": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "customer",
+        "driver",
+        null
+      ],
+      "description": "Ben huy cuoc (null neu completed)"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.1.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "drop_h3",
+    "gross_vnd",
+    "pickup_h3",
+    "request_time",
+    "schema_version",
+    "service_type",
+    "source",
+    "status",
+    "trip_id"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id",
+    "customer_id"
+  ],
+  "x-availability": "TBC-với-GSM (bảng thiếu cột — field ENGINEER)"
+}

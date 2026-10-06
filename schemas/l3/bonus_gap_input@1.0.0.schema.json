@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l3/bonus_gap_input",
+  "title": "bonus_gap_input",
+  "description": "Input S1 BonusFeasibility. US-F0-01, F1-03/04. Pain #2 #4.",
+  "type": "object",
+  "properties": {
+    "driver_id": {
+      "type": "string"
+    },
+    "t_now": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "points_now": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "next_tiers": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "VND nguyên (không âm)"
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+    "historical_points_per_hour": {
+      "type": "object",
+      "description": "khung giờ -> tốc độ điểm lịch sử driver này"
+    },
+    "hours_budget_remaining": {
+      "type": "number",
+      "minimum": 0
+    },
+    "acceptance_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "completion_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "policy_bundle_version": {
+      "type": "string"
+    },
+    "view_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "driver_id",
+    "hours_budget_remaining",
+    "next_tiers",
+    "points_now",
+    "policy_bundle_version",
+    "schema_version",
+    "source",
+    "t_now",
+    "view_version"
+  ],
+  "additionalProperties": false
+}

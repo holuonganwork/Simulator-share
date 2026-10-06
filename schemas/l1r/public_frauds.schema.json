@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l1r/public_frauds",
+  "title": "public_frauds (public_frauds)",
+  "description": "Cờ bất thường (UC7) — ENGINEER, nhãn INFERRED, KHÔNG kết tội.",
+  "type": "object",
+  "properties": {
+    "fraud_id": {
+      "type": "string"
+    },
+    "driver_id": {
+      "type": "string"
+    },
+    "detected_at": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "fraud_type": {
+      "type": "string",
+      "enum": [
+        "route_deviation",
+        "gps_anomaly",
+        "off_app",
+        "abnormal_cancel",
+        "multi_account"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "evidence_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "reviewing",
+        "cleared",
+        "confirmed"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO-8601 UTC+7"
+    },
+    "datastream_metadata": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "CDC Datastream metadata — không dùng logic"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "confidence",
+    "detected_at",
+    "driver_id",
+    "fraud_id",
+    "fraud_type",
+    "schema_version",
+    "severity",
+    "source",
+    "status"
+  ],
+  "additionalProperties": false,
+  "x-pii-columns": [
+    "driver_id"
+  ],
+  "x-availability": "TBC-với-GSM (bảng thiếu cột — field ENGINEER)"
+}

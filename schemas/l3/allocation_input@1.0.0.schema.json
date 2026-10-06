@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/l3/allocation_input",
+  "title": "allocation_input",
+  "description": "Input S4 CapacityAlloc — chống herding. US-F2-04. Pain #1.",
+  "type": "object",
+  "properties": {
+    "t_now": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC+7 (data đã normalize — spec §0 assumption)"
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "driver_id",
+          "advice_kind",
+          "target"
+        ],
+        "properties": {
+          "driver_id": {
+            "type": "string"
+          },
+          "advice_kind": {
+            "type": "string",
+            "enum": [
+              "swap_window",
+              "standby_zone"
+            ]
+          },
+          "target": {
+            "type": "string"
+          },
+          "priority_soc": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "station_capacity": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "zone_supply": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "view_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "MOCK",
+        "REAL",
+        "ESTIMATED",
+        "COARSE",
+        "INFERRED"
+      ],
+      "description": "Nhãn nguồn bắt buộc (CLAUDE.md §5 — mock phải gắn nhãn)"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "candidates",
+    "schema_version",
+    "source",
+    "t_now",
+    "view_version"
+  ],
+  "additionalProperties": false
+}

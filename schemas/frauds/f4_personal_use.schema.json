@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsm-driver-agent/schemas/frauds/f4_personal_use",
+  "title": "f4_personal_use",
+  "description": "Thực thể phát hiện gian lận F4: Sử dụng xe mục đích cá nhân ngoài ca trực (Personal Vehicle Use / Lạm dụng tài sản doanh nghiệp). Áp dụng đặc thù cho mô hình Taxi Cơ Hữu theo FRAUDS.md. Cơ chế phát hiện dựa trên việc xe tiếp tục lăn bánh (vận tốc >= 10 km/h, ODO tăng) ngoài khung ca trực cam kết và ngoài giờ online của app. Áp dụng mức truy thu chi phí hao mòn tài sản 3.500 VNĐ/km (gồm tiền điện nạp, khấu hao pin VinFast và hao mòn lốp/khung gầm xe). Kích hoạt cảnh báo nghiêm trọng khi xe ra ngoài địa bàn Hà Nội.",
+  "type": "object",
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "description": "Mã định danh duy nhất của vụ việc vi phạm F4 (vd: f4-20260924-d4e5f6a1)"
+    },
+    "fraud_type": {
+      "type": "string",
+      "const": "F4_PERSONAL_USE",
+      "description": "Mã định danh loại vi phạm F4"
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm hệ thống phát hiện vi phạm (ISO-8601 UTC+7)"
+    },
+    "driver_id": {
+      "type": "string",
+      "description": "Mã tài xế vi phạm"
+    },
+    "vehicle_id": {
+      "type": "string",
+      "description": "Mã xe ô tô điện"
+    },
+    "vin": {
+      "type": "string",
+      "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+      "description": "Số khung xe VinFast"
+    },
+    "depot_id": {
+      "type": "string",
+      "enum": [
+        "depot_gia_lam",
+        "depot_nam_tu_liem",
+        "depot_yen_nghia",
+        "hub_noi_bai",
+        "hub_my_dinh",
+        "hub_giap_bat"
+      ],
+      "description": "Depot quản lý mà tài xế có nghĩa vụ bàn giao xe sau khi hết ca"
+    },
+    "track": {
+      "type": "string",
+      "const": "core_owned"
+    },
+    "activity_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Ngày diễn ra hành vi sử dụng xe ngoài ca"
+    },
+    "declared_shift_start_min": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1440,
+      "description": "Phút bắt đầu ca trực đã đăng ký"
+    },
+    "declared_shift_end_min": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1440,
+      "description": "Phút kết thúc ca trực đã đăng ký"
+    },
+    "app_offline_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm tài xế bấm Offline kết thúc phiên làm việc trên app"
+    },
+    "off_shift_start_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm bắt đầu ghi nhận xe lăn bánh ngoài ca"
+    },
+    "off_shift_end_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm kết thúc đợt lăn bánh ngoài ca"
+    },
+    "km_off_shift": {
+      "type": "number",
+      "minimum": 3.0,
+      "description": "Tổng quãng đường xe lăn bánh ngoài ca trực tính theo chênh lệch ODO CAN-bus (km)"
+    },
+    "max_speed_kmh": {
+      "type": "number",
+      "minimum": 10.0,
+      "description": "Vận tốc tối đa ghi nhận khi chạy ngoài ca"
+    },
+    "left_hanoi_boundary": {
+      "type": "boolean",
+      "description": "true nếu tọa độ xe vượt ra ngoài địa giới hành chính 12 quận Hà Nội"
+    },
+    "km_outside_hanoi": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Số km lăn bánh bên ngoài địa phận Hà Nội (ngưỡng vi phạm >= 3.0 km)"
+    },
+    "farthest_location": {
+      "type": "object",
+      "properties": {
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "province_detected": {
+          "type": "string",
+          "description": "Tỉnh/thành phố phát hiện xe (vd: Bắc Ninh, Hải Dương, Hưng Yên, Hà Nam)"
+        }
+      },
+      "description": "Điểm xa nhất xe di chuyển tới khi chạy ngoài ca trực"
+    },
+    "overnight_outside_depot": {
+      "type": "boolean",
+      "description": "true nếu xe không được đưa về Depot qua đêm (vi phạm nghiêm trọng quy chế bàn giao phương tiện)"
+    },
+    "cost_rate_per_km_vnd": {
+      "type": "integer",
+      "const": 3500,
+      "description": "Định mức chi phí bồi hoàn vận hành xe: 3.500 VNĐ/km theo FRAUDS.md"
+    },
+    "cost_breakdown": {
+      "type": "object",
+      "required": ["electricity_vnd", "battery_depreciation_vnd", "chassis_wear_vnd"],
+      "properties": {
+        "electricity_vnd": {
+          "type": "integer",
+          "description": "Chi phí điện nạp trụ V-Green / trạm Depot (~450đ/km)"
+        },
+        "battery_depreciation_vnd": {
+          "type": "integer",
+          "description": "Chi phí khấu hao cụm pin Lithium VinFast (~1.200đ/km)"
+        },
+        "chassis_wear_vnd": {
+          "type": "integer",
+          "description": "Chi phí hao mòn lốp xe, khung gầm và hệ thống treo (~1.850đ/km)"
+        }
+      },
+      "description": "Bóc tách cơ cấu chi phí bồi hoàn theo km lăn bánh"
+    },
+    "total_clawback_cost_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Tổng chi phí bồi hoàn bị khấu trừ vào bảng lương tháng: km_off_shift * 3.500 VNĐ"
+    },
+    "disciplinary_action": {
+      "type": "string",
+      "enum": [
+        "written_reprimand_and_salary_deduction",
+        "suspension_next_shift",
+        "labor_contract_termination_and_damage_claim"
+      ],
+      "description": "Biện pháp xử lý kỷ luật lao động vi phạm quy chế quản lý tài sản"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["light", "medium", "heavy"]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["flagged", "under_review", "confirmed", "appealed", "dismissed"]
+    }
+  },
+  "required": [
+    "incident_id",
+    "detected_at",
+    "driver_id",
+    "vehicle_id",
+    "vin",
+    "depot_id",
+    "track",
+    "activity_date",
+    "km_off_shift",
+    "cost_rate_per_km_vnd",
+    "cost_breakdown",
+    "total_clawback_cost_vnd",
+    "disciplinary_action",
+    "severity",
+    "confidence",
+    "status"
+  ],
+  "additionalProperties": false
+}

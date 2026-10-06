@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcx-core/schemas/tools/query_device_account_graph",
+  "title": "query_device_account_graph",
+  "description": "Xem src/lcx_core/agent/tools/query_device_account_graph.py va tier_c/device_account_graph.py. LUON tra ve ok=false, blocked_by='missing_data_tier_c' o repo hien tai - khong co device_id/IMEI/IP trong 13 bang.",
+  "input": {
+    "type": "object",
+    "properties": { "driver_id": { "type": "string" } },
+    "required": ["driver_id"]
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "ok": { "type": "boolean" },
+      "blocked_by": { "type": ["string", "null"], "const": "missing_data_tier_c" },
+      "data": {
+        "type": "object",
+        "properties": {
+          "driver_id": { "type": "string" },
+          "clusters": { "type": "array", "description": "Rong cho toi khi Tier C co du lieu that." }
+        }
+      }
+    }
+  }
+}
